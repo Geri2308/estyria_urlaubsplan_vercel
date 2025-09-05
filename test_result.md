@@ -182,10 +182,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Neuer Aktualisierungs-Button im Persönlichkeitsprofil-Dialog"
-  stuck_tasks: []
+    - "Krankheitstage-Aktualisierungs-Problem beheben"
+  stuck_tasks: 
+    - "Krankheitstage-Aktualisierungs-Problem beheben"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "stuck_first"
 
   - task: "Krankheitstage-Aktualisierungs-Problem beheben"
     implemented: true
