@@ -882,12 +882,10 @@ export const vacationAPI = {
       // Automatisches Speichern
       autoSave.vacations(vacations);
       
-      // Urlaubstage zurückgeben (nur bei URLAUB)
-      if (deletedVacation.vacation_type === 'URLAUB') {
-        updateEmployeeVacationDays(deletedVacation.employee_id, -(deletedVacation.days_count || 0));
-      }
+      // Urlaubstage und Krankheitstage aktualisieren (für ALLE Arten: URLAUB, KRANKHEIT, SONDERURLAUB)
+      updateEmployeeVacationDays(deletedVacation.employee_id, 0); // Komplette Neuberechnung
       
-      console.log('✅ Urlaub gelöscht und Tage zurückgegeben:', `${deletedVacation.employee_name} (${deletedVacation.start_date} - ${deletedVacation.end_date}) - ${deletedVacation.days_count} Tage zurück`);
+      console.log('✅ Urlaub gelöscht und Tage aktualisiert:', `${deletedVacation.employee_name} (${deletedVacation.start_date} - ${deletedVacation.end_date}) - ${deletedVacation.days_count} Tage - Type: ${deletedVacation.vacation_type}`);
       return Promise.resolve({ data: { message: 'Urlaubseintrag gelöscht' } });
     }
     return Promise.reject({ response: { data: { error: 'Urlaubseintrag nicht gefunden' } } });
