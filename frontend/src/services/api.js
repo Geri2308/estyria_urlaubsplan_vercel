@@ -1,6 +1,42 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
+// Für die Entwicklung verwenden wir ein vereinfachtes Mock-System
+const MOCK_AUTH = true;
+
+// Mock Auth für Entwicklung
+const mockLogin = (code) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (code === '9999') {
+        resolve({
+          data: {
+            success: true,
+            token: 'mock-admin-token-' + Date.now(),
+            user: { username: 'admin', role: 'admin' },
+            message: 'Erfolgreich als Admin angemeldet'
+          }
+        });
+      } else if (code === '1234') {
+        resolve({
+          data: {
+            success: true,
+            token: 'mock-user-token-' + Date.now(),
+            user: { username: 'user', role: 'user' },
+            message: 'Erfolgreich als Benutzer angemeldet'
+          }
+        });
+      } else {
+        reject({
+          response: {
+            data: { error: 'Ungültiger Code' }
+          }
+        });
+      }
+    }, 500);
+  });
+};
+
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
 
 // Axios instance erstellen
 const api = axios.create({
@@ -40,7 +76,12 @@ api.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-  login: (code) => api.post('/auth/login', { code }),
+  login: (code) => {
+    if (MOCK_AUTH) {
+      return mockLogin(code);
+    }
+    return api.post('/auth/login', { code });
+  },
 };
 
 // Employee API
