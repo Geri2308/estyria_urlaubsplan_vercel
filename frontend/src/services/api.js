@@ -232,7 +232,123 @@ const saveToStorage = (key, value) => {
   }
 };
 
-// Hilfsfunktion: Urlaubstage eines Mitarbeiters berechnen und aktualisieren
+// Monatliche Urlaubsakkumulation
+const MONTHLY_VACATION_DAYS = 2.08333; // 25 Tage / 12 Monate = 2,08333
+
+// Prüfe und füge monatliche Urlaubstage hinzu
+const processMonthlyVacationAccumulation = () => {
+  const now = new Date();
+  const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`; // YYYY-MM
+  const lastProcessedMonth = localStorage.getItem('urlaubsplaner_last_monthly_accumulation');
+  
+  console.log('🗓️ Prüfe monatliche Urlaubsakkumulation...');
+  console.log('Aktueller Monat:', currentMonthKey);
+  console.log('Letzter verarbeiteter Monat:', lastProcessedMonth);
+  
+  // Prüfe ob bereits für diesen Monat verarbeitet
+  if (lastProcessedMonth === currentMonthKey) {
+    console.log('✅ Urlaubstage für diesen Monat bereits hinzugefügt');
+    return false;
+  }
+  
+  // Hole alle Mitarbeiter
+  const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+  let addedEmployees = [];
+  
+  // Füge jedem Mitarbeiter 2,08333 Urlaubstage hinzu
+  employees.forEach(employee => {
+    const oldTotal = employee.vacation_days_total || 25;
+    const newTotal = Math.round((oldTotal + MONTHLY_VACATION_DAYS) * 100) / 100; // Auf 2 Dezimalstellen runden
+    
+    employee.vacation_days_total = newTotal;
+    employee.last_monthly_accumulation = now.toISOString();
+    employee.monthly_accumulation_history = employee.monthly_accumulation_history || [];
+    
+    // Füge zur Historie hinzu
+    employee.monthly_accumulation_history.push({
+      month: currentMonthKey,
+      added_days: MONTHLY_VACATION_DAYS,
+      total_after: newTotal,
+      date: now.toISOString()
+    });
+    
+    // Behalte nur die letzten 12 Monate in der Historie
+    if (employee.monthly_accumulation_history.length > 12) {
+      employee.monthly_accumulation_history = employee.monthly_accumulation_history.slice(-12);
+    }
+    
+    addedEmployees.push({
+      name: employee.name,
+      oldTotal: oldTotal,
+      newTotal: newTotal,
+      added: MONTHLY_VACATION_DAYS
+    });
+  });
+  
+  // Speichere aktualisierte Mitarbeiterdaten
+  autoSave.employees(employees);
+  
+  // Speichere letzten verarbeiteten Monat
+  localStorage.setItem('urlaubsplaner_last_monthly_accumulation', currentMonthKey);
+  localStorage.setItem('urlaubsplaner_last_monthly_accumulation_date', now.toISOString());
+  
+  console.log('🎉 Monatliche Urlaubsakkumulation abgeschlossen!');
+  console.log('📊 Zusammenfassung:', {
+    monat: currentMonthKey,
+    mitarbeiter: addedEmployees.length,
+    tageProMitarbeiter: MONTHLY_VACATION_DAYS,
+    gesamtHinzugefügt: Math.round(addedEmployees.length * MONTHLY_VACATION_DAYS * 100) / 100
+  });
+  
+  // Detaillierte Logs für jeden Mitarbeiter
+  addedEmployees.forEach(emp => {
+    console.log(`📈 ${emp.name}: ${emp.oldTotal} → ${emp.newTotal} (+${emp.added} Tage)`);
+  });
+  
+  return {
+    processed: true,
+    month: currentMonthKey,
+    employees: addedEmployees,
+    totalDaysAdded: Math.round(addedEmployees.length * MONTHLY_VACATION_DAYS * 100) / 100
+  };
+};
+
+// Manuelle Ausführung der monatlichen Akkumulation (für Tests)
+const forceMonthlyAccumulation = () => {
+  // Setze letzten Monat zurück um Neuverarbeitung zu erzwingen
+  const now = new Date();
+  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const lastMonthKey = `${lastMonth.getFullYear()}-${String(lastMonth.getMonth() + 1).padStart(2, '0')}`;
+  
+  localStorage.setItem('urlaubsplaner_last_monthly_accumulation', lastMonthKey);
+  console.log('🔄 Erzwinge monatliche Akkumulation für aktuellen Monat...');
+  
+  return processMonthlyVacationAccumulation();
+};
+
+// Hilfsfunktion: Nächste Akkumulation berechnen
+const getNextAccumulationDate = () => {
+  const now = new Date();
+  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  return nextMonth;
+};
+
+// Hilfsfunktion: Akkumulations-Status abrufen
+const getAccumulationStatus = () => {
+  const lastProcessed = localStorage.getItem('urlaubsplaner_last_monthly_accumulation');
+  const lastDate = localStorage.getItem('urlaubsplaner_last_monthly_accumulation_date');
+  const now = new Date();
+  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  
+  return {
+    lastProcessedMonth: lastProcessed,
+    lastProcessedDate: lastDate,
+    currentMonth: currentMonth,
+    isCurrentMonthProcessed: lastProcessed === currentMonth,
+    nextAccumulationDate: getNextAccumulationDate(),
+    monthlyAmount: MONTHLY_VACATION_DAYS
+  };
+};
 const updateEmployeeVacationDays = (employeeId, daysDifference) => {
   const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
   const employeeIndex = employees.findIndex(emp => emp.id === employeeId);
