@@ -232,7 +232,43 @@ const saveToStorage = (key, value) => {
   }
 };
 
-// Auto-Save für alle Änderungen
+// Hilfsfunktion: Urlaubstage eines Mitarbeiters berechnen und aktualisieren
+const updateEmployeeVacationDays = (employeeId, daysDifference) => {
+  const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+  const employeeIndex = employees.findIndex(emp => emp.id === employeeId);
+  
+  if (employeeIndex >= 0) {
+    // Berechne aktuell verwendete Urlaubstage
+    const vacations = getFromStorage('urlaubsplaner_vacations', []);
+    const employeeVacations = vacations.filter(v => v.employee_id === employeeId && v.vacation_type === 'URLAUB');
+    
+    let totalUsedDays = 0;
+    employeeVacations.forEach(vacation => {
+      totalUsedDays += vacation.days_count || 0;
+    });
+    
+    // Aktualisiere Mitarbeiter-Daten
+    employees[employeeIndex] = {
+      ...employees[employeeIndex],
+      vacation_days_used: totalUsedDays,
+      vacation_days_remaining: (employees[employeeIndex].vacation_days_total || 25) - totalUsedDays,
+      last_vacation_update: new Date().toISOString()
+    };
+    
+    // Speichern
+    autoSave.employees(employees);
+    
+    console.log(`📊 Urlaubstage aktualisiert für ${employees[employeeIndex].name}:`, {
+      total: employees[employeeIndex].vacation_days_total,
+      used: totalUsedDays,
+      remaining: employees[employeeIndex].vacation_days_remaining
+    });
+    
+    return employees[employeeIndex];
+  }
+  
+  return null;
+};
 const autoSave = {
   employees: (data) => {
     saveToStorage('urlaubsplaner_employees', data);
