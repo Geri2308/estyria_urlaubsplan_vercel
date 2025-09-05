@@ -399,7 +399,7 @@ const autoSave = {
   }
 };
 
-// Daten initialisieren (beim ersten Besuch) mit verbesserter Wiederherstellung
+// Daten initialisieren (beim ersten Besuch) mit monatlicher Urlaubsakkumulation
 const initializeData = () => {
   console.log('🔄 Initialisiere Daten-System...');
   
@@ -423,10 +423,17 @@ const initializeData = () => {
         updateEmployeeVacationDays(employee.id, 0);
         updated = true;
       }
+      
+      // Initialisiere monatliche Akkumulations-Historie falls nicht vorhanden
+      if (!employee.monthly_accumulation_history) {
+        employee.monthly_accumulation_history = [];
+        updated = true;
+      }
     });
     
     if (updated) {
       console.log('🔄 Mitarbeiterdaten mit Urlaubstage-Tracking aktualisiert');
+      autoSave.employees(employees);
     }
   }
   
@@ -440,7 +447,7 @@ const initializeData = () => {
   // Speichere Initialisierungsdatum
   if (!localStorage.getItem('urlaubsplaner_initialized')) {
     localStorage.setItem('urlaubsplaner_initialized', new Date().toISOString());
-    localStorage.setItem('urlaubsplaner_version', '1.1'); // Version erhöht für Urlaubstage-Feature
+    localStorage.setItem('urlaubsplaner_version', '1.2'); // Version erhöht für monatliche Akkumulation
     console.log('🎉 System erfolgreich initialisiert!');
   }
   
@@ -450,14 +457,28 @@ const initializeData = () => {
     updateEmployeeVacationDays(employee.id, 0);
   });
   
+  // WICHTIG: Prüfe und führe monatliche Urlaubsakkumulation durch
+  console.log('🗓️ Prüfe monatliche Urlaubsakkumulation...');
+  const accumulationResult = processMonthlyVacationAccumulation();
+  
+  if (accumulationResult && accumulationResult.processed) {
+    console.log('🎊 Neue Urlaubstage für diesen Monat hinzugefügt!');
+    console.log(`📈 ${accumulationResult.employees.length} Mitarbeiter erhielten je ${MONTHLY_VACATION_DAYS} Tage`);
+    console.log(`🏖️ Gesamt hinzugefügt: ${accumulationResult.totalDaysAdded} Tage`);
+  }
+  
   // Zeige Datenstatistiken
   const employees = getFromStorage('urlaubsplaner_employees', []);
   const vacations = getFromStorage('urlaubsplaner_vacations', []);
+  const accStatus = getAccumulationStatus();
   
   console.log('📊 Aktuelle Daten:', {
     mitarbeiter: employees.length,
     urlaubseinträge: vacations.length,
     urlaubstageSystem: '✅ Aktiv',
+    monatlicheAkkumulation: `✅ Aktiv (${MONTHLY_VACATION_DAYS} Tage/Monat)`,
+    letzterMonat: accStatus.lastProcessedMonth || 'Noch nie',
+    nächsteAkkumulation: accStatus.nextAccumulationDate.toLocaleDateString('de-DE'),
     letzteÄnderung: localStorage.getItem('urlaubsplaner_employees_last_modified') || 'Unbekannt'
   });
 };
