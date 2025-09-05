@@ -372,7 +372,7 @@ export const employeeAPI = {
   },
 };
 
-// Vacation Entry API (mit LocalStorage)
+// Vacation Entry API (mit automatischem Speichern)
 export const vacationAPI = {
   getAll: (params = {}) => {
     let vacations = getFromStorage('urlaubsplaner_vacations', DEFAULT_VACATION_ENTRIES);
@@ -385,6 +385,7 @@ export const vacationAPI = {
       vacations = vacations.filter(v => v.vacation_type === params.vacation_type);
     }
     
+    console.log('🏖️ Urlaubseinträge geladen:', vacations.length);
     return Promise.resolve({ data: vacations });
   },
   
@@ -417,11 +418,16 @@ export const vacationAPI = {
       ...data,
       id: Date.now().toString(),
       days_count: businessDays,
-      created_date: new Date().toISOString()
+      created_date: new Date().toISOString(),
+      last_modified: new Date().toISOString()
     };
     
     vacations.push(newVacation);
-    saveToStorage('urlaubsplaner_vacations', vacations);
+    
+    // Automatisches Speichern
+    autoSave.vacations(vacations);
+    
+    console.log('✅ Neuer Urlaub erstellt und gespeichert:', `${newVacation.employee_name} (${newVacation.start_date} - ${newVacation.end_date})`);
     return Promise.resolve({ data: newVacation });
   },
   
@@ -446,9 +452,14 @@ export const vacationAPI = {
       vacations[index] = { 
         ...vacations[index], 
         ...data, 
-        days_count: businessDays 
+        days_count: businessDays,
+        last_modified: new Date().toISOString()
       };
-      saveToStorage('urlaubsplaner_vacations', vacations);
+      
+      // Automatisches Speichern
+      autoSave.vacations(vacations);
+      
+      console.log('✅ Urlaub aktualisiert und gespeichert:', `${vacations[index].employee_name} (${vacations[index].start_date} - ${vacations[index].end_date})`);
       return Promise.resolve({ data: vacations[index] });
     }
     return Promise.reject({ response: { data: { error: 'Urlaubseintrag nicht gefunden' } } });
@@ -458,8 +469,13 @@ export const vacationAPI = {
     const vacations = getFromStorage('urlaubsplaner_vacations', DEFAULT_VACATION_ENTRIES);
     const index = vacations.findIndex(v => v.id === id);
     if (index >= 0) {
+      const deletedVacation = vacations[index];
       vacations.splice(index, 1);
-      saveToStorage('urlaubsplaner_vacations', vacations);
+      
+      // Automatisches Speichern
+      autoSave.vacations(vacations);
+      
+      console.log('✅ Urlaub gelöscht und gespeichert:', `${deletedVacation.employee_name} (${deletedVacation.start_date} - ${deletedVacation.end_date})`);
       return Promise.resolve({ data: { message: 'Urlaubseintrag gelöscht' } });
     }
     return Promise.reject({ response: { data: { error: 'Urlaubseintrag nicht gefunden' } } });
