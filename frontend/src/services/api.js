@@ -770,7 +770,7 @@ const performLogin = (code) => {
 };
 
 // Auth API
-export const authAPI = {
+const authAPI = {
   login: performLogin,
 };
 
