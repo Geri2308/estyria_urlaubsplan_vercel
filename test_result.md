@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Benutzer sieht nicht alle Mitarbeiter in der Teamverwaltung (Scrollsystem-Problem) und braucht bei jedem Mitarbeiter einen Button für Persönlichkeitseintragung"
+user_problem_statement: "Mitarbeiter-Bearbeitungs-Problem: Benutzer kann Mitarbeiter nicht aktualisieren, wenn das Feld 'Urlaubstage pro Jahr' Dezimalwerte wie '27,08' enthält"
 
 frontend:
   - task: "Team View Scrollsystem reparieren"
