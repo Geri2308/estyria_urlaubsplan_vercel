@@ -1030,7 +1030,7 @@ const vacationAPI = {
 };
 
 // Settings API
-export const settingsAPI = {
+const settingsAPI = {
   get: () => {
     const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
     return Promise.resolve({
