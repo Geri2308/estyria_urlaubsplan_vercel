@@ -194,13 +194,19 @@ const DEFAULT_VACATION_ENTRIES = [
   }
 ];
 
-// LocalStorage Helfer-Funktionen
+// LocalStorage Helfer-Funktionen mit automatischem Backup
 const getFromStorage = (key, defaultValue) => {
   try {
     const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : defaultValue;
+    if (item) {
+      const parsed = JSON.parse(item);
+      console.log(`✅ Daten geladen für ${key}:`, parsed.length || 'N/A', 'Einträge');
+      return parsed;
+    }
+    console.log(`📝 Erstmalige Initialisierung für ${key}`);
+    return defaultValue;
   } catch (error) {
-    console.error(`Error reading ${key} from localStorage:`, error);
+    console.error(`❌ Fehler beim Laden von ${key}:`, error);
     return defaultValue;
   }
 };
@@ -208,8 +214,36 @@ const getFromStorage = (key, defaultValue) => {
 const saveToStorage = (key, value) => {
   try {
     localStorage.setItem(key, JSON.stringify(value));
+    // Zusätzliches Backup mit Timestamp
+    localStorage.setItem(`${key}_backup`, JSON.stringify({
+      data: value, 
+      timestamp: new Date().toISOString(),
+      version: '1.0'
+    }));
+    console.log(`💾 Automatisch gespeichert: ${key} (${value.length || 'N/A'} Einträge)`);
   } catch (error) {
-    console.error(`Error saving ${key} to localStorage:`, error);
+    console.error(`❌ Fehler beim Speichern von ${key}:`, error);
+    // Fallback: Versuche Backup zu verwenden
+    try {
+      localStorage.setItem(`${key}_emergency`, JSON.stringify(value));
+    } catch (e) {
+      console.error('❌ Auch Emergency-Save fehlgeschlagen:', e);
+    }
+  }
+};
+
+// Auto-Save für alle Änderungen
+const autoSave = {
+  employees: (data) => {
+    saveToStorage('urlaubsplaner_employees', data);
+    saveToStorage('urlaubsplaner_employees_last_modified', new Date().toISOString());
+  },
+  vacations: (data) => {
+    saveToStorage('urlaubsplaner_vacations', data);
+    saveToStorage('urlaubsplaner_vacations_last_modified', new Date().toISOString());
+  },
+  userPreferences: (data) => {
+    saveToStorage('urlaubsplaner_user_preferences', data);
   }
 };
 
