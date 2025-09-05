@@ -264,7 +264,7 @@ const saveToStorage = (key, value) => {
 // Monatliche Urlaubsakkumulation
 const MONTHLY_VACATION_DAYS = 2.08333; // 25 Tage / 12 Monate = 2,08333
 
-// Prüfe und füge monatliche Urlaubstage hinzu (erst ab Oktober)
+// Prüfe und füge monatliche Urlaubstage hinzu (erst ab Oktober 2025)
 const processMonthlyVacationAccumulation = () => {
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -276,14 +276,16 @@ const processMonthlyVacationAccumulation = () => {
   console.log('Aktueller Monat:', currentMonthKey);
   console.log('Letzter verarbeiteter Monat:', lastProcessedMonth);
   
-  // Prüfe ob wir schon Oktober oder später sind
-  if (currentMonth < 10) {
-    console.log('📅 Monatliche Akkumulation startet erst ab Oktober - aktuell noch zu früh');
+  // Prüfe ob wir schon Oktober 2025 oder später sind
+  const isOctoberTwentyTwentyFiveOrLater = (currentYear > 2025) || (currentYear === 2025 && currentMonth >= 10);
+  
+  if (!isOctoberTwentyTwentyFiveOrLater) {
+    console.log('📅 Monatliche Akkumulation startet erst ab Oktober 2025 - aktuell noch zu früh');
     return {
       processed: false,
-      reason: 'Akkumulation startet erst ab Oktober',
+      reason: 'Akkumulation startet erst ab Oktober 2025',
       currentMonth: currentMonthKey,
-      nextStartMonth: `${currentYear}-10`
+      nextStartMonth: '2025-10'
     };
   }
   
