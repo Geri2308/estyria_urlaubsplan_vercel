@@ -87,7 +87,7 @@ app.delete('/api/vacation-entries/:id', (req, res) => {
 });
 
 // Catch-all for undefined routes
-app.use('/api/*', (req, res) => {
+app.use('/api*', (req, res) => {
   res.status(404).json({ error: 'API endpoint not found' });
 });
 
