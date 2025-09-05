@@ -1506,9 +1506,18 @@ function App() {
                             .map((employee) => (
                               <tr key={`employee-${employee.id}`}>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-sm font-medium text-gray-900">
-                                    {employee.role === 'admin' && '👑 '}
-                                    {employee.name}
+                                  <div className="flex items-center space-x-2">
+                                    <div className="text-sm font-medium text-gray-900">
+                                      {employee.role === 'admin' && '👑 '}
+                                      {employee.name}
+                                    </div>
+                                    <button
+                                      onClick={() => handleOpenPersonalityProfile(employee)}
+                                      className="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors"
+                                      title="Persönlichkeitsmerkmale bearbeiten"
+                                    >
+                                      Profil
+                                    </button>
                                   </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
