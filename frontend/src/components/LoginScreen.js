@@ -59,6 +59,13 @@ const LoginScreen = ({ onLogin }) => {
       {/* Blaues Gradient-Overlay für Branding */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-blue-600/10"></div>
       
+      {/* EXPRESS-LOGISTIK Hintergrund-Text */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="text-white/5 text-[12rem] md:text-[16rem] font-black tracking-wider transform -rotate-12 select-none">
+          EXPRESS-LOGISTIK
+        </div>
+      </div>
+      
       <div className="max-w-md w-full relative z-10">
         {/* Logo/Header */}
         <div className="text-center mb-8">
