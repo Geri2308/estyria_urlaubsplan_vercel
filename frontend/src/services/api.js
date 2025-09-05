@@ -1056,5 +1056,3 @@ export {
   getAccumulationStatus,
   resetAllEmployeesToTwentyFiveDays
 };
-
-export default { authAPI, employeeAPI, vacationAPI, settingsAPI };
