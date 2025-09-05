@@ -552,6 +552,29 @@ export const vacationAPI = {
       currentDate.setDate(currentDate.getDate() + 1);
     }
     
+    // Prüfe verfügbare Urlaubstage (nur bei URLAUB, nicht bei Krankheit/Sonderurlaub)
+    if (data.vacation_type === 'URLAUB') {
+      const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+      const employee = employees.find(emp => emp.id === data.employee_id);
+      
+      if (employee) {
+        const currentUsedDays = employee.vacation_days_used || 0;
+        const totalDays = employee.vacation_days_total || 25;
+        const remainingDays = totalDays - currentUsedDays;
+        
+        if (businessDays > remainingDays) {
+          console.warn(`⚠️ Nicht genügend Urlaubstage! Benötigt: ${businessDays}, Verfügbar: ${remainingDays}`);
+          return Promise.reject({
+            response: {
+              data: {
+                error: `Nicht genügend Urlaubstage verfügbar! Benötigt: ${businessDays} Tage, Verfügbar: ${remainingDays} Tage`
+              }
+            }
+          });
+        }
+      }
+    }
+    
     const newVacation = {
       ...data,
       id: Date.now().toString(),
@@ -565,7 +588,12 @@ export const vacationAPI = {
     // Automatisches Speichern
     autoSave.vacations(vacations);
     
-    console.log('✅ Neuer Urlaub erstellt und gespeichert:', `${newVacation.employee_name} (${newVacation.start_date} - ${newVacation.end_date})`);
+    // Urlaubstage des Mitarbeiters aktualisieren (nur bei URLAUB)
+    if (data.vacation_type === 'URLAUB') {
+      updateEmployeeVacationDays(data.employee_id, businessDays);
+    }
+    
+    console.log('✅ Neuer Urlaub erstellt und gespeichert:', `${newVacation.employee_name} (${newVacation.start_date} - ${newVacation.end_date}) - ${businessDays} Tage`);
     return Promise.resolve({ data: newVacation });
   },
   
