@@ -802,8 +802,8 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
               </>
             ) : (
               <>
-                <Star className="w-4 h-4 mr-2" />
-                Profile speichern
+                <Edit2 className="w-4 h-4 mr-2" />
+                Merkmale speichern
               </>
             )}
           </button>
