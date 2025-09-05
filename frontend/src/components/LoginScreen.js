@@ -66,6 +66,14 @@ const LoginScreen = ({ onLogin }) => {
         </div>
       </div>
       
+      {/* EXPRESS-LOGISTIK Subtile Ecken-Texte */}
+      <div className="absolute top-8 left-8 text-white/10 text-2xl font-bold tracking-wide transform -rotate-12 select-none pointer-events-none">
+        EXPRESS-LOGISTIK
+      </div>
+      <div className="absolute bottom-8 right-8 text-white/10 text-2xl font-bold tracking-wide transform rotate-12 select-none pointer-events-none">
+        EXPRESS-LOGISTIK
+      </div>
+      
       <div className="max-w-md w-full relative z-10">
         {/* Logo/Header */}
         <div className="text-center mb-8">
