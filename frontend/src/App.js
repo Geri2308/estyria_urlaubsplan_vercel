@@ -260,22 +260,44 @@ const Toolbar = ({
           </button>
         </div>
 
-        {/* User Info & Logout */}
-        <div className="flex items-center space-x-2">
+        {/* User Info & Settings Dropdown */}
+        <div className="flex items-center space-x-2 relative">
           <span className="text-xs text-gray-600">
             {currentUser?.role === 'admin' ? '👑' : '👤'} {currentUser?.username}
           </span>
-          <button className="flex items-center px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors">
-            <Settings className="w-4 h-4" />
-          </button>
-          <button
-            onClick={onLogout}
-            className="flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded transition-colors"
-            title="Abmelden"
-          >
-            <LogOut className="w-4 h-4 mr-1" />
-            Abmelden
-          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowSettings(!showSettings)}
+              className="flex items-center px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+            
+            {showSettings && (
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                <div className="py-1">
+                  <button
+                    onClick={() => {
+                      setShowPersonalityDialog(true);
+                      setShowSettings(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                  >
+                    <Star className="w-4 h-4 mr-2" />
+                    Persönlichkeitsprofil
+                  </button>
+                  <div className="border-t border-gray-100"></div>
+                  <button
+                    onClick={onLogout}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Abmelden
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
