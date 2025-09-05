@@ -1006,8 +1006,6 @@ function App() {
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [showPersonalityDialog, setShowPersonalityDialog] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [settings, setSettings] = useState({
