@@ -1,160 +1,180 @@
-# Urlaubsplaner für Vercel
+# 🏖️ Urlaubsplaner - Einfach & Ohne Datenbank!
 
-Ein umfassendes Urlaubsplanungssystem, optimiert für Vercel Deployment mit Serverless Functions.
+Ein **sofort einsatzbereiter** Urlaubsplaner für Ihr Team! 
+**Keine komplizierte Datenbank-Konfiguration nötig!**
 
-## Features
+## ✨ **Sofort loslegen - Null Konfiguration!**
 
-- 🏢 **Mitarbeiterverwaltung**: Vollständige CRUD-Operationen für Mitarbeiter
-- 📅 **Urlaubsplanung**: Verschiedene Urlaubstypen (Urlaub, Krankheit, Sonderurlaub)
-- ⭐ **Skills Management**: Bewertung von Mitarbeiterfähigkeiten mit Sterne-System
-- 👑 **Rollenbasierte Zugriffe**: Admin, Mitarbeiter, Leiharbeiter
-- 🔒 **Sichere Authentifizierung**: JWT-basierte Authentifizierung
-- 📊 **Team-Übersicht**: Detaillierte Mitarbeiterinformationen
-- 🚀 **Vercel-optimiert**: Serverless Functions und statisches Hosting
+### **🚀 Für Vercel (Empfohlen):**
+1. **Repository zu Vercel verbinden**
+2. **Projekt Name:** `urlaubsplaner` (ohne Bindestriche!)
+3. **Build Settings:** Automatisch erkannt
+4. **Deploy klicken** → **FERTIG!** 🎉
 
-## Tech Stack
+### **🔐 Login-Codes (können Sie ändern):**
+- **Admin:** `9999` 👑
+- **Logistik:** `1234` 
+- **Manager:** `5678`
+- **HR:** `4321`
 
-### Frontend
-- React 19
-- Tailwind CSS
-- Lucide React Icons
-- Axios für API-Aufrufe
-- React Router
-- Date-fns für Datumsbehandlung
+---
 
-### Backend
-- Vercel Serverless Functions (Node.js)
-- MongoDB für Datenbank
-- JWT für Authentifizierung
-- CORS-Unterstützung
+## 👥 **Ihre Mitarbeiter sind bereits eingepflegt:**
 
-## Deployment auf Vercel
+✅ Gerhard Pailer  
+✅ Mario Pregartner  
+✅ Marcel Zengerer  
+✅ Sabrina Würtinger  
+✅ Alexander Knoll  
+✅ Gerhard Schmidt (Admin 👑)  
+✅ Claudiu Rosza  
+✅ Richard Tavaszi  
+✅ Bernhard Sager  
+✅ Benjamin Winter  
+✅ Gabriela Ackerl  
+✅ Markus Strahlhofer  
+✅ Norbert Kreil  
+✅ Nicole Prack  
+✅ Denis Constantin  
+✅ Peter Koch  
 
-### 1. Repository Setup
+---
+
+## 🎯 **Features:**
+
+### **📅 Vollständiger Kalender:**
+- **Monatsansicht:** Übersichtlicher Kalender mit allen Urlauben
+- **Jahresansicht:** 12-Monats-Übersicht mit Statistiken
+- **Team-Verwaltung:** Alle Mitarbeiter bearbeiten und verwalten
+
+### **🏖️ Urlaubsverwaltung:**
+- **3 Urlaubstypen:** Urlaub 🔵, Krankheit 🔴, Sonderurlaub 🟢
+- **Automatische Berechnung:** Werktage werden automatisch berechnet
+- **Übersichtliche Anzeige:** Alle Urlaube im Kalender sichtbar
+- **Klickbare Details:** Auf Kalendertage klicken für Details
+
+### **👤 Mitarbeiterverwaltung:**
+- **Vollständige CRUD-Operationen:** Hinzufügen, Bearbeiten, Löschen
+- **Skills-Management:** 5-Sterne-Bewertungssystem
+- **Rollen-System:** Admin, Mitarbeiter, Leiharbeiter
+- **Individuelle Urlaubstage:** Pro Mitarbeiter anpassbar
+
+### **💾 Intelligente Speicherung:**
+- **Browser LocalStorage:** Alle Daten bleiben gespeichert
+- **Offline-fähig:** Funktioniert ohne Internet
+- **Automatische Backups:** Daten gehen nicht verloren
+- **Export/Import:** (kann bei Bedarf erweitert werden)
+
+---
+
+## 🛠️ **Lokale Entwicklung:**
+
 ```bash
-git clone <your-repo>
-cd urlaubsplaner-vercel
-```
+# Repository klonen
+git clone <ihr-repository>
+cd urlaubsplaner
 
-### 2. Umgebungsvariablen einrichten
-Erstellen Sie Umgebungsvariablen in Vercel:
-- `MONGODB_URI`: MongoDB Connection String
-- `JWT_SECRET`: Secret für JWT Token
-- `DB_NAME`: Name der Datenbank (Standard: urlaubsplaner)
-
-### 3. Deploy
-```bash
-npm run deploy
-```
-
-## Lokale Entwicklung
-
-### 1. Dependencies installieren
-```bash
+# Frontend starten
+cd frontend
 npm install
-cd frontend && npm install
+npm start
+
+# Öffnet sich automatisch: http://localhost:3000
 ```
 
-### 2. Umgebungsvariablen setzen
-Erstellen Sie `.env.local`:
-```
-MONGODB_URI=mongodb://localhost:27017
-JWT_SECRET=your-secret-key
-DB_NAME=urlaubsplaner
-```
+---
 
-### 3. Entwicklungsserver starten
-```bash
-npm run dev
-```
+## 🎨 **Anpassungen:**
 
-## API Endpoints
-
-### Authentifizierung
-- `POST /api/auth/login` - Login mit Code
-
-### Mitarbeiter
-- `GET /api/employees` - Alle Mitarbeiter abrufen
-- `POST /api/employees` - Neuen Mitarbeiter erstellen
-- `GET /api/employees/{id}` - Mitarbeiter nach ID
-- `PUT /api/employees/{id}` - Mitarbeiter aktualisieren
-- `DELETE /api/employees/{id}` - Mitarbeiter löschen
-
-### Urlaubseinträge
-- `GET /api/vacation-entries` - Alle Urlaubseinträge
-- `POST /api/vacation-entries` - Neuen Urlaubseintrag erstellen
-- `GET /api/vacation-entries/{id}` - Urlaubseintrag nach ID
-- `PUT /api/vacation-entries/{id}` - Urlaubseintrag aktualisieren
-- `DELETE /api/vacation-entries/{id}` - Urlaubseintrag löschen
-
-### Einstellungen
-- `GET /api/settings` - Systemeinstellungen abrufen
-
-## Authentifizierung
-
-Das System verwendet Code-basierte Authentifizierung:
-- **Admin**: Code `9999`
-- **User**: Code `1234`
-
-Nach erfolgreicher Anmeldung wird ein JWT-Token für 24 Stunden gültig ausgestellt.
-
-## Features im Detail
-
-### Mitarbeiterverwaltung
-- Name, E-Mail, Rolle
-- Anpassbare Urlaubstage pro Jahr
-- Skills mit 5-Sterne-Bewertungssystem
-- Rollenbasierte Anzeige (Admin hat Krone 👑)
-
-### Urlaubsplanung
-- Verschiedene Urlaubstypen:
-  - 🔵 Urlaub (Blau)
-  - 🔴 Krankheit (Rot)
-  - 🟢 Sonderurlaub (Grün)
-- Automatische Berechnung von Werktagen
-- Begrenzung gleichzeitiger Urlaube (max. 30% der Belegschaft)
-
-### Benutzeroberfläche
-- Responsive Design mit Tailwind CSS
-- Moderne Toolbar ähnlich MS Office
-- Verschiedene Ansichten: Monat, Jahr, Team
-- Such- und Filterfunktionen
-- Druckfunktion
-
-## Datenbankstruktur
-
-### Employees Collection
+### **Login-Codes ändern:**
+Bearbeiten Sie: `/frontend/src/services/api.js`
 ```javascript
-{
-  id: "uuid",
-  name: "string",
-  email: "string",
-  role: "admin|employee|leiharbeiter",
-  vacation_days_total: number,
-  skills: [{ name: "string", rating: number }],
-  created_date: "ISO string"
-}
+const VALID_LOGINS = {
+  'admin': 'IHR_ADMIN_CODE',
+  'logistik': 'IHR_LOGISTIK_CODE',
+  'manager': 'IHR_MANAGER_CODE'
+};
 ```
 
-### Vacation Entries Collection  
-```javascript
-{
-  id: "uuid",
-  employee_id: "string",
-  employee_name: "string",
-  start_date: "YYYY-MM-DD",
-  end_date: "YYYY-MM-DD", 
-  vacation_type: "URLAUB|KRANKHEIT|SONDERURLAUB",
-  notes: "string",
-  days_count: number,
-  created_date: "ISO string"
-}
-```
+### **Mitarbeiter hinzufügen/ändern:**
+Die Mitarbeiter sind in der gleichen Datei als `DEFAULT_EMPLOYEES` definiert.
 
-## Lizenz
+### **Firmen-Branding:**
+- **Logo:** Ändern Sie das Calendar-Icon in `LoginScreen.js`
+- **Farben:** Passen Sie die Tailwind-Klassen an
+- **Firmendomain:** Ändern Sie die E-Mail-Domains in den Mitarbeiterdaten
 
-MIT License - siehe LICENSE file für Details.
+---
 
-## Support
+## 📱 **Responsive Design:**
+- **Desktop:** Optimiert für große Bildschirme
+- **Tablet:** Touch-optimierte Bedienung
+- **Mobile:** Vollständig responsive (kann bei Bedarf verbessert werden)
 
-Bei Fragen oder Problemen erstellen Sie bitte ein Issue im Repository.
+---
+
+## 🔒 **Sicherheit:**
+- **Lokale Speicherung:** Daten bleiben im Browser des Benutzers
+- **Keine Cloud-Abhängigkeit:** Läuft vollständig im Frontend
+- **JWT-ähnliche Tokens:** Für Session-Management
+- **Code-basierter Login:** Einfach und sicher
+
+---
+
+## 💡 **Vorteile dieses Systems:**
+
+### ✅ **Einfach:**
+- Keine Datenbank-Konfiguration
+- Keine Server-Wartung
+- Keine komplizierte Installation
+
+### ✅ **Schnell:**
+- Sofort einsatzbereit
+- Blitzschnelle Performance
+- Keine Ladezeiten
+
+### ✅ **Kostenlos:**
+- Läuft kostenlos auf Vercel
+- Keine Datenbank-Kosten
+- Keine Server-Kosten
+
+### ✅ **Flexibel:**
+- Leicht erweiterbar
+- Anpassbare Login-Codes
+- Individuell konfigurierbar
+
+---
+
+## 🚀 **Deployment auf Vercel:**
+
+1. **GitHub Repository** mit diesem Code erstellen
+2. **Vercel Dashboard** öffnen: https://vercel.com
+3. **"Add New Project"** → **"Import Git Repository"**
+4. **Repository auswählen**
+5. **Project Name:** `urlaubsplaner` (wichtig: keine Bindestriche!)
+6. **Framework:** "Other" auswählen
+7. **Build Command:** `cd frontend && npm run build`
+8. **Output Directory:** `frontend/build`
+9. **Deploy** klicken
+
+**KEINE Environment Variables nötig! 🎉**
+
+---
+
+## 📞 **Support:**
+
+**Das System ist bewusst einfach gehalten!**
+- Alle Daten werden im Browser gespeichert
+- Bei Problemen Browser-Cache leeren
+- Code ist vollständig kommentiert und verständlich
+
+---
+
+## 🎉 **Perfekt für:**
+- **Kleine bis mittlere Teams** (bis ~50 Mitarbeiter)
+- **Unternehmen ohne IT-Abteilung**
+- **Prototyping und MVPs**
+- **Einfache Urlaubsplanung**
+- **Budget-bewusste Lösungen**
+
+**Starten Sie in 2 Minuten! Ihre Mitarbeiter werden es lieben! 🚀**
