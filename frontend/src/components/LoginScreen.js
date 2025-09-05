@@ -44,30 +44,44 @@ const LoginScreen = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
-      <div className="max-w-md w-full">
+    <div 
+      className="min-h-screen flex items-center justify-center px-4 relative"
+      style={{
+        backgroundImage: 'url(/logistics-bg.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Dunkles Overlay für bessere Lesbarkeit */}
+      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+      
+      {/* Blaues Gradient-Overlay für Branding */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-blue-600/10"></div>
+      
+      <div className="max-w-md w-full relative z-10">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <div className="mx-auto h-20 w-20 bg-blue-600 rounded-full flex items-center justify-center mb-4">
-            <Calendar className="h-10 w-10 text-white" />
+          <div className="mx-auto h-24 w-24 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center mb-6 shadow-2xl border-4 border-blue-200/50">
+            <Calendar className="h-12 w-12 text-blue-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Urlaubsplaner</h1>
-          <p className="text-gray-600">Bitte geben Sie Ihren 4-stelligen Code ein</p>
+          <h1 className="text-4xl font-bold text-white mb-3 drop-shadow-lg">Urlaubsplaner</h1>
+          <p className="text-blue-100 text-lg drop-shadow">Bitte geben Sie Ihren 4-stelligen Code ein</p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/20">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Lock className="w-4 h-4 inline mr-2" />
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                <Lock className="w-5 h-5 inline mr-2 text-blue-600" />
                 Zugangscode
               </label>
               <input
                 type="password"
                 value={code}
                 onChange={handleCodeChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-2xl font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-6 py-4 border-2 border-gray-200 rounded-xl text-center text-3xl font-mono tracking-widest focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/90"
                 placeholder="●●●●"
                 maxLength="4"
                 autoFocus
@@ -75,7 +89,7 @@ const LoginScreen = ({ onLogin }) => {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50/95 backdrop-blur-sm border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm shadow-lg">
                 <AlertTriangle className="w-4 h-4 inline mr-2" />
                 {error}
               </div>
@@ -84,11 +98,11 @@ const LoginScreen = ({ onLogin }) => {
             <button
               type="submit"
               disabled={code.length !== 4 || loading}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
             >
               {loading ? (
                 <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
                   Überprüfung...
                 </div>
               ) : (
@@ -97,16 +111,19 @@ const LoginScreen = ({ onLogin }) => {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
-              Sicheres Urlaubsplanungssystem für Vercel
+          <div className="mt-8 text-center">
+            <p className="text-xs text-gray-500/80">
+              🔒 Sicheres Urlaubsplanungssystem
             </p>
           </div>
         </div>
 
-        {/* Info */}
-        <div className="mt-6 text-center text-sm text-gray-600">
-          <p>🔒 Ihre Daten sind geschützt</p>
+        {/* Estyria Branding Footer */}
+        <div className="mt-8 text-center">
+          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+            <p className="text-sm text-white/90 font-medium">Powered by Estyria</p>
+          </div>
         </div>
       </div>
     </div>
