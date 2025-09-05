@@ -10,19 +10,26 @@ const LoginScreen = ({ onLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('🔄 Login gestartet mit Code:', code);
     setLoading(true);
     setError('');
 
     try {
+      console.log('🔄 Rufe authAPI.login auf...');
       const response = await authAPI.login(code);
+      console.log('✅ Login Response:', response.data);
+      
       const { token, user } = response.data;
       
       // Speichere Auth-Daten
       setAuthData(token, user);
+      console.log('✅ Auth-Daten gespeichert');
       
       // Rufe onLogin auf
       onLogin();
+      console.log('✅ onLogin() aufgerufen');
     } catch (err) {
+      console.error('❌ Login-Fehler:', err);
       setError(err.response?.data?.error || 'Fehler beim Anmelden');
       setCode('');
     } finally {
