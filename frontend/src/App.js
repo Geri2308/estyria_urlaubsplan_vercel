@@ -631,15 +631,15 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
   const displayEmployees = selectedEmployee ? [selectedEmployee] : employees;
 
   useEffect(() => {
-    if (isOpen && employees) {
+    if (isOpen && displayEmployees) {
       // Initialisiere Ratings mit aktuellen Werten
       const initialRatings = {};
-      employees.forEach(employee => {
+      displayEmployees.forEach(employee => {
         initialRatings[employee.id] = employee.personality_rating || 3;
       });
       setPersonalityRatings(initialRatings);
     }
-  }, [isOpen, employees]);
+  }, [isOpen, displayEmployees]);
 
   const handleRatingChange = (employeeId, rating) => {
     setPersonalityRatings(prev => ({
