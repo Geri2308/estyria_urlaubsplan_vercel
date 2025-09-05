@@ -694,7 +694,7 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
 
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {employees
+            {displayEmployees
               .sort((a, b) => {
                 // Admins first
                 if (a.role === 'admin' && b.role !== 'admin') return -1;
