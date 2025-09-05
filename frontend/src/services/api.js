@@ -859,9 +859,10 @@ export const vacationAPI = {
       // Automatisches Speichern
       autoSave.vacations(vacations);
       
-      // Urlaubstage aktualisieren (für beide Mitarbeiter, falls sich employee_id geändert hat)
-      if (oldVacation.vacation_type === 'URLAUB' || data.vacation_type === 'URLAUB') {
-        updateEmployeeVacationDays(oldVacation.employee_id, 0); // Alte Berechnung
+      // Urlaubstage aktualisieren (für ALLE Arten: URLAUB, KRANKHEIT, SONDERURLAUB)
+      // Für beide Mitarbeiter, falls sich employee_id geändert hat
+      updateEmployeeVacationDays(oldVacation.employee_id, 0); // Alte Berechnung
+      if (oldVacation.employee_id !== data.employee_id) {
         updateEmployeeVacationDays(data.employee_id, 0); // Neue Berechnung
       }
       
