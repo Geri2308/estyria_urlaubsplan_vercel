@@ -1152,10 +1152,14 @@ const EmployeeDialog = ({ isOpen, onClose, onSave, editingEmployee = null }) => 
               type="number"
               min="0"
               max="365"
+              step="0.01"
               value={formData.vacation_days_total}
-              onChange={(e) => setFormData({ ...formData, vacation_days_total: parseInt(e.target.value) || 25 })}
+              onChange={(e) => setFormData({ ...formData, vacation_days_total: parseFloat(e.target.value) || 25 })}
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            <div className="mt-1 text-xs text-gray-400">
+              Dezimalwerte sind erlaubt (z.B. 27.08 für monatliche Berechnung)
+            </div>
           </div>
 
           <SkillManager
