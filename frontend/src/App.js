@@ -1001,6 +1001,7 @@ function App() {
   const [showVacationDialog, setShowVacationDialog] = useState(false);
   const [editingVacationEntry, setEditingVacationEntry] = useState(null);
   const [showPersonalityDialog, setShowPersonalityDialog] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [showEmployeeDialog, setShowEmployeeDialog] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
