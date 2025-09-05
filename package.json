@@ -1,0 +1,20 @@
+{
+  "name": "urlaubsplaner-vercel",
+  "version": "1.0.0",
+  "description": "Urlaubsplaner für Vercel Deployment",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "cd frontend && npm run build",
+    "start": "vercel",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "mongodb": "^6.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^9.0.1",
+    "date-fns": "^3.3.1"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.21"
+  }
+}
