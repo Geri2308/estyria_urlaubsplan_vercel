@@ -681,8 +681,8 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
             </h3>
             <p className="text-sm text-gray-500 mt-1">
               {selectedEmployee 
-                ? `Bewerten Sie die Persönlichkeit von ${selectedEmployee.name} (1-5 Sterne)`
-                : 'Bewerten Sie die Persönlichkeit Ihrer Mitarbeiter (1-5 Sterne)'
+                ? `Beschreiben Sie die Persönlichkeitsmerkmale von ${selectedEmployee.name}`
+                : 'Beschreiben Sie die Persönlichkeitsmerkmale Ihrer Mitarbeiter'
               }
             </p>
           </div>
