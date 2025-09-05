@@ -296,6 +296,22 @@ const initializeData = () => {
     saveToStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
   } else {
     console.log('✅ Bestehende Mitarbeiterdaten gefunden');
+    
+    // Aktualisiere bestehende Mitarbeiter mit neuen Urlaubstage-Feldern
+    const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+    let updated = false;
+    
+    employees.forEach(employee => {
+      if (employee.vacation_days_used === undefined) {
+        // Berechne verwendete Urlaubstage
+        updateEmployeeVacationDays(employee.id, 0);
+        updated = true;
+      }
+    });
+    
+    if (updated) {
+      console.log('🔄 Mitarbeiterdaten mit Urlaubstage-Tracking aktualisiert');
+    }
   }
   
   if (!existingVacations) {
@@ -308,9 +324,15 @@ const initializeData = () => {
   // Speichere Initialisierungsdatum
   if (!localStorage.getItem('urlaubsplaner_initialized')) {
     localStorage.setItem('urlaubsplaner_initialized', new Date().toISOString());
-    localStorage.setItem('urlaubsplaner_version', '1.0');
+    localStorage.setItem('urlaubsplaner_version', '1.1'); // Version erhöht für Urlaubstage-Feature
     console.log('🎉 System erfolgreich initialisiert!');
   }
+  
+  // Aktualisiere alle Mitarbeiter-Urlaubstage nach Initialisierung
+  const finalEmployees = getFromStorage('urlaubsplaner_employees', []);
+  finalEmployees.forEach(employee => {
+    updateEmployeeVacationDays(employee.id, 0);
+  });
   
   // Zeige Datenstatistiken
   const employees = getFromStorage('urlaubsplaner_employees', []);
@@ -319,6 +341,7 @@ const initializeData = () => {
   console.log('📊 Aktuelle Daten:', {
     mitarbeiter: employees.length,
     urlaubseinträge: vacations.length,
+    urlaubstageSystem: '✅ Aktiv',
     letzteÄnderung: localStorage.getItem('urlaubsplaner_employees_last_modified') || 'Unbekannt'
   });
 };
