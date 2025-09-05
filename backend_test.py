@@ -10,7 +10,7 @@ import json
 from datetime import datetime
 
 class UrlaubsplanerAPITester:
-    def __init__(self, base_url="http://localhost:3000"):
+    def __init__(self, base_url="http://localhost:3001"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
