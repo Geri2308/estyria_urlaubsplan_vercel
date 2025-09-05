@@ -669,6 +669,20 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
     }
   };
 
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      // Lade die Mitarbeiterdaten neu
+      await onSave(); // Das lädt die Daten neu
+      console.log('✅ Mitarbeiterdaten aktualisiert');
+    } catch (error) {
+      console.error('❌ Fehler beim Aktualisieren:', error);
+      alert('Fehler beim Aktualisieren der Daten');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
