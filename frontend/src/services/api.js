@@ -236,7 +236,7 @@ const mockVacationEntries = [
   {
     id: '1',
     employee_id: '1',
-    employee_name: 'Max Mustermann',
+    employee_name: 'Gerhard Pailer',
     start_date: '2024-12-23',
     end_date: '2024-12-30',
     vacation_type: 'URLAUB',
