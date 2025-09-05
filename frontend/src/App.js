@@ -1100,6 +1100,16 @@ function App() {
             currentUser={currentUser}
           />
 
+          {/* Calendar Navigation */}
+          {currentView !== 'team' && (
+            <CalendarNavigation
+              currentDate={currentDate}
+              onPrevious={handlePrevious}
+              onNext={handleNext}
+              view={currentView}
+            />
+          )}
+
           {/* Main Content */}
           <div className="flex-1 overflow-hidden">
             {error && (
@@ -1109,6 +1119,24 @@ function App() {
                   <p className="text-red-700">{error}</p>
                 </div>
               </div>
+            )}
+
+            {currentView === 'month' && (
+              <MonthCalendarView
+                currentDate={currentDate}
+                vacationEntries={vacationEntries}
+                employees={employees}
+                onDateClick={handleDateClick}
+                onEntryClick={handleEditVacationEntry}
+              />
+            )}
+
+            {currentView === 'year' && (
+              <YearCalendarView
+                currentDate={currentDate}
+                vacationEntries={vacationEntries}
+                onMonthClick={handleMonthClick}
+              />
             )}
 
             {currentView === 'team' && (
