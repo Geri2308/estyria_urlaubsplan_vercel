@@ -470,10 +470,14 @@ function App() {
 
   // Check authentication on app load
   useEffect(() => {
+    console.log('🔄 App useEffect - prüfe Auth');
     if (isAuthenticated()) {
+      console.log('✅ Bereits authentifiziert');
       const userData = getUserData();
       setCurrentUser(userData);
       setAuthenticated(true);
+    } else {
+      console.log('❌ Nicht authentifiziert');
     }
     setLoading(false);
   }, []);
@@ -481,6 +485,7 @@ function App() {
   // Load data when authenticated
   useEffect(() => {
     if (authenticated) {
+      console.log('🔄 Lade Daten da authentifiziert...');
       loadData();
     }
   }, [authenticated]);
