@@ -610,7 +610,7 @@ function App() {
         <div className="flex flex-col h-screen">
           {/* Toolbar */}
           <Toolbar
-            onNewVacation={() => alert('Urlaub Dialog wird implementiert...')}
+            onNewVacation={handleNewVacation}
             onNewEmployee={handleNewEmployee}
             onExport={handleExport}
             onImport={handleImport}
