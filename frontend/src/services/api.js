@@ -359,17 +359,33 @@ const processMonthlyVacationAccumulation = () => {
   };
 };
 
-// Manuelle Ausführung der monatlichen Akkumulation (für Tests)
+// Manuelle Ausführung der monatlichen Akkumulation (für Tests, ab Oktober)
 const forceMonthlyAccumulation = () => {
-  // Setze letzten Monat zurück um Neuverarbeitung zu erzwingen
   const now = new Date();
+  const currentMonth = now.getMonth() + 1; // 1-12
+  
+  if (currentMonth < 10) {
+    console.log('⚠️ Manuelle Akkumulation nicht möglich - startet erst ab Oktober');
+    return {
+      forced: false,
+      reason: 'Akkumulation startet erst ab Oktober',
+      currentMonth: `${now.getFullYear()}-${String(currentMonth).padStart(2, '0')}`,
+      nextStartMonth: `${now.getFullYear()}-10`
+    };
+  }
+  
+  // Setze letzten Monat zurück um Neuverarbeitung zu erzwingen
   const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const lastMonthKey = `${lastMonth.getFullYear()}-${String(lastMonth.getMonth() + 1).padStart(2, '0')}`;
   
   localStorage.setItem('urlaubsplaner_last_monthly_accumulation', lastMonthKey);
   console.log('🔄 Erzwinge monatliche Akkumulation für aktuellen Monat...');
   
-  return processMonthlyVacationAccumulation();
+  const result = processMonthlyVacationAccumulation();
+  return {
+    forced: true,
+    ...result
+  };
 };
 
 // Hilfsfunktion: Nächste Akkumulation berechnen (ab Oktober)  
