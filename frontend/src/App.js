@@ -486,9 +486,12 @@ function App() {
   }, [authenticated]);
 
   const handleLogin = () => {
+    console.log('🔄 handleLogin aufgerufen');
     const userData = getUserData();
+    console.log('👤 User Data:', userData);
     setCurrentUser(userData);
     setAuthenticated(true);
+    console.log('✅ Auth state auf true gesetzt');
   };
 
   const handleLogout = () => {
