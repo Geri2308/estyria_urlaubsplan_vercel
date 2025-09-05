@@ -785,16 +785,13 @@ export const employeeAPI = {
         last_modified: new Date().toISOString()
       };
       
-      // Aktualisiere Urlaubstage und Krankheitstage neu (wichtig für korrekte Anzeige)
-      const updatedEmployee = updateEmployeeVacationDays(id, 0);
-      if (updatedEmployee) {
-        employees[index] = { ...employees[index], ...updatedEmployee };
-      }
+      // KEINE automatische Urlaubstage-Berechnung mehr - manuelle Eingabe erlaubt
+      // (updateEmployeeVacationDays entfernt für manuelle Kontrolle)
       
       // Automatisches Speichern
       autoSave.employees(employees);
       
-      console.log('✅ Mitarbeiter aktualisiert und gespeichert:', employees[index].name);
+      console.log('✅ Mitarbeiter manuell aktualisiert und gespeichert:', employees[index].name);
       return Promise.resolve({ data: employees[index] });
     }
     return Promise.reject({ response: { data: { error: 'Mitarbeiter nicht gefunden' } } });
