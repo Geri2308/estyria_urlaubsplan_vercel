@@ -288,7 +288,243 @@ const Toolbar = ({
   );
 };
 
-// Vacation Entry Dialog
+// Calendar Navigation
+const CalendarNavigation = ({ currentDate, onPrevious, onNext, view }) => {
+  const getTitle = () => {
+    switch (view) {
+      case 'month':
+        return format(currentDate, 'MMMM yyyy', { locale: de });
+      case 'year':
+        return format(currentDate, 'yyyy', { locale: de });
+      default:
+        return format(currentDate, 'MMMM yyyy', { locale: de });
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-between p-4 bg-white border-b border-gray-200">
+      <button
+        onClick={onPrevious}
+        className="flex items-center px-3 py-2 text-gray-600 hover:bg-gray-100 rounded transition-colors"
+      >
+        <ChevronLeft className="w-5 h-5" />
+      </button>
+
+      <h2 className="text-xl font-semibold text-gray-900 capitalize">
+        {getTitle()}
+      </h2>
+
+      <button
+        onClick={onNext}
+        className="flex items-center px-3 py-2 text-gray-600 hover:bg-gray-100 rounded transition-colors"
+      >
+        <ChevronRight className="w-5 h-5" />
+      </button>
+    </div>
+  );
+};
+
+// Month Calendar View
+const MonthCalendarView = ({ currentDate, vacationEntries, employees, onDateClick, onEntryClick }) => {
+  const monthStart = startOfMonth(currentDate);
+  const monthEnd = endOfMonth(currentDate);
+  const calendarDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
+
+  const getVacationsForDay = (day) => {
+    return vacationEntries.filter(entry => {
+      const entryStart = new Date(entry.start_date);
+      const entryEnd = new Date(entry.end_date);
+      return day >= entryStart && day <= entryEnd;
+    });
+  };
+
+  const getDayClasses = (day) => {
+    const isCurrentMonth = isSameMonth(day, currentDate);
+    const isCurrentDay = isToday(day);
+    const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+
+    let classes = "min-h-24 p-1 border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors ";
+
+    if (!isCurrentMonth) classes += "bg-gray-50 text-gray-400 ";
+    if (isCurrentDay) classes += "bg-blue-50 border-blue-300 ";
+    if (isWeekend && isCurrentMonth) classes += "bg-gray-100 ";
+
+    return classes;
+  };
+
+  return (
+    <div className="bg-white">
+      {/* Calendar Header */}
+      <div className="grid grid-cols-7 border-b border-gray-200">
+        {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((day) => (
+          <div key={day} className="p-3 text-center text-sm font-medium text-gray-500 bg-gray-50">
+            {day}
+          </div>
+        ))}
+      </div>
+
+      {/* Calendar Body */}
+      <div className="grid grid-cols-7">
+        {calendarDays.map((day) => {
+          const dayVacations = getVacationsForDay(day);
+          return (
+            <div
+              key={day.toISOString()}
+              className={getDayClasses(day)}
+              onClick={() => onDateClick(day)}
+            >
+              <div className="flex justify-between items-start">
+                <span className="text-sm font-medium">
+                  {format(day, 'd')}
+                </span>
+                {dayVacations.length > 0 && (
+                  <span className="text-xs bg-blue-500 text-white rounded-full px-1 min-w-4 text-center">
+                    {dayVacations.length}
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-1 space-y-1">
+                {dayVacations.slice(0, 3).map((vacation) => {
+                  const vacationType = VACATION_TYPES[vacation.vacation_type];
+                  return (
+                    <div
+                      key={vacation.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEntryClick(vacation);
+                      }}
+                      className={`text-xs p-1 rounded truncate cursor-pointer hover:opacity-80 ${vacationType.color} text-white`}
+                      title={`${vacation.employee_name} - ${vacationType.label}`}
+                    >
+                      {vacation.employee_name}
+                    </div>
+                  );
+                })}
+                {dayVacations.length > 3 && (
+                  <div className="text-xs text-gray-500">
+                    +{dayVacations.length - 3} weitere
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+// Year Calendar View
+const YearCalendarView = ({ currentDate, vacationEntries, onMonthClick }) => {
+  const yearStart = startOfYear(currentDate);
+  const yearEnd = endOfYear(currentDate);
+  const yearMonths = eachMonthOfInterval({ start: yearStart, end: yearEnd });
+
+  const getVacationsForMonth = (month) => {
+    const monthStart = startOfMonth(month);
+    const monthEnd = endOfMonth(month);
+    return vacationEntries.filter(entry => {
+      const entryStart = new Date(entry.start_date);
+      const entryEnd = new Date(entry.end_date);
+      return (entryStart <= monthEnd && entryEnd >= monthStart);
+    });
+  };
+
+  const getMonthVacationStats = (month) => {
+    const monthVacations = getVacationsForMonth(month);
+    const uniqueEmployees = [...new Set(monthVacations.map(v => v.employee_id))];
+    const typeStats = {
+      URLAUB: monthVacations.filter(v => v.vacation_type === 'URLAUB').length,
+      KRANKHEIT: monthVacations.filter(v => v.vacation_type === 'KRANKHEIT').length,
+      SONDERURLAUB: monthVacations.filter(v => v.vacation_type === 'SONDERURLAUB').length
+    };
+
+    return {
+      totalEntries: monthVacations.length,
+      uniqueEmployees: uniqueEmployees.length,
+      typeStats
+    };
+  };
+
+  return (
+    <div className="bg-white p-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {yearMonths.map((month) => {
+          const stats = getMonthVacationStats(month);
+          return (
+            <div
+              key={month.toISOString()}
+              onClick={() => onMonthClick(month)}
+              className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow"
+            >
+              <div className="text-center mb-3">
+                <h3 className="text-lg font-semibold text-gray-900 capitalize">
+                  {format(month, 'MMMM', { locale: de })}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {format(month, 'yyyy')}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Urlaubseinträge:</span>
+                  <span className="font-medium">{stats.totalEntries}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Betroffene Mitarbeiter:</span>
+                  <span className="font-medium">{stats.uniqueEmployees}</span>
+                </div>
+
+                {stats.totalEntries > 0 && (
+                  <div className="pt-2 border-t border-gray-100">
+                    <div className="text-xs text-gray-500 mb-1">Aufschlüsselung:</div>
+                    <div className="space-y-1">
+                      {stats.typeStats.URLAUB > 0 && (
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
+                            <span className="text-xs">Urlaub</span>
+                          </div>
+                          <span className="text-xs font-medium">{stats.typeStats.URLAUB}</span>
+                        </div>
+                      )}
+                      {stats.typeStats.KRANKHEIT > 0 && (
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
+                            <span className="text-xs">Krankheit</span>
+                          </div>
+                          <span className="text-xs font-medium">{stats.typeStats.KRANKHEIT}</span>
+                        </div>
+                      )}
+                      {stats.typeStats.SONDERURLAUB > 0 && (
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
+                            <span className="text-xs">Sonderurlaub</span>
+                          </div>
+                          <span className="text-xs font-medium">{stats.typeStats.SONDERURLAUB}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {stats.totalEntries === 0 && (
+                  <div className="text-center py-2">
+                    <span className="text-xs text-gray-400">Keine Einträge</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 const VacationDialog = ({ isOpen, onClose, onSave, employees, editingEntry = null }) => {
   const [formData, setFormData] = useState({
     employee_id: '',
