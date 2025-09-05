@@ -852,7 +852,7 @@ const employeeAPI = {
 };
 
 // Vacation Entry API (mit automatischem Speichern)
-export const vacationAPI = {
+const vacationAPI = {
   getAll: (params = {}) => {
     let vacations = getFromStorage('urlaubsplaner_vacations', DEFAULT_VACATION_ENTRIES);
     
