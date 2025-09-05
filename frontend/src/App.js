@@ -1020,8 +1020,32 @@ function App() {
     loadData(); // Reload data after save
   };
 
-  const handleSaveVacation = () => {
-    loadData(); // Reload data after save
+  // Navigation handlers
+  const handlePrevious = () => {
+    if (currentView === 'month') {
+      setCurrentDate(subMonths(currentDate, 1));
+    } else if (currentView === 'year') {
+      setCurrentDate(new Date(currentDate.getFullYear() - 1, currentDate.getMonth()));
+    }
+  };
+
+  const handleNext = () => {
+    if (currentView === 'month') {
+      setCurrentDate(addMonths(currentDate, 1));
+    } else if (currentView === 'year') {
+      setCurrentDate(new Date(currentDate.getFullYear() + 1, currentDate.getMonth()));
+    }
+  };
+
+  // View handlers
+  const handleMonthClick = (month) => {
+    setCurrentDate(month);
+    setCurrentView('month');
+  };
+
+  const handleDateClick = (date) => {
+    console.log('Date clicked:', date);
+    // Könnte ein Quick-Add Dialog öffnen
   };
 
   // Placeholder handlers
