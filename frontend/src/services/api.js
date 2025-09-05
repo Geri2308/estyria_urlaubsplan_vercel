@@ -264,20 +264,37 @@ const saveToStorage = (key, value) => {
 // Monatliche Urlaubsakkumulation
 const MONTHLY_VACATION_DAYS = 2.08333; // 25 Tage / 12 Monate = 2,08333
 
-// Prüfe und füge monatliche Urlaubstage hinzu
+// Prüfe und füge monatliche Urlaubstage hinzu (erst ab Oktober)
 const processMonthlyVacationAccumulation = () => {
   const now = new Date();
-  const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`; // YYYY-MM
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1; // 1-12
+  const currentMonthKey = `${currentYear}-${String(currentMonth).padStart(2, '0')}`; // YYYY-MM
   const lastProcessedMonth = localStorage.getItem('urlaubsplaner_last_monthly_accumulation');
   
   console.log('🗓️ Prüfe monatliche Urlaubsakkumulation...');
   console.log('Aktueller Monat:', currentMonthKey);
   console.log('Letzter verarbeiteter Monat:', lastProcessedMonth);
   
+  // Prüfe ob wir schon Oktober oder später sind
+  if (currentMonth < 10) {
+    console.log('📅 Monatliche Akkumulation startet erst ab Oktober - aktuell noch zu früh');
+    return {
+      processed: false,
+      reason: 'Akkumulation startet erst ab Oktober',
+      currentMonth: currentMonthKey,
+      nextStartMonth: `${currentYear}-10`
+    };
+  }
+  
   // Prüfe ob bereits für diesen Monat verarbeitet
   if (lastProcessedMonth === currentMonthKey) {
     console.log('✅ Urlaubstage für diesen Monat bereits hinzugefügt');
-    return false;
+    return {
+      processed: false,
+      reason: 'Bereits für diesen Monat verarbeitet',
+      currentMonth: currentMonthKey
+    };
   }
   
   // Hole alle Mitarbeiter
