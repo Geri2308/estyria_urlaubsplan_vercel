@@ -390,24 +390,26 @@ const forceMonthlyAccumulation = () => {
   };
 };
 
-// Hilfsfunktion: Nächste Akkumulation berechnen (ab Oktober)  
+// Hilfsfunktion: Nächste Akkumulation berechnen (ab Oktober 2025)  
 const getNextAccumulationDate = () => {
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1; // 1-12
   
-  if (currentMonth < 10) {
-    // Noch nicht Oktober - nächste Akkumulation ist Oktober dieses Jahres
-    return new Date(currentYear, 9, 1); // Oktober (Monat 9, da 0-basiert)
+  const isBeforeOctoberTwentyTwentyFive = (currentYear < 2025) || (currentYear === 2025 && currentMonth < 10);
+  
+  if (isBeforeOctoberTwentyTwentyFive) {
+    // Noch nicht Oktober 2025 - nächste Akkumulation ist Oktober 2025
+    return new Date(2025, 9, 1); // Oktober 2025 (Monat 9, da 0-basiert)
   } else {
-    // Schon Oktober oder später - nächste Akkumulation ist nächster Monat
+    // Schon Oktober 2025 oder später - nächste Akkumulation ist nächster Monat
     const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
     const nextYear = currentMonth === 12 ? currentYear + 1 : currentYear;
     return new Date(nextYear, nextMonth - 1, 1);
   }
 };
 
-// Hilfsfunktion: Akkumulations-Status abrufen (ab Oktober)
+// Hilfsfunktion: Akkumulations-Status abrufen (ab Oktober 2025)
 const getAccumulationStatus = () => {
   const lastProcessed = localStorage.getItem('urlaubsplaner_last_monthly_accumulation');
   const lastDate = localStorage.getItem('urlaubsplaner_last_monthly_accumulation_date');
@@ -416,7 +418,7 @@ const getAccumulationStatus = () => {
   const currentMonth = now.getMonth() + 1; // 1-12
   const currentMonthKey = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
   
-  const isActiveMonth = currentMonth >= 10; // Aktiv ab Oktober
+  const isActiveMonth = (currentYear > 2025) || (currentYear === 2025 && currentMonth >= 10);
   const nextAccumulation = getNextAccumulationDate();
   
   return {
@@ -425,12 +427,12 @@ const getAccumulationStatus = () => {
     currentMonth: currentMonthKey,
     isCurrentMonthProcessed: lastProcessed === currentMonthKey,
     isAccumulationActive: isActiveMonth,
-    accumulationStartMonth: `${currentYear}-10`,
+    accumulationStartMonth: '2025-10',
     nextAccumulationDate: nextAccumulation,
     monthlyAmount: MONTHLY_VACATION_DAYS,
     status: isActiveMonth 
       ? (lastProcessed === currentMonthKey ? 'Bereits verarbeitet' : 'Bereit für Akkumulation')
-      : `Wartet auf Oktober (Start: ${currentYear}-10)`
+      : 'Wartet auf Oktober 2025'
   };
 };
 // Hilfsfunktion: Urlaubstage und Krankheitstage eines Mitarbeiters berechnen und aktualisieren
