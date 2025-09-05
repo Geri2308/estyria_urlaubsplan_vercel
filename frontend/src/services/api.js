@@ -438,7 +438,39 @@ const getAccumulationStatus = () => {
       : 'Wartet auf Oktober 2025'
   };
 };
-// Hilfsfunktion: Urlaubstage und Krankheitstage eines Mitarbeiters berechnen und aktualisieren
+// Reset aller Mitarbeiter auf 25 Urlaubstage (einmalige Ausführung)
+const resetAllEmployeesToTwentyFiveDays = () => {
+  console.log('🔄 Setze alle Mitarbeiter auf 25 Urlaubstage zurück...');
+  
+  const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+  let resetCount = 0;
+  
+  employees.forEach(employee => {
+    const oldTotal = employee.vacation_days_total;
+    employee.vacation_days_total = 25;
+    employee.vacation_days_remaining = 25 - (employee.vacation_days_used || 0);
+    employee.last_modified = new Date().toISOString();
+    employee.reset_to_25_date = new Date().toISOString();
+    
+    console.log(`📋 ${employee.name}: ${oldTotal} → 25 Urlaubstage`);
+    resetCount++;
+  });
+  
+  // Speichere aktualisierte Daten
+  autoSave.employees(employees);
+  
+  // Markiere Reset als durchgeführt
+  localStorage.setItem('urlaubsplaner_reset_to_25_completed', new Date().toISOString());
+  
+  console.log(`✅ Reset abgeschlossen! ${resetCount} Mitarbeiter auf 25 Urlaubstage gesetzt`);
+  
+  return {
+    resetCompleted: true,
+    employeesReset: resetCount,
+    resetDate: new Date().toISOString(),
+    newVacationDays: 25
+  };
+};
 const updateEmployeeVacationDays = (employeeId, daysDifference, currentVacations = null) => {
   const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
   const employeeIndex = employees.findIndex(emp => emp.id === employeeId);
