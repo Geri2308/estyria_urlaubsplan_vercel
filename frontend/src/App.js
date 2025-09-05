@@ -456,6 +456,8 @@ function App() {
   const [currentView, setCurrentView] = useState('month');
   const [employees, setEmployees] = useState([]);
   const [vacationEntries, setVacationEntries] = useState([]);
+  const [showVacationDialog, setShowVacationDialog] = useState(false);
+  const [editingVacationEntry, setEditingVacationEntry] = useState(null);
   const [showEmployeeDialog, setShowEmployeeDialog] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
