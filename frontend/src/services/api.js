@@ -247,13 +247,115 @@ const autoSave = {
   }
 };
 
-// Daten initialisieren (beim ersten Besuch)
+// Daten initialisieren (beim ersten Besuch) mit verbesserter Wiederherstellung
 const initializeData = () => {
-  if (!localStorage.getItem('urlaubsplaner_employees')) {
+  console.log('🔄 Initialisiere Daten-System...');
+  
+  // Prüfe ob Daten existieren
+  const existingEmployees = localStorage.getItem('urlaubsplaner_employees');
+  const existingVacations = localStorage.getItem('urlaubsplaner_vacations');
+  
+  if (!existingEmployees) {
+    console.log('📝 Erstmalige Einrichtung - Mitarbeiter werden geladen...');
     saveToStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+  } else {
+    console.log('✅ Bestehende Mitarbeiterdaten gefunden');
   }
-  if (!localStorage.getItem('urlaubsplaner_vacations')) {
+  
+  if (!existingVacations) {
+    console.log('📝 Erstmalige Einrichtung - Beispiel-Urlaube werden geladen...');
     saveToStorage('urlaubsplaner_vacations', DEFAULT_VACATION_ENTRIES);
+  } else {
+    console.log('✅ Bestehende Urlaubsdaten gefunden');
+  }
+  
+  // Speichere Initialisierungsdatum
+  if (!localStorage.getItem('urlaubsplaner_initialized')) {
+    localStorage.setItem('urlaubsplaner_initialized', new Date().toISOString());
+    localStorage.setItem('urlaubsplaner_version', '1.0');
+    console.log('🎉 System erfolgreich initialisiert!');
+  }
+  
+  // Zeige Datenstatistiken
+  const employees = getFromStorage('urlaubsplaner_employees', []);
+  const vacations = getFromStorage('urlaubsplaner_vacations', []);
+  
+  console.log('📊 Aktuelle Daten:', {
+    mitarbeiter: employees.length,
+    urlaubseinträge: vacations.length,
+    letzteÄnderung: localStorage.getItem('urlaubsplaner_employees_last_modified') || 'Unbekannt'
+  });
+};
+
+// Backup- und Recovery-Funktionen
+export const dataManagement = {
+  // Vollständiges Backup erstellen
+  createBackup: () => {
+    const backup = {
+      employees: getFromStorage('urlaubsplaner_employees', []),
+      vacations: getFromStorage('urlaubsplaner_vacations', []),
+      timestamp: new Date().toISOString(),
+      version: '1.0'
+    };
+    
+    // Als JSON-String für Download bereitstellen
+    const backupString = JSON.stringify(backup, null, 2);
+    console.log('💾 Backup erstellt:', backup);
+    
+    return backupString;
+  },
+  
+  // Daten aus Backup wiederherstellen
+  restoreFromBackup: (backupData) => {
+    try {
+      const parsed = typeof backupData === 'string' ? JSON.parse(backupData) : backupData;
+      
+      if (parsed.employees) {
+        autoSave.employees(parsed.employees);
+        console.log('✅ Mitarbeiter wiederhergestellt:', parsed.employees.length);
+      }
+      
+      if (parsed.vacations) {
+        autoSave.vacations(parsed.vacations);
+        console.log('✅ Urlaube wiederhergestellt:', parsed.vacations.length);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('❌ Fehler beim Wiederherstellen:', error);
+      return false;
+    }
+  },
+  
+  // Alle Daten löschen (für Reset)
+  clearAllData: () => {
+    localStorage.removeItem('urlaubsplaner_employees');
+    localStorage.removeItem('urlaubsplaner_vacations');
+    localStorage.removeItem('urlaubsplaner_employees_backup');
+    localStorage.removeItem('urlaubsplaner_vacations_backup');
+    console.log('🗑️ Alle Daten gelöscht');
+    
+    // Neu initialisieren
+    initializeData();
+  },
+  
+  // Datenintegrität prüfen
+  checkDataIntegrity: () => {
+    const employees = getFromStorage('urlaubsplaner_employees', []);
+    const vacations = getFromStorage('urlaubsplaner_vacations', []);
+    
+    let issues = [];
+    
+    // Prüfe auf verwaiste Urlaubseinträge
+    vacations.forEach(vacation => {
+      const employeeExists = employees.some(emp => emp.id === vacation.employee_id);
+      if (!employeeExists) {
+        issues.push(`Urlaub für nicht existierenden Mitarbeiter: ${vacation.employee_name}`);
+      }
+    });
+    
+    console.log(issues.length === 0 ? '✅ Datenintegrität OK' : '⚠️ Datenprobleme gefunden:', issues);
+    return issues;
   }
 };
 
