@@ -162,6 +162,18 @@ frontend:
         agent: "main"
         comment: "EXPRESS-LOGISTIK Text im Hintergrund des Login-Screens hinzugefügt. Mehrere Ebenen: 1) Großer zentraler Text (sehr transparent), 2) Subtile Eck-Texte in oberer linker und unterer rechter Ecke. Text ist rotiert und stimmig ins Design integriert."
 
+  - task: "Neuer Aktualisierungs-Button im Persönlichkeitsprofil-Dialog"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED SUCCESSFULLY: Neuer grüner 'Aktualisieren'-Button im Persönlichkeitsprofil-Dialog funktioniert einwandfrei! Button ist korrekt positioniert (links in der Button-Leiste), hat grüne Farbe (bg-green-600), Refresh-Icon vorhanden, korrekten Tooltip 'Krankheitstage und Urlaubstage aktualisieren'. Button-Layout: Position 0: Aktualisieren (grün), Position 1: Abbrechen (grau), Position 2: Merkmale speichern (blau). Funktionalität getestet - Button-Click funktioniert, Responsive Design auf Mobile funktioniert, alle anderen Buttons arbeiten korrekt. Dialog öffnet/schließt ordnungsgemäß. Getestet für Mitarbeiter 'Gerhard Schmidt' mit Admin-Login 9999."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
