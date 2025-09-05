@@ -149,5 +149,5 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Implemented fixes for both user reported issues: 1) Fixed team table scrolling by applying existing 'team-table-scroll' CSS class, 2) Added individual personality profile buttons for each employee. Both features need frontend testing to verify functionality. Application compiles successfully and runs without errors."
-  - agent: "testing"
-    message: "✅ COMPREHENSIVE TESTING COMPLETED: Both features work perfectly! Team scrolling system allows viewing all 16 employees with proper 500px height limit and scrolling. Each employee has a functional yellow star button that opens individual personality profile dialogs. All core functionality tested successfully. Minor React useEffect warnings present but don't affect functionality."
+  - agent: "main"
+    message: "NEUIMPLEMENTIERUNG: Persönlichkeitsprofil komplett umgebaut nach User-Feedback. Sternenbewertung entfernt und durch Textarea für freie Texteingabe der Persönlichkeitsmerkmale ersetzt. 'Profil'-Button neben jedem Mitarbeiternamen hinzugefügt (statt gelber Stern in Aktionen-Spalte). Dialog jetzt für individuelle Beschreibung der Persönlichkeit und Arbeitsweise. Anwendung kompiliert erfolgreich."
