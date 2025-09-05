@@ -298,12 +298,12 @@ export const authAPI = {
   login: performLogin,
 };
 
-// Employee API (mit LocalStorage)
+// Employee API (mit automatischem Speichern)
 export const employeeAPI = {
   getAll: () => {
-    return Promise.resolve({ 
-      data: getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES)
-    });
+    const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+    console.log('👥 Mitarbeiter geladen:', employees.length);
+    return Promise.resolve({ data: employees });
   },
   
   getById: (id) => {
@@ -319,10 +319,15 @@ export const employeeAPI = {
     const newEmployee = {
       ...data,
       id: Date.now().toString(),
-      created_date: new Date().toISOString()
+      created_date: new Date().toISOString(),
+      last_modified: new Date().toISOString()
     };
     employees.push(newEmployee);
-    saveToStorage('urlaubsplaner_employees', employees);
+    
+    // Automatisches Speichern
+    autoSave.employees(employees);
+    
+    console.log('✅ Neuer Mitarbeiter erstellt und gespeichert:', newEmployee.name);
     return Promise.resolve({ data: newEmployee });
   },
   
@@ -330,8 +335,16 @@ export const employeeAPI = {
     const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
     const index = employees.findIndex(emp => emp.id === id);
     if (index >= 0) {
-      employees[index] = { ...employees[index], ...data };
-      saveToStorage('urlaubsplaner_employees', employees);
+      employees[index] = { 
+        ...employees[index], 
+        ...data, 
+        last_modified: new Date().toISOString()
+      };
+      
+      // Automatisches Speichern
+      autoSave.employees(employees);
+      
+      console.log('✅ Mitarbeiter aktualisiert und gespeichert:', employees[index].name);
       return Promise.resolve({ data: employees[index] });
     }
     return Promise.reject({ response: { data: { error: 'Mitarbeiter nicht gefunden' } } });
@@ -341,14 +354,18 @@ export const employeeAPI = {
     const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
     const index = employees.findIndex(emp => emp.id === id);
     if (index >= 0) {
+      const deletedEmployee = employees[index];
       employees.splice(index, 1);
-      saveToStorage('urlaubsplaner_employees', employees);
+      
+      // Automatisches Speichern
+      autoSave.employees(employees);
       
       // Lösche auch alle Urlaubseinträge des Mitarbeiters
       const vacations = getFromStorage('urlaubsplaner_vacations', []);
       const filteredVacations = vacations.filter(vacation => vacation.employee_id !== id);
-      saveToStorage('urlaubsplaner_vacations', filteredVacations);
+      autoSave.vacations(filteredVacations);
       
+      console.log('✅ Mitarbeiter und Urlaube gelöscht und gespeichert:', deletedEmployee.name);
       return Promise.resolve({ data: { message: 'Mitarbeiter gelöscht' } });
     }
     return Promise.reject({ response: { data: { error: 'Mitarbeiter nicht gefunden' } } });
