@@ -1295,7 +1295,36 @@ function App() {
                                   </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {employee.vacation_days_total || 25} Tage
+                                  <div className="flex flex-col">
+                                    <div className="flex items-center space-x-2">
+                                      <span className="font-medium">{employee.vacation_days_total || 25}</span>
+                                      <span className="text-gray-500">Tage/Jahr</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1 mt-1">
+                                      <div className="flex items-center space-x-1">
+                                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <span className="text-xs text-green-600">
+                                          {((employee.vacation_days_total || 25) - (employee.vacation_days_used || 0))} verfügbar
+                                        </span>
+                                      </div>
+                                      <span className="text-gray-300">•</span>
+                                      <div className="flex items-center space-x-1">
+                                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                        <span className="text-xs text-blue-600">
+                                          {employee.vacation_days_used || 0} verwendet
+                                        </span>
+                                      </div>
+                                    </div>
+                                    {/* Progress Bar */}
+                                    <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                                      <div 
+                                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-1.5 rounded-full transition-all duration-300"
+                                        style={{
+                                          width: `${Math.min(100, ((employee.vacation_days_used || 0) / (employee.vacation_days_total || 25)) * 100)}%`
+                                        }}
+                                      ></div>
+                                    </div>
+                                  </div>
                                 </td>
                                 <td className="px-6 py-4">
                                   <div className="space-y-1">
