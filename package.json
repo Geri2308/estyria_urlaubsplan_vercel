@@ -1,22 +1,11 @@
 {
   "name": "urlaubsplaner-vercel",
   "version": "1.0.0",
-  "description": "Urlaubsplaner für Vercel Deployment",
+  "description": "Einfacher Urlaubsplaner für Vercel - Kein Backend nötig!",
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "cd frontend && npm start",
     "build": "cd frontend && npm run build",
-    "start": "vercel",
+    "start": "cd frontend && npm start",
     "deploy": "vercel --prod"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "date-fns": "^3.3.1",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.3.0",
-    "uuid": "^9.0.1"
-  },
-  "devDependencies": {
-    "@vercel/node": "^3.0.21"
   }
 }
