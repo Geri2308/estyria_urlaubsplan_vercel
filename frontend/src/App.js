@@ -332,11 +332,23 @@ const MonthCalendarView = ({ currentDate, vacationEntries, employees, onDateClic
   const calendarDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
   const getVacationsForDay = (day) => {
-    return vacationEntries.filter(entry => {
+    console.log('🔍 Checking vacations for day:', day, 'Total entries:', vacationEntries.length);
+    
+    const dayVacations = vacationEntries.filter(entry => {
       const entryStart = new Date(entry.start_date);
       const entryEnd = new Date(entry.end_date);
-      return day >= entryStart && day <= entryEnd;
+      
+      console.log(`Entry ${entry.employee_name}: ${entry.start_date} to ${entry.end_date}`);
+      console.log(`Checking if ${day.toDateString()} is between ${entryStart.toDateString()} and ${entryEnd.toDateString()}`);
+      
+      const isInRange = day >= entryStart && day <= entryEnd;
+      console.log(`Result: ${isInRange}`);
+      
+      return isInRange;
     });
+    
+    console.log(`Found ${dayVacations.length} vacations for ${day.toDateString()}`);
+    return dayVacations;
   };
 
   const getDayClasses = (day) => {
