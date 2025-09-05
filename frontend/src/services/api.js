@@ -349,35 +349,58 @@ const getAccumulationStatus = () => {
     monthlyAmount: MONTHLY_VACATION_DAYS
   };
 };
+// Hilfsfunktion: Urlaubstage und Krankheitstage eines Mitarbeiters berechnen und aktualisieren
 const updateEmployeeVacationDays = (employeeId, daysDifference) => {
   const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
   const employeeIndex = employees.findIndex(emp => emp.id === employeeId);
   
   if (employeeIndex >= 0) {
-    // Berechne aktuell verwendete Urlaubstage
+    // Berechne aktuell verwendete Urlaubstage und Krankheitstage
     const vacations = getFromStorage('urlaubsplaner_vacations', []);
-    const employeeVacations = vacations.filter(v => v.employee_id === employeeId && v.vacation_type === 'URLAUB');
+    const employeeVacations = vacations.filter(v => v.employee_id === employeeId);
     
-    let totalUsedDays = 0;
+    let totalUsedVacationDays = 0;
+    let totalSickDays = 0;
+    let totalSpecialDays = 0;
+    
     employeeVacations.forEach(vacation => {
-      totalUsedDays += vacation.days_count || 0;
+      const days = vacation.days_count || 0;
+      switch (vacation.vacation_type) {
+        case 'URLAUB':
+          totalUsedVacationDays += days;
+          break;
+        case 'KRANKHEIT':
+          totalSickDays += days;
+          break;
+        case 'SONDERURLAUB':
+          totalSpecialDays += days;
+          break;
+      }
     });
     
     // Aktualisiere Mitarbeiter-Daten
     employees[employeeIndex] = {
       ...employees[employeeIndex],
-      vacation_days_used: totalUsedDays,
-      vacation_days_remaining: (employees[employeeIndex].vacation_days_total || 25) - totalUsedDays,
+      vacation_days_used: totalUsedVacationDays,
+      vacation_days_remaining: (employees[employeeIndex].vacation_days_total || 25) - totalUsedVacationDays,
+      sick_days_used: totalSickDays,
+      special_days_used: totalSpecialDays,
+      personality_rating: employees[employeeIndex].personality_rating || 3, // Default 3 Sterne
       last_vacation_update: new Date().toISOString()
     };
     
     // Speichern
     autoSave.employees(employees);
     
-    console.log(`📊 Urlaubstage aktualisiert für ${employees[employeeIndex].name}:`, {
-      total: employees[employeeIndex].vacation_days_total,
-      used: totalUsedDays,
-      remaining: employees[employeeIndex].vacation_days_remaining
+    console.log(`📊 Tage aktualisiert für ${employees[employeeIndex].name}:`, {
+      urlaubstage: {
+        total: employees[employeeIndex].vacation_days_total,
+        used: totalUsedVacationDays,
+        remaining: employees[employeeIndex].vacation_days_remaining
+      },
+      krankheitstage: totalSickDays,
+      sonderurlaub: totalSpecialDays,
+      persönlichkeit: employees[employeeIndex].personality_rating
     });
     
     return employees[employeeIndex];
