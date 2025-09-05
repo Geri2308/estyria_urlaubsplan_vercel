@@ -1287,6 +1287,15 @@ function App() {
             )}
           </div>
 
+          {/* Vacation Dialog */}
+          <VacationDialog
+            isOpen={showVacationDialog}
+            onClose={() => setShowVacationDialog(false)}
+            onSave={handleSaveVacation}
+            employees={employees}
+            editingEntry={editingVacationEntry}
+          />
+
           {/* Employee Dialog */}
           <EmployeeDialog
             isOpen={showEmployeeDialog}
