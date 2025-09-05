@@ -1633,8 +1633,12 @@ function App() {
           {/* Personality Profile Dialog */}
           <PersonalityProfileDialog
             isOpen={showPersonalityDialog}
-            onClose={() => setShowPersonalityDialog(false)}
+            onClose={() => {
+              setShowPersonalityDialog(false);
+              setSelectedEmployeeForPersonality(null);
+            }}
             employees={employees}
+            selectedEmployee={selectedEmployeeForPersonality}
             onSave={loadData}
           />
         </div>
