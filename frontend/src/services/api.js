@@ -1050,6 +1050,7 @@ export {
   employeeAPI, 
   vacationAPI, 
   settingsAPI,
+  dataManagement,
   initializeData,
   processMonthlyVacationAccumulation,
   forceMonthlyAccumulation,
