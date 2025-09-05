@@ -1049,6 +1049,7 @@ export {
   authAPI, 
   employeeAPI, 
   vacationAPI, 
+  settingsAPI,
   initializeData,
   processMonthlyVacationAccumulation,
   forceMonthlyAccumulation,
