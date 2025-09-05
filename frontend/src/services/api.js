@@ -88,40 +88,147 @@ export const authAPI = {
 const mockEmployees = [
   {
     id: '1',
-    name: 'Max Mustermann',
-    email: 'max.mustermann@firma.de',
+    name: 'Gerhard Pailer',
+    email: 'gerhard.pailer@firma.de',
     role: 'employee',
     vacation_days_total: 25,
-    skills: [
-      { name: 'JavaScript', rating: 4 },
-      { name: 'React', rating: 5 },
-      { name: 'Node.js', rating: 3 }
-    ],
+    skills: [],
     created_date: '2024-01-15T10:00:00Z'
   },
   {
     id: '2',
-    name: 'Anna Schmidt',
-    email: 'anna.schmidt@firma.de',
-    role: 'admin',
-    vacation_days_total: 30,
-    skills: [
-      { name: 'Management', rating: 5 },
-      { name: 'Teamführung', rating: 4 }
-    ],
+    name: 'Mario Pregartner',
+    email: 'mario.pregartner@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
     created_date: '2024-01-10T10:00:00Z'
   },
   {
     id: '3',
-    name: 'Peter Müller',
-    email: 'peter.mueller@firma.de',
-    role: 'leiharbeiter',
-    vacation_days_total: 20,
-    skills: [
-      { name: 'PHP', rating: 3 },
-      { name: 'Database', rating: 4 }
-    ],
+    name: 'Marcel Zengerer',
+    email: 'marcel.zengerer@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
     created_date: '2024-02-01T10:00:00Z'
+  },
+  {
+    id: '4',
+    name: 'Sabrina Würtinger',
+    email: 'sabrina.wuertinger@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-02-05T10:00:00Z'
+  },
+  {
+    id: '5',
+    name: 'Alexander Knoll',
+    email: 'alexander.knoll@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-02-10T10:00:00Z'
+  },
+  {
+    id: '6',
+    name: 'Gerhard Schmidt',
+    email: 'gerhard.schmidt@firma.de',
+    role: 'admin',
+    vacation_days_total: 30,
+    skills: [],
+    created_date: '2024-01-05T10:00:00Z'
+  },
+  {
+    id: '7',
+    name: 'Claudiu Rosza',
+    email: 'claudiu.rosza@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-02-15T10:00:00Z'
+  },
+  {
+    id: '8',
+    name: 'Richard Tavaszi',
+    email: 'richard.tavaszi@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-02-20T10:00:00Z'
+  },
+  {
+    id: '9',
+    name: 'Bernhard Sager',
+    email: 'bernhard.sager@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-03-01T10:00:00Z'
+  },
+  {
+    id: '10',
+    name: 'Benjamin Winter',
+    email: 'benjamin.winter@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-03-05T10:00:00Z'
+  },
+  {
+    id: '11',
+    name: 'Gabriela Ackerl',
+    email: 'gabriela.ackerl@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-03-10T10:00:00Z'
+  },
+  {
+    id: '12',
+    name: 'Markus Strahlhofer',
+    email: 'markus.strahlhofer@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-03-15T10:00:00Z'
+  },
+  {
+    id: '13',
+    name: 'Norbert Kreil',
+    email: 'norbert.kreil@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-03-20T10:00:00Z'
+  },
+  {
+    id: '14',
+    name: 'Nicole Prack',
+    email: 'nicole.prack@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-03-25T10:00:00Z'
+  },
+  {
+    id: '15',
+    name: 'Denis Constantin',
+    email: 'denis.constantin@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-04-01T10:00:00Z'
+  },
+  {
+    id: '16',
+    name: 'Peter Koch',
+    email: 'peter.koch@firma.de',
+    role: 'employee',
+    vacation_days_total: 25,
+    skills: [],
+    created_date: '2024-04-05T10:00:00Z'
   }
 ];
 
