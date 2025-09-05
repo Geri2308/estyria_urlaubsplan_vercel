@@ -440,14 +440,31 @@ const updateEmployeeVacationDays = (employeeId, daysDifference, currentVacations
 };
 const autoSave = {
   employees: (data) => {
+    // Verhindere versehentliches Überschreiben mit leeren Daten
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+      console.warn('⚠️ Versuche leere Mitarbeiter-Daten zu speichern - überspringe');
+      return;
+    }
+    console.log(`💾 Speichere ${data.length} Mitarbeiter...`);
     saveToStorage('urlaubsplaner_employees', data);
     saveToStorage('urlaubsplaner_employees_last_modified', new Date().toISOString());
   },
   vacations: (data) => {
+    // Erlaube leere Vacation-Arrays (Benutzer könnte alle löschen wollen)
+    // Aber warnen wenn undefined/null
+    if (data === undefined || data === null) {
+      console.warn('⚠️ Undefinierte Vacation-Daten - überspringe');
+      return;
+    }
+    console.log(`💾 Speichere ${data.length} Urlaubseinträge...`);
     saveToStorage('urlaubsplaner_vacations', data);
     saveToStorage('urlaubsplaner_vacations_last_modified', new Date().toISOString());
   },
   userPreferences: (data) => {
+    if (!data) {
+      console.warn('⚠️ Undefinierte User-Preferences - überspringe');
+      return;
+    }
     saveToStorage('urlaubsplaner_user_preferences', data);
   }
 };
