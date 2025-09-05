@@ -1048,6 +1048,10 @@ function App() {
     // Könnte ein Quick-Add Dialog öffnen
   };
 
+  const handleSaveVacation = () => {
+    loadData(); // Reload data after save
+  };
+
   // Placeholder handlers
   const handleExport = () => {
     alert('Export-Funktion wird implementiert...');
