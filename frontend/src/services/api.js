@@ -678,6 +678,12 @@ export const employeeAPI = {
         last_modified: new Date().toISOString()
       };
       
+      // Aktualisiere Urlaubstage und Krankheitstage neu (wichtig für korrekte Anzeige)
+      const updatedEmployee = updateEmployeeVacationDays(id, 0);
+      if (updatedEmployee) {
+        employees[index] = { ...employees[index], ...updatedEmployee };
+      }
+      
       // Automatisches Speichern
       autoSave.employees(employees);
       
