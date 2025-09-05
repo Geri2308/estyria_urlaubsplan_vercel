@@ -1390,6 +1390,9 @@ function App() {
             settings={settings}
             onLogout={handleLogout}
             currentUser={currentUser}
+            showSettings={showSettings}
+            setShowSettings={setShowSettings}
+            setShowPersonalityDialog={setShowPersonalityDialog}
           />
 
           {/* Calendar Navigation */}
