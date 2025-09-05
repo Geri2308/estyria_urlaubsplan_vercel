@@ -483,15 +483,16 @@ const initializeData = () => {
   });
 };
 
-// Backup- und Recovery-Funktionen
+// Backup- und Recovery-Funktionen + Monatliche Akkumulation
 export const dataManagement = {
   // Vollständiges Backup erstellen
   createBackup: () => {
     const backup = {
       employees: getFromStorage('urlaubsplaner_employees', []),
       vacations: getFromStorage('urlaubsplaner_vacations', []),
+      accumulationStatus: getAccumulationStatus(),
       timestamp: new Date().toISOString(),
-      version: '1.0'
+      version: '1.2'
     };
     
     // Als JSON-String für Download bereitstellen
@@ -529,6 +530,8 @@ export const dataManagement = {
     localStorage.removeItem('urlaubsplaner_vacations');
     localStorage.removeItem('urlaubsplaner_employees_backup');
     localStorage.removeItem('urlaubsplaner_vacations_backup');
+    localStorage.removeItem('urlaubsplaner_last_monthly_accumulation');
+    localStorage.removeItem('urlaubsplaner_last_monthly_accumulation_date');
     console.log('🗑️ Alle Daten gelöscht');
     
     // Neu initialisieren
@@ -552,6 +555,19 @@ export const dataManagement = {
     
     console.log(issues.length === 0 ? '✅ Datenintegrität OK' : '⚠️ Datenprobleme gefunden:', issues);
     return issues;
+  },
+
+  // Monatliche Akkumulation
+  processMonthlyAccumulation: processMonthlyVacationAccumulation,
+  forceMonthlyAccumulation: forceMonthlyAccumulation,
+  getAccumulationStatus: getAccumulationStatus,
+  getNextAccumulationDate: getNextAccumulationDate,
+  
+  // Akkumulations-Historie für einen Mitarbeiter abrufen
+  getEmployeeAccumulationHistory: (employeeId) => {
+    const employees = getFromStorage('urlaubsplaner_employees', []);
+    const employee = employees.find(emp => emp.id === employeeId);
+    return employee ? employee.monthly_accumulation_history || [] : [];
   }
 };
 
