@@ -141,7 +141,7 @@ metadata:
 test_plan:
   current_focus:
     - "Team View Scrollsystem reparieren"
-    - "Persönlichkeitsprofil-Button für jeden Mitarbeiter"
+    - "Persönlichkeitsprofil umbauen - Sterne durch Textfelder ersetzen"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
