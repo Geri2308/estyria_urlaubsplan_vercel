@@ -885,7 +885,7 @@ export const vacationAPI = {
       autoSave.vacations(vacations);
       
       // Urlaubstage und Krankheitstage aktualisieren (für ALLE Arten: URLAUB, KRANKHEIT, SONDERURLAUB)
-      updateEmployeeVacationDays(deletedVacation.employee_id, 0); // Komplette Neuberechnung
+      updateEmployeeVacationDays(deletedVacation.employee_id, 0, vacations); // Komplette Neuberechnung mit aktuellen Daten
       
       console.log('✅ Urlaub gelöscht und Tage aktualisiert:', `${deletedVacation.employee_name} (${deletedVacation.start_date} - ${deletedVacation.end_date}) - ${deletedVacation.days_count} Tage - Type: ${deletedVacation.vacation_type}`);
       return Promise.resolve({ data: { message: 'Urlaubseintrag gelöscht' } });
