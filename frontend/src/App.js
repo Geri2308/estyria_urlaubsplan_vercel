@@ -1468,7 +1468,7 @@ function App() {
                               Rolle
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide bg-gray-50">
-                              Urlaubstage
+                              Urlaubstage & Krankheit
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide bg-gray-50">
                               Skills
