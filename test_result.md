@@ -191,13 +191,16 @@ test_plan:
     implemented: true
     working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "❌ KRANKHEITSTAGE-AKTUALISIERUNGS-PROBLEM IDENTIFIZIERT: Detaillierte Tests zeigen, dass Krankheitstage NICHT sofort nach Erstellung von KRANKHEIT-Einträgen aktualisiert werden. Test-Szenario: 1) Login Admin 9999 ✅, 2) Gerhard Schmidt Profil öffnen - Initial: 0 Krankheitstage ✅, 3) KRANKHEIT-Eintrag erstellen (3 Tage) ✅, 4) Profil erneut prüfen - Krankheitstage zeigen immer noch 0 ❌. Das ist der Kernproblem! Der Aktualisierungs-Button existiert und ist funktional, aber die automatische Berechnung nach Erstellung/Löschung funktioniert nicht korrekt. Die updateEmployeeVacationDays Funktion wird möglicherweise nicht bei allen CRUD-Operationen aufgerufen."
+      - working: false
+        agent: "testing"
+        comment: "❌ KRANKHEITSTAGE-PROBLEM BESTÄTIGT NACH BEHEBUNGSVERSUCH: Umfassende Retests nach der implementierten Behebung zeigen, dass das Problem WEITERHIN BESTEHT. Test-Verlauf: 1) Login Admin 9999 ✅, 2) Initial-Status Gerhard Schmidt: 0 Krankheitstage ✅, 3) KRANKHEIT-Eintrag erstellt (3 Tage, 05.09-07.09.2025) ✅, 4) Sofortige Überprüfung: Krankheitstage zeigen immer noch 0 ❌, 5) Refresh-Button Test: Krankheitstage bleiben bei 0 ❌, 6) Kalender-Ansicht: Kein KRANKHEIT-Eintrag sichtbar ❌. DIAGNOSE: Die updateEmployeeVacationDays Funktion in /app/frontend/src/services/api.js wird zwar in vacationAPI.create() aufgerufen (Zeile 797), aber die Berechnung funktioniert nicht korrekt. Mögliche Ursachen: 1) Timing-Problem bei localStorage-Updates, 2) Fehler in der Tage-Berechnung für KRANKHEIT-Typ, 3) Race Condition zwischen Vacation-Erstellung und Employee-Update. EMPFEHLUNG: Detaillierte Code-Analyse der updateEmployeeVacationDays Funktion erforderlich."
 
 agent_communication:
   - agent: "main"
