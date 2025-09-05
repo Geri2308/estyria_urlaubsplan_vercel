@@ -863,9 +863,9 @@ export const vacationAPI = {
       
       // Urlaubstage aktualisieren (für ALLE Arten: URLAUB, KRANKHEIT, SONDERURLAUB)
       // Für beide Mitarbeiter, falls sich employee_id geändert hat
-      updateEmployeeVacationDays(oldVacation.employee_id, 0); // Alte Berechnung
+      updateEmployeeVacationDays(oldVacation.employee_id, 0, vacations); // Alte Berechnung
       if (oldVacation.employee_id !== data.employee_id) {
-        updateEmployeeVacationDays(data.employee_id, 0); // Neue Berechnung
+        updateEmployeeVacationDays(data.employee_id, 0, vacations); // Neue Berechnung
       }
       
       console.log('✅ Urlaub aktualisiert und gespeichert:', `${vacations[index].employee_name} (${vacations[index].start_date} - ${vacations[index].end_date}) - ${businessDays} Tage`);
