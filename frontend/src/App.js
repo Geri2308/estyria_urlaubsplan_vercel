@@ -1559,6 +1559,13 @@ function App() {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                   <button
+                                    onClick={() => handleOpenPersonalityProfile(employee)}
+                                    className="text-yellow-600 hover:text-yellow-900 mr-3"
+                                    title="Persönlichkeitsprofil bearbeiten"
+                                  >
+                                    <Star className="w-4 h-4" />
+                                  </button>
+                                  <button
                                     onClick={() => handleEditEmployee(employee)}
                                     className="text-blue-600 hover:text-blue-900 mr-3"
                                   >
