@@ -326,6 +326,7 @@ const CalendarNavigation = ({ currentDate, onPrevious, onNext, view }) => {
 
 // Month Calendar View
 const MonthCalendarView = ({ currentDate, vacationEntries, employees, onDateClick, onEntryClick }) => {
+  const [expandedDay, setExpandedDay] = useState(null);
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const calendarDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
@@ -343,13 +344,19 @@ const MonthCalendarView = ({ currentDate, vacationEntries, employees, onDateClic
     const isCurrentDay = isToday(day);
     const isWeekend = day.getDay() === 0 || day.getDay() === 6;
 
-    let classes = "min-h-24 p-1 border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors ";
+    let classes = "min-h-24 p-1 border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors relative ";
 
     if (!isCurrentMonth) classes += "bg-gray-50 text-gray-400 ";
     if (isCurrentDay) classes += "bg-blue-50 border-blue-300 ";
     if (isWeekend && isCurrentMonth) classes += "bg-gray-100 ";
 
     return classes;
+  };
+
+  const handleDayBadgeClick = (e, day) => {
+    e.stopPropagation();
+    const dayKey = day.toISOString();
+    setExpandedDay(expandedDay === dayKey ? null : dayKey);
   };
 
   return (
@@ -367,9 +374,12 @@ const MonthCalendarView = ({ currentDate, vacationEntries, employees, onDateClic
       <div className="grid grid-cols-7">
         {calendarDays.map((day) => {
           const dayVacations = getVacationsForDay(day);
+          const dayKey = day.toISOString();
+          const isExpanded = expandedDay === dayKey;
+          
           return (
             <div
-              key={day.toISOString()}
+              key={dayKey}
               className={getDayClasses(day)}
               onClick={() => onDateClick(day)}
             >
@@ -378,14 +388,19 @@ const MonthCalendarView = ({ currentDate, vacationEntries, employees, onDateClic
                   {format(day, 'd')}
                 </span>
                 {dayVacations.length > 0 && (
-                  <span className="text-xs bg-blue-500 text-white rounded-full px-1 min-w-4 text-center">
+                  <button
+                    onClick={(e) => handleDayBadgeClick(e, day)}
+                    className="text-xs bg-blue-500 hover:bg-blue-600 text-white rounded-full px-1 min-w-4 text-center transition-colors z-10"
+                    title={`${dayVacations.length} Urlaubseinträge - Klicken für Details`}
+                  >
                     {dayVacations.length}
-                  </span>
+                  </button>
                 )}
               </div>
 
               <div className="mt-1 space-y-1">
-                {dayVacations.slice(0, 3).map((vacation) => {
+                {/* Zeige entweder die ersten 3 oder alle, je nach Expanded-Status */}
+                {(isExpanded ? dayVacations : dayVacations.slice(0, 3)).map((vacation) => {
                   const vacationType = VACATION_TYPES[vacation.vacation_type];
                   return (
                     <div
@@ -395,18 +410,72 @@ const MonthCalendarView = ({ currentDate, vacationEntries, employees, onDateClic
                         onEntryClick(vacation);
                       }}
                       className={`text-xs p-1 rounded truncate cursor-pointer hover:opacity-80 ${vacationType.color} text-white`}
-                      title={`${vacation.employee_name} - ${vacationType.label}`}
+                      title={`${vacation.employee_name} - ${vacationType.label}${vacation.notes ? ': ' + vacation.notes : ''}`}
                     >
                       {vacation.employee_name}
                     </div>
                   );
                 })}
-                {dayVacations.length > 3 && (
-                  <div className="text-xs text-gray-500">
+                
+                {/* Zeige "+ X weitere" nur wenn nicht expanded und mehr als 3 Einträge */}
+                {!isExpanded && dayVacations.length > 3 && (
+                  <button
+                    onClick={(e) => handleDayBadgeClick(e, day)}
+                    className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer"
+                  >
                     +{dayVacations.length - 3} weitere
-                  </div>
+                  </button>
+                )}
+                
+                {/* Collapse Button wenn expanded */}
+                {isExpanded && dayVacations.length > 3 && (
+                  <button
+                    onClick={(e) => handleDayBadgeClick(e, day)}
+                    className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer"
+                  >
+                    ↑ weniger anzeigen
+                  </button>
                 )}
               </div>
+
+              {/* Erweiterte Details als Overlay für sehr viele Einträge */}
+              {isExpanded && dayVacations.length > 6 && (
+                <div 
+                  className="absolute top-0 left-0 bg-white border border-gray-300 shadow-lg rounded-lg p-2 z-20 min-w-48"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-medium text-sm">
+                      {format(day, 'd. MMMM', { locale: de })}
+                    </span>
+                    <button
+                      onClick={(e) => handleDayBadgeClick(e, day)}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="space-y-1 max-h-32 overflow-y-auto">
+                    {dayVacations.map((vacation) => {
+                      const vacationType = VACATION_TYPES[vacation.vacation_type];
+                      return (
+                        <div
+                          key={vacation.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEntryClick(vacation);
+                            setExpandedDay(null);
+                          }}
+                          className={`text-xs p-2 rounded cursor-pointer hover:opacity-80 ${vacationType.color} text-white flex justify-between items-center`}
+                        >
+                          <span>{vacation.employee_name}</span>
+                          <span className="opacity-75">{vacationType.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
