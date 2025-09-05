@@ -626,7 +626,7 @@ const YearCalendarView = ({ currentDate, vacationEntries, onMonthClick }) => {
 
 // Personality Profile Dialog Component
 const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee = null, onSave }) => {
-  const [personalityRatings, setPersonalityRatings] = useState({});
+  const [personalityTraits, setPersonalityTraits] = useState({});
   const [loading, setLoading] = useState(false);
 
   // Bestimme welche Mitarbeiter angezeigt werden sollen
@@ -634,36 +634,36 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
 
   useEffect(() => {
     if (isOpen && displayEmployees) {
-      // Initialisiere Ratings mit aktuellen Werten
-      const initialRatings = {};
+      // Initialisiere Traits mit aktuellen Werten
+      const initialTraits = {};
       displayEmployees.forEach(employee => {
-        initialRatings[employee.id] = employee.personality_rating || 3;
+        initialTraits[employee.id] = employee.personality_traits || '';
       });
-      setPersonalityRatings(initialRatings);
+      setPersonalityTraits(initialTraits);
     }
   }, [isOpen, displayEmployees]);
 
-  const handleRatingChange = (employeeId, rating) => {
-    setPersonalityRatings(prev => ({
+  const handleTraitsChange = (employeeId, traits) => {
+    setPersonalityTraits(prev => ({
       ...prev,
-      [employeeId]: rating
+      [employeeId]: traits
     }));
   };
 
   const handleSave = async () => {
     setLoading(true);
     try {
-      // Aktualisiere jeden Mitarbeiter mit der neuen Bewertung
-      for (const [employeeId, rating] of Object.entries(personalityRatings)) {
-        await employeeAPI.update(employeeId, { personality_rating: rating });
+      // Aktualisiere jeden Mitarbeiter mit den neuen Traits
+      for (const [employeeId, traits] of Object.entries(personalityTraits)) {
+        await employeeAPI.update(employeeId, { personality_traits: traits });
       }
       
-      console.log('✅ Persönlichkeitsprofile aktualisiert:', personalityRatings);
+      console.log('✅ Persönlichkeitsmerkmale aktualisiert:', personalityTraits);
       onSave();
       onClose();
     } catch (error) {
       console.error('❌ Fehler beim Speichern der Profile:', error);
-      alert('Fehler beim Speichern der Persönlichkeitsprofile');
+      alert('Fehler beim Speichern der Persönlichkeitsmerkmale');
     } finally {
       setLoading(false);
     }
