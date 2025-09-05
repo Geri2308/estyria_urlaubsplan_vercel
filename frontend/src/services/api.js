@@ -646,7 +646,7 @@ const initializeData = () => {
 };
 
 // Backup- und Recovery-Funktionen + Monatliche Akkumulation
-export const dataManagement = {
+const dataManagement = {
   // Vollständiges Backup erstellen
   createBackup: () => {
     const backup = {
