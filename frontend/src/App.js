@@ -1305,6 +1305,11 @@ function App() {
     }
   };
 
+  const handleOpenPersonalityProfile = (employee) => {
+    setSelectedEmployeeForPersonality(employee);
+    setShowPersonalityDialog(true);
+  };
+
   const handleSaveEmployee = () => {
     loadData(); // Reload data after save
   };
