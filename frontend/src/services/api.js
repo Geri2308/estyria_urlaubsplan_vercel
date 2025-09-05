@@ -350,13 +350,13 @@ const getAccumulationStatus = () => {
   };
 };
 // Hilfsfunktion: Urlaubstage und Krankheitstage eines Mitarbeiters berechnen und aktualisieren
-const updateEmployeeVacationDays = (employeeId, daysDifference) => {
+const updateEmployeeVacationDays = (employeeId, daysDifference, currentVacations = null) => {
   const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
   const employeeIndex = employees.findIndex(emp => emp.id === employeeId);
   
   if (employeeIndex >= 0) {
-    // Berechne aktuell verwendete Urlaubstage und Krankheitstage
-    const vacations = getFromStorage('urlaubsplaner_vacations', []);
+    // Verwende übergebene Vacations oder lade aus Storage (Race Condition Fix)
+    const vacations = currentVacations || getFromStorage('urlaubsplaner_vacations', []);
     const employeeVacations = vacations.filter(v => v.employee_id === employeeId);
     
     let totalUsedVacationDays = 0;
@@ -400,7 +400,8 @@ const updateEmployeeVacationDays = (employeeId, daysDifference) => {
       },
       krankheitstage: totalSickDays,
       sonderurlaub: totalSpecialDays,
-      persönlichkeit: employees[employeeIndex].personality_rating
+      persönlichkeit: employees[employeeIndex].personality_rating,
+      totalVacationEntries: employeeVacations.length
     });
     
     return employees[employeeIndex];
