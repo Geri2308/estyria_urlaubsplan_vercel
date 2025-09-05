@@ -536,6 +536,11 @@ function App() {
   };
 
   // Dialog handlers
+  const handleNewVacation = () => {
+    setEditingVacationEntry(null);
+    setShowVacationDialog(true);
+  };
+
   const handleNewEmployee = () => {
     setEditingEmployee(null);
     setShowEmployeeDialog(true);
@@ -544,6 +549,11 @@ function App() {
   const handleEditEmployee = (employee) => {
     setEditingEmployee(employee);
     setShowEmployeeDialog(true);
+  };
+
+  const handleEditVacationEntry = (entry) => {
+    setEditingVacationEntry(entry);
+    setShowVacationDialog(true);
   };
 
   const handleDeleteEmployee = async (employee) => {
@@ -558,6 +568,10 @@ function App() {
   };
 
   const handleSaveEmployee = () => {
+    loadData(); // Reload data after save
+  };
+
+  const handleSaveVacation = () => {
     loadData(); // Reload data after save
   };
 
