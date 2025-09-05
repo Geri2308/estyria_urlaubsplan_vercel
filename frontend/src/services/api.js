@@ -601,6 +601,8 @@ export const vacationAPI = {
     const vacations = getFromStorage('urlaubsplaner_vacations', DEFAULT_VACATION_ENTRIES);
     const index = vacations.findIndex(v => v.id === id);
     if (index >= 0) {
+      const oldVacation = vacations[index];
+      
       // Berechne Werktage neu
       const startDate = new Date(data.start_date);
       const endDate = new Date(data.end_date);
@@ -615,6 +617,35 @@ export const vacationAPI = {
         currentDate.setDate(currentDate.getDate() + 1);
       }
       
+      // Prüfe verfügbare Tage bei URLAUB
+      if (data.vacation_type === 'URLAUB') {
+        const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+        const employee = employees.find(emp => emp.id === data.employee_id);
+        
+        if (employee) {
+          const currentUsedDays = employee.vacation_days_used || 0;
+          const totalDays = employee.vacation_days_total || 25;
+          
+          // Bei Update: Alte Tage wieder hinzufügen, dann neue prüfen
+          let adjustedUsedDays = currentUsedDays;
+          if (oldVacation.vacation_type === 'URLAUB') {
+            adjustedUsedDays -= (oldVacation.days_count || 0);
+          }
+          
+          const availableDays = totalDays - adjustedUsedDays;
+          
+          if (businessDays > availableDays) {
+            return Promise.reject({
+              response: {
+                data: {
+                  error: `Nicht genügend Urlaubstage verfügbar! Benötigt: ${businessDays} Tage, Verfügbar: ${availableDays} Tage`
+                }
+              }
+            });
+          }
+        }
+      }
+      
       vacations[index] = { 
         ...vacations[index], 
         ...data, 
@@ -625,7 +656,13 @@ export const vacationAPI = {
       // Automatisches Speichern
       autoSave.vacations(vacations);
       
-      console.log('✅ Urlaub aktualisiert und gespeichert:', `${vacations[index].employee_name} (${vacations[index].start_date} - ${vacations[index].end_date})`);
+      // Urlaubstage aktualisieren (für beide Mitarbeiter, falls sich employee_id geändert hat)
+      if (oldVacation.vacation_type === 'URLAUB' || data.vacation_type === 'URLAUB') {
+        updateEmployeeVacationDays(oldVacation.employee_id, 0); // Alte Berechnung
+        updateEmployeeVacationDays(data.employee_id, 0); // Neue Berechnung
+      }
+      
+      console.log('✅ Urlaub aktualisiert und gespeichert:', `${vacations[index].employee_name} (${vacations[index].start_date} - ${vacations[index].end_date}) - ${businessDays} Tage`);
       return Promise.resolve({ data: vacations[index] });
     }
     return Promise.reject({ response: { data: { error: 'Urlaubseintrag nicht gefunden' } } });
@@ -641,7 +678,12 @@ export const vacationAPI = {
       // Automatisches Speichern
       autoSave.vacations(vacations);
       
-      console.log('✅ Urlaub gelöscht und gespeichert:', `${deletedVacation.employee_name} (${deletedVacation.start_date} - ${deletedVacation.end_date})`);
+      // Urlaubstage zurückgeben (nur bei URLAUB)
+      if (deletedVacation.vacation_type === 'URLAUB') {
+        updateEmployeeVacationDays(deletedVacation.employee_id, -(deletedVacation.days_count || 0));
+      }
+      
+      console.log('✅ Urlaub gelöscht und Tage zurückgegeben:', `${deletedVacation.employee_name} (${deletedVacation.start_date} - ${deletedVacation.end_date}) - ${deletedVacation.days_count} Tage zurück`);
       return Promise.resolve({ data: { message: 'Urlaubseintrag gelöscht' } });
     }
     return Promise.reject({ response: { data: { error: 'Urlaubseintrag nicht gefunden' } } });
