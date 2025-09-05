@@ -672,9 +672,21 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
   const handleRefresh = async () => {
     setLoading(true);
     try {
-      // Lade die Mitarbeiterdaten neu
-      await onSave(); // Das lädt die Daten neu
-      console.log('✅ Mitarbeiterdaten aktualisiert');
+      // Lade die Mitarbeiterdaten neu und aktualisiere alle Berechnungen
+      console.log('🔄 Aktualisiere Mitarbeiterdaten...');
+      
+      // Für alle angezeigten Mitarbeiter die Urlaubstage neu berechnen
+      if (displayEmployees) {
+        const { employeeAPI } = await import('../services/api');
+        for (const employee of displayEmployees) {
+          // Rufe die Update-Funktion auf, um Krankheitstage neu zu berechnen
+          await employeeAPI.update(employee.id, {});
+        }
+      }
+      
+      // Lade die Hauptdaten neu
+      await onSave(); 
+      console.log('✅ Mitarbeiterdaten erfolgreich aktualisiert');
     } catch (error) {
       console.error('❌ Fehler beim Aktualisieren:', error);
       alert('Fehler beim Aktualisieren der Daten');
