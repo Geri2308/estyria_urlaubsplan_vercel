@@ -618,6 +618,191 @@ const YearCalendarView = ({ currentDate, vacationEntries, onMonthClick }) => {
     </div>
   );
 };
+
+// Personality Profile Dialog Component
+const PersonalityProfileDialog = ({ isOpen, onClose, employees, onSave }) => {
+  const [personalityRatings, setPersonalityRatings] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && employees) {
+      // Initialisiere Ratings mit aktuellen Werten
+      const initialRatings = {};
+      employees.forEach(employee => {
+        initialRatings[employee.id] = employee.personality_rating || 3;
+      });
+      setPersonalityRatings(initialRatings);
+    }
+  }, [isOpen, employees]);
+
+  const handleRatingChange = (employeeId, rating) => {
+    setPersonalityRatings(prev => ({
+      ...prev,
+      [employeeId]: rating
+    }));
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      // Aktualisiere jeden Mitarbeiter mit der neuen Bewertung
+      for (const [employeeId, rating] of Object.entries(personalityRatings)) {
+        await employeeAPI.update(employeeId, { personality_rating: rating });
+      }
+      
+      console.log('✅ Persönlichkeitsprofile aktualisiert:', personalityRatings);
+      onSave();
+      onClose();
+    } catch (error) {
+      console.error('❌ Fehler beim Speichern der Profile:', error);
+      alert('Fehler beim Speichern der Persönlichkeitsprofile');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-90vh overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b">
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900">Persönlichkeitsprofile</h3>
+            <p className="text-sm text-gray-500 mt-1">
+              Bewerten Sie die Persönlichkeit Ihrer Mitarbeiter (1-5 Sterne)
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {employees
+              .sort((a, b) => {
+                // Admins first
+                if (a.role === 'admin' && b.role !== 'admin') return -1;
+                if (b.role === 'admin' && a.role !== 'admin') return 1;
+                return a.name.localeCompare(b.name);
+              })
+              .map((employee) => (
+                <div key={employee.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h4 className="font-medium text-gray-900 flex items-center">
+                        {employee.role === 'admin' && '👑 '}
+                        {employee.name}
+                      </h4>
+                      <p className="text-sm text-gray-500">{employee.email}</p>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full mt-1 ${
+                        employee.role === 'admin'
+                          ? 'bg-purple-100 text-purple-800'
+                          : employee.role === 'leiharbeiter'
+                          ? 'bg-orange-100 text-orange-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {employee.role === 'admin' ? 'Administrator' : 
+                         employee.role === 'leiharbeiter' ? 'Leiharbeiter' : 'Mitarbeiter'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Tage-Statistiken */}
+                  <div className="grid grid-cols-3 gap-2 mb-4 text-xs">
+                    <div className="bg-green-50 p-2 rounded text-center">
+                      <div className="font-medium text-green-800">
+                        {((employee.vacation_days_total || 25) - (employee.vacation_days_used || 0))}
+                      </div>
+                      <div className="text-green-600">Urlaub verfügbar</div>
+                    </div>
+                    <div className="bg-red-50 p-2 rounded text-center">
+                      <div className="font-medium text-red-800">
+                        {employee.sick_days_used || 0}
+                      </div>
+                      <div className="text-red-600">Krankheitstage</div>
+                    </div>
+                    <div className="bg-blue-50 p-2 rounded text-center">
+                      <div className="font-medium text-blue-800">
+                        {employee.special_days_used || 0}
+                      </div>
+                      <div className="text-blue-600">Sonderurlaub</div>
+                    </div>
+                  </div>
+
+                  {/* Persönlichkeitsbewertung */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Persönlichkeitsbewertung
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <StarRating
+                        rating={personalityRatings[employee.id] || 3}
+                        onRatingChange={(rating) => handleRatingChange(employee.id, rating)}
+                        readonly={false}
+                      />
+                      <span className="text-sm text-gray-500">
+                        ({personalityRatings[employee.id] || 3}/5)
+                      </span>
+                    </div>
+                    <div className="mt-1 text-xs text-gray-400">
+                      Bewerten Sie Teamfähigkeit, Zuverlässigkeit, Motivation
+                    </div>
+                  </div>
+
+                  {/* Skills Preview */}
+                  {employee.skills && employee.skills.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <div className="text-xs text-gray-500 mb-1">Top Skills:</div>
+                      <div className="flex flex-wrap gap-1">
+                        {employee.skills.slice(0, 3).map((skill, index) => (
+                          <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-700">
+                            {skill.name}
+                            <span className="ml-1 text-yellow-500">{'★'.repeat(skill.rating)}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+          </div>
+        </div>
+
+        <div className="flex justify-end space-x-3 p-6 border-t bg-gray-50">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+          >
+            Abbrechen
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center"
+          >
+            {loading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Speichern...
+              </>
+            ) : (
+              <>
+                <Star className="w-4 h-4 mr-2" />
+                Profile speichern
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const VacationDialog = ({ isOpen, onClose, onSave, employees, editingEntry = null }) => {
   const [formData, setFormData] = useState({
     employee_id: '',
