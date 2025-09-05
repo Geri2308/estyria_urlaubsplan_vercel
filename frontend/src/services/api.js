@@ -793,10 +793,8 @@ export const vacationAPI = {
     // Automatisches Speichern
     autoSave.vacations(vacations);
     
-    // Urlaubstage des Mitarbeiters aktualisieren (nur bei URLAUB)
-    if (data.vacation_type === 'URLAUB') {
-      updateEmployeeVacationDays(data.employee_id, businessDays);
-    }
+    // Urlaubstage des Mitarbeiters aktualisieren (für ALLE Arten: URLAUB, KRANKHEIT, SONDERURLAUB)
+    updateEmployeeVacationDays(data.employee_id, 0); // 0 = komplette Neuberechnung aller Tage
     
     console.log('✅ Neuer Urlaub erstellt und gespeichert:', `${newVacation.employee_name} (${newVacation.start_date} - ${newVacation.end_date}) - ${businessDays} Tage`);
     return Promise.resolve({ data: newVacation });
