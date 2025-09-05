@@ -187,6 +187,18 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Krankheitstage-Aktualisierungs-Problem beheben"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ KRANKHEITSTAGE-AKTUALISIERUNGS-PROBLEM IDENTIFIZIERT: Detaillierte Tests zeigen, dass Krankheitstage NICHT sofort nach Erstellung von KRANKHEIT-Einträgen aktualisiert werden. Test-Szenario: 1) Login Admin 9999 ✅, 2) Gerhard Schmidt Profil öffnen - Initial: 0 Krankheitstage ✅, 3) KRANKHEIT-Eintrag erstellen (3 Tage) ✅, 4) Profil erneut prüfen - Krankheitstage zeigen immer noch 0 ❌. Das ist der Kernproblem! Der Aktualisierungs-Button existiert und ist funktional, aber die automatische Berechnung nach Erstellung/Löschung funktioniert nicht korrekt. Die updateEmployeeVacationDays Funktion wird möglicherweise nicht bei allen CRUD-Operationen aufgerufen."
+
 agent_communication:
   - agent: "main"
     message: "Implemented fixes for both user reported issues: 1) Fixed team table scrolling by applying existing 'team-table-scroll' CSS class, 2) Added individual personality profile buttons for each employee. Both features need frontend testing to verify functionality. Application compiles successfully and runs without errors."
@@ -198,3 +210,5 @@ agent_communication:
     message: "✅ DEZIMALWERTE-TEST ERFOLGREICH: Mitarbeiter-Bearbeitung mit Dezimalwerten funktioniert perfekt! Getestet: 27.08 wird korrekt akzeptiert und gespeichert, step='0.01' Attribut vorhanden, parseFloat verarbeitet Werte korrekt, keine Validierungsfehler, Hilftext sichtbar. Problem vollständig behoben - Benutzer kann jetzt Dezimalwerte wie 27.08 für Urlaubstage eingeben und erfolgreich speichern."
   - agent: "testing"
     message: "✅ AKTUALISIERUNGS-BUTTON TEST ERFOLGREICH: Neuer grüner 'Aktualisieren'-Button im Persönlichkeitsprofil-Dialog vollständig getestet und funktionsfähig! Alle Anforderungen erfüllt: ✓ Grüne Farbe (bg-green-600), ✓ Refresh-Icon vorhanden, ✓ Korrekte Positionierung links in Button-Leiste, ✓ Tooltip 'Krankheitstage und Urlaubstage aktualisieren', ✓ Button-Funktionalität arbeitet, ✓ Responsive Design auf Mobile, ✓ Layout korrekt (Aktualisieren-Abbrechen-Merkmale speichern). Getestet mit Admin-Login 9999, Team-Ansicht Navigation, Persönlichkeitsprofil für 'Gerhard Schmidt'. Neue Funktion vollständig implementiert und einsatzbereit."
+  - agent: "testing"
+    message: "❌ KRANKHEITSTAGE-PROBLEM IDENTIFIZIERT: Umfassende Tests des Krankheitstage-Aktualisierungs-Problems zeigen das Kernproblem: Krankheitstage werden NICHT automatisch nach Erstellung von KRANKHEIT-Einträgen berechnet. Test-Verlauf: Login ✅, Profil öffnen (0 Krankheitstage) ✅, KRANKHEIT-Eintrag erstellen (3 Tage) ✅, Profil erneut prüfen → Krankheitstage zeigen immer noch 0 ❌. Der Aktualisierungs-Button existiert und funktioniert, aber die automatische Neuberechnung bei CRUD-Operationen ist defekt. Die updateEmployeeVacationDays Funktion wird nicht bei allen Vacation-API-Aufrufen ausgelöst. LÖSUNG ERFORDERLICH: Sicherstellen, dass nach jedem vacationAPI.create/update/delete die Mitarbeiter-Krankheitstage neu berechnet werden."
