@@ -233,13 +233,13 @@ const mockEmployees = [
 ];
 
 const mockVacationEntries = [
-  // Aktuelle Urlaube für Januar 2025 (sichtbar im aktuellen Monat)
+  // September 2025 Urlaube (aktueller Monat - sollten sichtbar sein)
   {
     id: '1',
     employee_id: '1',
     employee_name: 'Gerhard Pailer',
-    start_date: '2025-01-15',
-    end_date: '2025-01-17',
+    start_date: '2025-09-15',
+    end_date: '2025-09-17',
     vacation_type: 'URLAUB',
     notes: 'Kurzurlaub',
     days_count: 3,
@@ -249,8 +249,8 @@ const mockVacationEntries = [
     id: '2',
     employee_id: '2',
     employee_name: 'Mario Pregartner',
-    start_date: '2025-01-15',
-    end_date: '2025-01-16',
+    start_date: '2025-09-15',
+    end_date: '2025-09-16',
     vacation_type: 'KRANKHEIT',
     notes: 'Erkältung',
     days_count: 2,
@@ -260,8 +260,8 @@ const mockVacationEntries = [
     id: '3',
     employee_id: '7',
     employee_name: 'Claudiu Rosza',
-    start_date: '2025-01-15',
-    end_date: '2025-01-15',
+    start_date: '2025-09-15',
+    end_date: '2025-09-15',
     vacation_type: 'SONDERURLAUB',
     notes: 'Arzttermin',
     days_count: 1,
@@ -271,8 +271,8 @@ const mockVacationEntries = [
     id: '4',
     employee_id: '4',
     employee_name: 'Sabrina Würtinger',
-    start_date: '2025-01-15',
-    end_date: '2025-01-18',
+    start_date: '2025-09-15',
+    end_date: '2025-09-18',
     vacation_type: 'URLAUB',
     notes: 'Verlängertes Wochenende',
     days_count: 4,
@@ -282,8 +282,8 @@ const mockVacationEntries = [
     id: '5',
     employee_id: '5',
     employee_name: 'Alexander Knoll',
-    start_date: '2025-01-15',
-    end_date: '2025-01-17',
+    start_date: '2025-09-15',
+    end_date: '2025-09-17',
     vacation_type: 'URLAUB',
     notes: 'Familienzeit',
     days_count: 3,
@@ -293,23 +293,34 @@ const mockVacationEntries = [
     id: '6',
     employee_id: '8',
     employee_name: 'Richard Tavaszi',
-    start_date: '2025-01-15',
-    end_date: '2025-01-15',
+    start_date: '2025-09-15',
+    end_date: '2025-09-15',
     vacation_type: 'URLAUB',
     notes: 'Freier Tag',
     days_count: 1,
     created_date: '2024-11-20T10:00:00Z'
   },
-  // Zusätzliche Urlaube für heute (sollten sichtbar sein)
+  // Zusätzliche Urlaube für heute (5. September)
   {
     id: '7',
     employee_id: '9',
     employee_name: 'Bernhard Sager',
-    start_date: '2025-01-09',
-    end_date: '2025-01-10',
+    start_date: '2025-09-05',
+    end_date: '2025-09-06',
     vacation_type: 'URLAUB',
-    notes: 'Heutiger Urlaub',
+    notes: 'Brückentag',
     days_count: 2,
+    created_date: '2024-12-01T10:00:00Z'
+  },
+  {
+    id: '8',
+    employee_id: '10',
+    employee_name: 'Benjamin Winter',
+    start_date: '2025-09-05',
+    end_date: '2025-09-05',
+    vacation_type: 'KRANKHEIT',
+    notes: 'Heute krank',
+    days_count: 1,
     created_date: '2024-12-01T10:00:00Z'
   }
 ];
