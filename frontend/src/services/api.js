@@ -243,6 +243,61 @@ const mockVacationEntries = [
     notes: 'Weihnachtsurlaub',
     days_count: 6,
     created_date: '2024-11-15T10:00:00Z'
+  },
+  {
+    id: '2',
+    employee_id: '2',
+    employee_name: 'Mario Pregartner',
+    start_date: '2024-12-23',
+    end_date: '2024-12-27',
+    vacation_type: 'URLAUB',
+    notes: 'Familienbesuch',
+    days_count: 5,
+    created_date: '2024-11-16T10:00:00Z'
+  },
+  {
+    id: '3',
+    employee_id: '7',
+    employee_name: 'Claudiu Rosza',
+    start_date: '2024-12-23',
+    end_date: '2024-12-24',
+    vacation_type: 'URLAUB',
+    notes: 'Weihnachten',
+    days_count: 2,
+    created_date: '2024-11-17T10:00:00Z'
+  },
+  {
+    id: '4',
+    employee_id: '4',
+    employee_name: 'Sabrina Würtinger',
+    start_date: '2024-12-23',
+    end_date: '2024-12-30',
+    vacation_type: 'URLAUB',
+    notes: 'Jahresendurlaub',
+    days_count: 6,
+    created_date: '2024-11-18T10:00:00Z'
+  },
+  {
+    id: '5',
+    employee_id: '5',
+    employee_name: 'Alexander Knoll',
+    start_date: '2024-12-23',
+    end_date: '2024-12-29',
+    vacation_type: 'URLAUB',
+    notes: 'Skiurlaub',
+    days_count: 5,
+    created_date: '2024-11-19T10:00:00Z'
+  },
+  {
+    id: '6',
+    employee_id: '8',
+    employee_name: 'Richard Tavaszi',
+    start_date: '2024-12-23',
+    end_date: '2024-12-24',
+    vacation_type: 'URLAUB',
+    notes: 'Kurzurlaub',
+    days_count: 2,
+    created_date: '2024-11-20T10:00:00Z'
   }
 ];
 
