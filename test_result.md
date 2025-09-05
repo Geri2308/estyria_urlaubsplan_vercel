@@ -182,7 +182,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Dezimalwerte in Mitarbeiter-Bearbeitung unterstützen"
+    - "Neuer Aktualisierungs-Button im Persönlichkeitsprofil-Dialog"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
