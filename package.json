@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "Einfacher Urlaubsplaner für Vercel - Kein Backend nötig!",
   "scripts": {
-    "dev": "cd frontend && npm start",
-    "build": "cd frontend && npm run build",
-    "start": "cd frontend && npm start",
+    "dev": "cd frontend && yarn start",
+    "build": "cd frontend && yarn build",
+    "start": "cd frontend && yarn start",
     "deploy": "vercel --prod"
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }
