@@ -198,15 +198,44 @@ const DEFAULT_VACATION_ENTRIES = [
 const getFromStorage = (key, defaultValue) => {
   try {
     const item = localStorage.getItem(key);
-    if (item) {
+    if (item && item !== 'null' && item !== 'undefined') {
       const parsed = JSON.parse(item);
-      console.log(`✅ Daten geladen für ${key}:`, parsed.length || 'N/A', 'Einträge');
-      return parsed;
+      // Zusätzliche Validierung: Nur zurückgeben wenn echte Daten vorhanden
+      if (parsed && (Array.isArray(parsed) ? parsed.length > 0 : Object.keys(parsed).length > 0)) {
+        console.log(`✅ Daten geladen für ${key}:`, Array.isArray(parsed) ? parsed.length : 'Object', 'Einträge');
+        return parsed;
+      }
     }
-    console.log(`📝 Erstmalige Initialisierung für ${key}`);
-    return defaultValue;
+    
+    // Prüfe ob schon mal initialisiert wurde
+    const initKey = `${key}_initialized`;
+    const wasInitialized = localStorage.getItem(initKey);
+    
+    if (!wasInitialized) {
+      console.log(`📝 Erstmalige Initialisierung für ${key}`);
+      // Markiere als initialisiert
+      localStorage.setItem(initKey, 'true');
+      // Speichere Default-Daten
+      saveToStorage(key, defaultValue);
+      return defaultValue;
+    } else {
+      console.log(`⚠️ ${key} bereits initialisiert aber leer - verwende leeres Array/Object`);
+      // Bereits initialisiert aber leer - bedeutet Benutzer hat Daten gelöscht
+      return Array.isArray(defaultValue) ? [] : {};
+    }
   } catch (error) {
     console.error(`❌ Fehler beim Laden von ${key}:`, error);
+    // Im Fehlerfall: Versuche Backup zu laden
+    try {
+      const backupItem = localStorage.getItem(`${key}_backup`);
+      if (backupItem) {
+        const backup = JSON.parse(backupItem);
+        console.log('🔄 Backup wiederhergestellt für', key);
+        return backup.data || defaultValue;
+      }
+    } catch (backupError) {
+      console.error('❌ Auch Backup konnte nicht geladen werden:', backupError);
+    }
     return defaultValue;
   }
 };
