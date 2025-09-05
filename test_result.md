@@ -122,15 +122,18 @@ frontend:
 
   - task: "Persönlichkeitsprofil umbauen - Sterne durch Textfelder ersetzen"
     implemented: true
-    working: "needs_testing"
+    working: true
     file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "needs_testing"
         agent: "main"
         comment: "Sternenbewertung entfernt und durch Textarea für freie Texteingabe ersetzt. Dialog-Text angepasst. Button neben Mitarbeiternamen statt in Aktionen-Spalte hinzugefügt. PersonalityProfileDialog verwendet jetzt personality_traits statt personality_rating."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED SUCCESSFULLY: Persönlichkeitsprofil komplett umgebaut wie gefordert. Alle 16 Mitarbeiter haben blaue 'Profil'-Buttons neben Namen (nicht in Aktionen-Spalte). Sternenbewertung vollständig entfernt. Textarea für freie Texteingabe vorhanden mit korrektem Placeholder. Dialog öffnet für spezifische Mitarbeiter. Speicherfunktion arbeitet korrekt (Backend-Logs bestätigen Speicherung). Minor: React useEffect Infinite-Loop-Warning in Console, beeinträchtigt aber nicht die Kernfunktionalität. Team-Scrolling weiterhin funktionsfähig."
 
 metadata:
   created_by: "main_agent"
