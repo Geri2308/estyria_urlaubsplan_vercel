@@ -155,8 +155,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Team View Scrollsystem reparieren"
-    - "Persönlichkeitsprofil umbauen - Sterne durch Textfelder ersetzen"
+    - "Dezimalwerte in Mitarbeiter-Bearbeitung unterstützen"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
