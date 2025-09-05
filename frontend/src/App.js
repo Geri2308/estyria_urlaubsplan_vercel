@@ -1409,6 +1409,7 @@ function App() {
             showSettings={showSettings}
             setShowSettings={setShowSettings}
             setShowPersonalityDialog={setShowPersonalityDialog}
+            setSelectedEmployeeForPersonality={setSelectedEmployeeForPersonality}
           />
 
           {/* Calendar Navigation */}
