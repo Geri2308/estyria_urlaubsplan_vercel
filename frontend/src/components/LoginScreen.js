@@ -53,9 +53,6 @@ const LoginScreen = ({ onLogin }) => {
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Urlaubsplaner</h1>
           <p className="text-gray-600">Bitte geben Sie Ihren 4-stelligen Code ein</p>
-          <div className="mt-2 text-sm text-gray-500">
-            <p>Demo-Codes: <span className="font-mono">9999</span> (Admin) oder <span className="font-mono">1234</span> (User)</p>
-          </div>
         </div>
 
         {/* Login Form */}
