@@ -1,95 +1,20 @@
-import axios from 'axios';
+// Einfacher Urlaubsplaner - OHNE DATENBANK
+// Alles wird lokal im Browser gespeichert
 
-// Für die Entwicklung verwenden wir ein vereinfachtes Mock-System
-const MOCK_AUTH = true;
-
-// Mock Auth für Entwicklung
-const mockLogin = (code) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (code === '9999') {
-        resolve({
-          data: {
-            success: true,
-            token: 'mock-admin-token-' + Date.now(),
-            user: { username: 'admin', role: 'admin' },
-            message: 'Erfolgreich als Admin angemeldet'
-          }
-        });
-      } else if (code === '1234') {
-        resolve({
-          data: {
-            success: true,
-            token: 'mock-user-token-' + Date.now(),
-            user: { username: 'user', role: 'user' },
-            message: 'Erfolgreich als Benutzer angemeldet'
-          }
-        });
-      } else {
-        reject({
-          response: {
-            data: { error: 'Ungültiger Code' }
-          }
-        });
-      }
-    }, 500);
-  });
+// Login-Codes (können Sie später ändern)
+const VALID_LOGINS = {
+  'admin': '9999',
+  'logistik': '1234', 
+  'manager': '5678',
+  'hr': '4321'
 };
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
-
-// Axios instance erstellen
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Request interceptor für Auth Token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor für Fehlerbehandlung
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Token abgelaufen oder ungültig - Logout
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user_data');
-      window.location.reload();
-    }
-    return Promise.reject(error);
-  }
-);
-
-// Auth API
-export const authAPI = {
-  login: (code) => {
-    if (MOCK_AUTH) {
-      return mockLogin(code);
-    }
-    return api.post('/auth/login', { code });
-  },
-};
-
-// Mock Daten für Entwicklung
-const mockEmployees = [
+// Ihre echten Mitarbeiter (fest im Code)
+const DEFAULT_EMPLOYEES = [
   {
     id: '1',
     name: 'Gerhard Pailer',
-    email: 'gerhard.pailer@firma.de',
+    email: 'gerhard.pailer@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -98,7 +23,7 @@ const mockEmployees = [
   {
     id: '2',
     name: 'Mario Pregartner',
-    email: 'mario.pregartner@firma.de',
+    email: 'mario.pregartner@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -107,7 +32,7 @@ const mockEmployees = [
   {
     id: '3',
     name: 'Marcel Zengerer',
-    email: 'marcel.zengerer@firma.de',
+    email: 'marcel.zengerer@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -116,7 +41,7 @@ const mockEmployees = [
   {
     id: '4',
     name: 'Sabrina Würtinger',
-    email: 'sabrina.wuertinger@firma.de',
+    email: 'sabrina.wuertinger@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -125,7 +50,7 @@ const mockEmployees = [
   {
     id: '5',
     name: 'Alexander Knoll',
-    email: 'alexander.knoll@firma.de',
+    email: 'alexander.knoll@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -134,7 +59,7 @@ const mockEmployees = [
   {
     id: '6',
     name: 'Gerhard Schmidt',
-    email: 'gerhard.schmidt@firma.de',
+    email: 'gerhard.schmidt@estyria.at',
     role: 'admin',
     vacation_days_total: 30,
     skills: [],
@@ -143,7 +68,7 @@ const mockEmployees = [
   {
     id: '7',
     name: 'Claudiu Rosza',
-    email: 'claudiu.rosza@firma.de',
+    email: 'claudiu.rosza@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -152,7 +77,7 @@ const mockEmployees = [
   {
     id: '8',
     name: 'Richard Tavaszi',
-    email: 'richard.tavaszi@firma.de',
+    email: 'richard.tavaszi@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -161,7 +86,7 @@ const mockEmployees = [
   {
     id: '9',
     name: 'Bernhard Sager',
-    email: 'bernhard.sager@firma.de',
+    email: 'bernhard.sager@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -170,7 +95,7 @@ const mockEmployees = [
   {
     id: '10',
     name: 'Benjamin Winter',
-    email: 'benjamin.winter@firma.de',
+    email: 'benjamin.winter@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -179,7 +104,7 @@ const mockEmployees = [
   {
     id: '11',
     name: 'Gabriela Ackerl',
-    email: 'gabriela.ackerl@firma.de',
+    email: 'gabriela.ackerl@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -188,7 +113,7 @@ const mockEmployees = [
   {
     id: '12',
     name: 'Markus Strahlhofer',
-    email: 'markus.strahlhofer@firma.de',
+    email: 'markus.strahlhofer@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -197,7 +122,7 @@ const mockEmployees = [
   {
     id: '13',
     name: 'Norbert Kreil',
-    email: 'norbert.kreil@firma.de',
+    email: 'norbert.kreil@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -206,7 +131,7 @@ const mockEmployees = [
   {
     id: '14',
     name: 'Nicole Prack',
-    email: 'nicole.prack@firma.de',
+    email: 'nicole.prack@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -215,7 +140,7 @@ const mockEmployees = [
   {
     id: '15',
     name: 'Denis Constantin',
-    email: 'denis.constantin@firma.de',
+    email: 'denis.constantin@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -224,7 +149,7 @@ const mockEmployees = [
   {
     id: '16',
     name: 'Peter Koch',
-    email: 'peter.koch@firma.de',
+    email: 'peter.koch@estyria.at',
     role: 'employee',
     vacation_days_total: 25,
     skills: [],
@@ -232,8 +157,8 @@ const mockEmployees = [
   }
 ];
 
-const mockVacationEntries = [
-  // September 2025 Urlaube (aktueller Monat - sollten sichtbar sein)
+// Beispiel-Urlaube für Demo
+const DEFAULT_VACATION_ENTRIES = [
   {
     id: '1',
     employee_id: '1',
@@ -266,183 +191,243 @@ const mockVacationEntries = [
     notes: 'Arzttermin',
     days_count: 1,
     created_date: '2024-11-17T10:00:00Z'
-  },
-  {
-    id: '4',
-    employee_id: '4',
-    employee_name: 'Sabrina Würtinger',
-    start_date: '2025-09-15',
-    end_date: '2025-09-18',
-    vacation_type: 'URLAUB',
-    notes: 'Verlängertes Wochenende',
-    days_count: 4,
-    created_date: '2024-11-18T10:00:00Z'
-  },
-  {
-    id: '5',
-    employee_id: '5',
-    employee_name: 'Alexander Knoll',
-    start_date: '2025-09-15',
-    end_date: '2025-09-17',
-    vacation_type: 'URLAUB',
-    notes: 'Familienzeit',
-    days_count: 3,
-    created_date: '2024-11-19T10:00:00Z'
-  },
-  {
-    id: '6',
-    employee_id: '8',
-    employee_name: 'Richard Tavaszi',
-    start_date: '2025-09-15',
-    end_date: '2025-09-15',
-    vacation_type: 'URLAUB',
-    notes: 'Freier Tag',
-    days_count: 1,
-    created_date: '2024-11-20T10:00:00Z'
-  },
-  // Zusätzliche Urlaube für heute (5. September)
-  {
-    id: '7',
-    employee_id: '9',
-    employee_name: 'Bernhard Sager',
-    start_date: '2025-09-05',
-    end_date: '2025-09-06',
-    vacation_type: 'URLAUB',
-    notes: 'Brückentag',
-    days_count: 2,
-    created_date: '2024-12-01T10:00:00Z'
-  },
-  {
-    id: '8',
-    employee_id: '10',
-    employee_name: 'Benjamin Winter',
-    start_date: '2025-09-05',
-    end_date: '2025-09-05',
-    vacation_type: 'KRANKHEIT',
-    notes: 'Heute krank',
-    days_count: 1,
-    created_date: '2024-12-01T10:00:00Z'
   }
 ];
 
-// Employee API
+// LocalStorage Helfer-Funktionen
+const getFromStorage = (key, defaultValue) => {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : defaultValue;
+  } catch (error) {
+    console.error(`Error reading ${key} from localStorage:`, error);
+    return defaultValue;
+  }
+};
+
+const saveToStorage = (key, value) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error(`Error saving ${key} to localStorage:`, error);
+  }
+};
+
+// Daten initialisieren (beim ersten Besuch)
+const initializeData = () => {
+  if (!localStorage.getItem('urlaubsplaner_employees')) {
+    saveToStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+  }
+  if (!localStorage.getItem('urlaubsplaner_vacations')) {
+    saveToStorage('urlaubsplaner_vacations', DEFAULT_VACATION_ENTRIES);
+  }
+};
+
+// Initialisierung ausführen
+initializeData();
+
+// Login-Funktion
+const performLogin = (code) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      // Finde Benutzer basierend auf Code
+      const userEntry = Object.entries(VALID_LOGINS).find(
+        ([, userCode]) => userCode === code
+      );
+
+      if (!userEntry) {
+        reject({
+          response: {
+            data: { error: 'Ungültiger Code' }
+          }
+        });
+        return;
+      }
+
+      const [username, ] = userEntry;
+      const role = username === 'admin' ? 'admin' : 'user';
+
+      resolve({
+        data: {
+          success: true,
+          token: `local-token-${username}-${Date.now()}`,
+          user: { username, role },
+          message: `Erfolgreich als ${role === 'admin' ? 'Administrator' : 'Benutzer'} angemeldet`
+        }
+      });
+    }, 500);
+  });
+};
+
+// Auth API
+export const authAPI = {
+  login: performLogin,
+};
+
+// Employee API (mit LocalStorage)
 export const employeeAPI = {
   getAll: () => {
-    if (MOCK_AUTH) {
-      return Promise.resolve({ data: mockEmployees });
-    }
-    return api.get('/employees');
+    return Promise.resolve({ 
+      data: getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES)
+    });
   },
+  
   getById: (id) => {
-    if (MOCK_AUTH) {
-      const employee = mockEmployees.find(emp => emp.id === id);
-      return employee ? Promise.resolve({ data: employee }) : Promise.reject({ response: { data: { error: 'Mitarbeiter nicht gefunden' } } });
-    }
-    return api.get(`/employees/${id}`);
+    const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+    const employee = employees.find(emp => emp.id === id);
+    return employee 
+      ? Promise.resolve({ data: employee }) 
+      : Promise.reject({ response: { data: { error: 'Mitarbeiter nicht gefunden' } } });
   },
+  
   create: (data) => {
-    if (MOCK_AUTH) {
-      const newEmployee = {
-        ...data,
-        id: Date.now().toString(),
-        created_date: new Date().toISOString()
-      };
-      mockEmployees.push(newEmployee);
-      return Promise.resolve({ data: newEmployee });
-    }
-    return api.post('/employees', data);
+    const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+    const newEmployee = {
+      ...data,
+      id: Date.now().toString(),
+      created_date: new Date().toISOString()
+    };
+    employees.push(newEmployee);
+    saveToStorage('urlaubsplaner_employees', employees);
+    return Promise.resolve({ data: newEmployee });
   },
+  
   update: (id, data) => {
-    if (MOCK_AUTH) {
-      const index = mockEmployees.findIndex(emp => emp.id === id);
-      if (index >= 0) {
-        mockEmployees[index] = { ...mockEmployees[index], ...data };
-        return Promise.resolve({ data: mockEmployees[index] });
-      }
-      return Promise.reject({ response: { data: { error: 'Mitarbeiter nicht gefunden' } } });
+    const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+    const index = employees.findIndex(emp => emp.id === id);
+    if (index >= 0) {
+      employees[index] = { ...employees[index], ...data };
+      saveToStorage('urlaubsplaner_employees', employees);
+      return Promise.resolve({ data: employees[index] });
     }
-    return api.put(`/employees/${id}`, data);
+    return Promise.reject({ response: { data: { error: 'Mitarbeiter nicht gefunden' } } });
   },
+  
   delete: (id) => {
-    if (MOCK_AUTH) {
-      const index = mockEmployees.findIndex(emp => emp.id === id);
-      if (index >= 0) {
-        mockEmployees.splice(index, 1);
-        return Promise.resolve({ data: { message: 'Mitarbeiter gelöscht' } });
-      }
-      return Promise.reject({ response: { data: { error: 'Mitarbeiter nicht gefunden' } } });
+    const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+    const index = employees.findIndex(emp => emp.id === id);
+    if (index >= 0) {
+      employees.splice(index, 1);
+      saveToStorage('urlaubsplaner_employees', employees);
+      
+      // Lösche auch alle Urlaubseinträge des Mitarbeiters
+      const vacations = getFromStorage('urlaubsplaner_vacations', []);
+      const filteredVacations = vacations.filter(vacation => vacation.employee_id !== id);
+      saveToStorage('urlaubsplaner_vacations', filteredVacations);
+      
+      return Promise.resolve({ data: { message: 'Mitarbeiter gelöscht' } });
     }
-    return api.delete(`/employees/${id}`);
+    return Promise.reject({ response: { data: { error: 'Mitarbeiter nicht gefunden' } } });
   },
 };
 
-// Vacation Entry API
+// Vacation Entry API (mit LocalStorage)
 export const vacationAPI = {
   getAll: (params = {}) => {
-    if (MOCK_AUTH) {
-      return Promise.resolve({ data: mockVacationEntries });
+    let vacations = getFromStorage('urlaubsplaner_vacations', DEFAULT_VACATION_ENTRIES);
+    
+    // Filter anwenden wenn Parameter vorhanden
+    if (params.employee_id) {
+      vacations = vacations.filter(v => v.employee_id === params.employee_id);
     }
-    const queryString = new URLSearchParams(params).toString();
-    return api.get(`/vacation-entries${queryString ? `?${queryString}` : ''}`);
+    if (params.vacation_type) {
+      vacations = vacations.filter(v => v.vacation_type === params.vacation_type);
+    }
+    
+    return Promise.resolve({ data: vacations });
   },
+  
   getById: (id) => {
-    if (MOCK_AUTH) {
-      const entry = mockVacationEntries.find(entry => entry.id === id);
-      return entry ? Promise.resolve({ data: entry }) : Promise.reject({ response: { data: { error: 'Urlaubseintrag nicht gefunden' } } });
-    }
-    return api.get(`/vacation-entries/${id}`);
+    const vacations = getFromStorage('urlaubsplaner_vacations', DEFAULT_VACATION_ENTRIES);
+    const vacation = vacations.find(v => v.id === id);
+    return vacation 
+      ? Promise.resolve({ data: vacation })
+      : Promise.reject({ response: { data: { error: 'Urlaubseintrag nicht gefunden' } } });
   },
+  
   create: (data) => {
-    if (MOCK_AUTH) {
-      const newEntry = {
-        ...data,
-        id: Date.now().toString(),
-        created_date: new Date().toISOString()
-      };
-      mockVacationEntries.push(newEntry);
-      return Promise.resolve({ data: newEntry });
+    const vacations = getFromStorage('urlaubsplaner_vacations', DEFAULT_VACATION_ENTRIES);
+    
+    // Berechne Werktage
+    const startDate = new Date(data.start_date);
+    const endDate = new Date(data.end_date);
+    let businessDays = 0;
+    const currentDate = new Date(startDate);
+    
+    while (currentDate <= endDate) {
+      const dayOfWeek = currentDate.getDay();
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Nicht Sonntag oder Samstag
+        businessDays++;
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
     }
-    return api.post('/vacation-entries', data);
+    
+    const newVacation = {
+      ...data,
+      id: Date.now().toString(),
+      days_count: businessDays,
+      created_date: new Date().toISOString()
+    };
+    
+    vacations.push(newVacation);
+    saveToStorage('urlaubsplaner_vacations', vacations);
+    return Promise.resolve({ data: newVacation });
   },
+  
   update: (id, data) => {
-    if (MOCK_AUTH) {
-      const index = mockVacationEntries.findIndex(entry => entry.id === id);
-      if (index >= 0) {
-        mockVacationEntries[index] = { ...mockVacationEntries[index], ...data };
-        return Promise.resolve({ data: mockVacationEntries[index] });
+    const vacations = getFromStorage('urlaubsplaner_vacations', DEFAULT_VACATION_ENTRIES);
+    const index = vacations.findIndex(v => v.id === id);
+    if (index >= 0) {
+      // Berechne Werktage neu
+      const startDate = new Date(data.start_date);
+      const endDate = new Date(data.end_date);
+      let businessDays = 0;
+      const currentDate = new Date(startDate);
+      
+      while (currentDate <= endDate) {
+        const dayOfWeek = currentDate.getDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          businessDays++;
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
       }
-      return Promise.reject({ response: { data: { error: 'Urlaubseintrag nicht gefunden' } } });
+      
+      vacations[index] = { 
+        ...vacations[index], 
+        ...data, 
+        days_count: businessDays 
+      };
+      saveToStorage('urlaubsplaner_vacations', vacations);
+      return Promise.resolve({ data: vacations[index] });
     }
-    return api.put(`/vacation-entries/${id}`, data);
+    return Promise.reject({ response: { data: { error: 'Urlaubseintrag nicht gefunden' } } });
   },
+  
   delete: (id) => {
-    if (MOCK_AUTH) {
-      const index = mockVacationEntries.findIndex(entry => entry.id === id);
-      if (index >= 0) {
-        mockVacationEntries.splice(index, 1);
-        return Promise.resolve({ data: { message: 'Urlaubseintrag gelöscht' } });
-      }
-      return Promise.reject({ response: { data: { error: 'Urlaubseintrag nicht gefunden' } } });
+    const vacations = getFromStorage('urlaubsplaner_vacations', DEFAULT_VACATION_ENTRIES);
+    const index = vacations.findIndex(v => v.id === id);
+    if (index >= 0) {
+      vacations.splice(index, 1);
+      saveToStorage('urlaubsplaner_vacations', vacations);
+      return Promise.resolve({ data: { message: 'Urlaubseintrag gelöscht' } });
     }
-    return api.delete(`/vacation-entries/${id}`);
+    return Promise.reject({ response: { data: { error: 'Urlaubseintrag nicht gefunden' } } });
   },
 };
 
 // Settings API
 export const settingsAPI = {
   get: () => {
-    if (MOCK_AUTH) {
-      return Promise.resolve({
-        data: {
-          max_concurrent_percentage: 30,
-          max_concurrent_fixed: null,
-          total_employees: mockEmployees.length,
-          max_concurrent_calculated: Math.max(1, Math.floor(mockEmployees.length * 0.3))
-        }
-      });
-    }
-    return api.get('/settings');
+    const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
+    return Promise.resolve({
+      data: {
+        max_concurrent_percentage: 30,
+        max_concurrent_fixed: null,
+        total_employees: employees.length,
+        max_concurrent_calculated: Math.max(1, Math.floor(employees.length * 0.3))
+      }
+    });
   },
 };
 
-export default api;
+export default { authAPI, employeeAPI, vacationAPI, settingsAPI };
