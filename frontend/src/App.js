@@ -1608,6 +1608,14 @@ function App() {
             onSave={handleSaveEmployee}
             editingEmployee={editingEmployee}
           />
+
+          {/* Personality Profile Dialog */}
+          <PersonalityProfileDialog
+            isOpen={showPersonalityDialog}
+            onClose={() => setShowPersonalityDialog(false)}
+            employees={employees}
+            onSave={loadData}
+          />
         </div>
       </BrowserRouter>
     </div>
