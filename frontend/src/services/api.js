@@ -1044,4 +1044,16 @@ export const settingsAPI = {
   },
 };
 
+// API-Exporte mit Reset-Funktion
+export { 
+  authAPI, 
+  employeeAPI, 
+  vacationAPI, 
+  initializeData,
+  processMonthlyVacationAccumulation,
+  forceMonthlyAccumulation,
+  getAccumulationStatus,
+  resetAllEmployeesToTwentyFiveDays
+};
+
 export default { authAPI, employeeAPI, vacationAPI, settingsAPI };
