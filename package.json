@@ -9,10 +9,12 @@
     "deploy": "vercel --prod"
   },
   "dependencies": {
-    "mongodb": "^6.3.0",
+    "cors": "^2.8.5",
+    "date-fns": "^3.3.1",
+    "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "uuid": "^9.0.1",
-    "date-fns": "^3.3.1"
+    "mongodb": "^6.3.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@vercel/node": "^3.0.21"
