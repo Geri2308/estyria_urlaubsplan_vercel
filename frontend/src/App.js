@@ -281,6 +281,7 @@ const Toolbar = ({
                 <div className="py-1">
                   <button
                     onClick={() => {
+                      setSelectedEmployeeForPersonality(null); // Für alle Mitarbeiter
                       setShowPersonalityDialog(true);
                       setShowSettings(false);
                     }}
