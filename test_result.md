@@ -135,6 +135,18 @@ frontend:
         agent: "testing"
         comment: "✅ TESTED SUCCESSFULLY: Persönlichkeitsprofil komplett umgebaut wie gefordert. Alle 16 Mitarbeiter haben blaue 'Profil'-Buttons neben Namen (nicht in Aktionen-Spalte). Sternenbewertung vollständig entfernt. Textarea für freie Texteingabe vorhanden mit korrektem Placeholder. Dialog öffnet für spezifische Mitarbeiter. Speicherfunktion arbeitet korrekt (Backend-Logs bestätigen Speicherung). Minor: React useEffect Infinite-Loop-Warning in Console, beeinträchtigt aber nicht die Kernfunktionalität. Team-Scrolling weiterhin funktionsfähig."
 
+  - task: "Dezimalwerte in Mitarbeiter-Bearbeitung unterstützen"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Number input field erweitert um step='0.01' für Dezimalwerte. parseInt durch parseFloat ersetzt. Deutsche Komma-Notation (27,08) sollte jetzt funktionieren. Hilftext hinzugefügt der Dezimalwerte erklärt."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
