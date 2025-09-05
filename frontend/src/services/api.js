@@ -775,7 +775,7 @@ const authAPI = {
 };
 
 // Employee API (mit automatischem Speichern)
-export const employeeAPI = {
+const employeeAPI = {
   getAll: () => {
     const employees = getFromStorage('urlaubsplaner_employees', DEFAULT_EMPLOYEES);
     console.log('👥 Mitarbeiter geladen:', employees.length);
