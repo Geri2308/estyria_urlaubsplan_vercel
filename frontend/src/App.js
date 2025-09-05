@@ -623,9 +623,12 @@ const YearCalendarView = ({ currentDate, vacationEntries, onMonthClick }) => {
 };
 
 // Personality Profile Dialog Component
-const PersonalityProfileDialog = ({ isOpen, onClose, employees, onSave }) => {
+const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee = null, onSave }) => {
   const [personalityRatings, setPersonalityRatings] = useState({});
   const [loading, setLoading] = useState(false);
+
+  // Bestimme welche Mitarbeiter angezeigt werden sollen
+  const displayEmployees = selectedEmployee ? [selectedEmployee] : employees;
 
   useEffect(() => {
     if (isOpen && employees) {
