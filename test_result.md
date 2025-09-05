@@ -101,3 +101,48 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Benutzer sieht nicht alle Mitarbeiter in der Teamverwaltung (Scrollsystem-Problem) und braucht bei jedem Mitarbeiter einen Button für Persönlichkeitseintragung"
+
+frontend:
+  - task: "Team View Scrollsystem reparieren"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Fixed scrolling issue by replacing 'max-h-screen overflow-y-auto' with 'team-table-scroll' CSS class that limits height to 500px with proper scrolling. The CSS class was already defined but not being used."
+
+  - task: "Persönlichkeitsprofil-Button für jeden Mitarbeiter"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Added Star button for each employee in team table that opens PersonalityProfileDialog for individual employee. Extended PersonalityProfileDialog to handle both all employees (from settings) and individual employee selection. Added selectedEmployeeForPersonality state and handleOpenPersonalityProfile function."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: true
+
+test_plan:
+  current_focus:
+    - "Team View Scrollsystem reparieren"
+    - "Persönlichkeitsprofil-Button für jeden Mitarbeiter"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Implemented fixes for both user reported issues: 1) Fixed team table scrolling by applying existing 'team-table-scroll' CSS class, 2) Added individual personality profile buttons for each employee. Both features need frontend testing to verify functionality. Application compiles successfully and runs without errors."
