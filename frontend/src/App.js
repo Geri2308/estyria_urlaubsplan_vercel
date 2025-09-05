@@ -1046,6 +1046,7 @@ function App() {
 
   const loadData = async () => {
     try {
+      console.log('🔄 Lade Daten da authentifiziert...');
       setLoading(true);
       const [employeesRes, vacationRes, settingsRes] = await Promise.all([
         employeeAPI.getAll(),
@@ -1053,13 +1054,17 @@ function App() {
         settingsAPI.get()
       ]);
 
+      console.log('👥 Employees loaded:', employeesRes.data.length);
+      console.log('🗓️ Vacation entries loaded:', vacationRes.data.length);
+      console.log('🗓️ Vacation entries:', vacationRes.data);
+
       setEmployees(employeesRes.data);
       setVacationEntries(vacationRes.data);
       setSettings(settingsRes.data);
       setError('');
     } catch (err) {
+      console.error('❌ Loading error:', err);
       setError('Fehler beim Laden der Daten');
-      console.error('Loading error:', err);
     } finally {
       setLoading(false);
     }
