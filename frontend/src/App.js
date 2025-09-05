@@ -1276,12 +1276,12 @@ function App() {
               </div>
             )}
 
-            {currentView !== 'team' && (
+            {currentView !== 'team' && currentView !== 'month' && currentView !== 'year' && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <Calendar className="w-16 h-16 mx-auto text-gray-300 mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">Kalenderansicht</h3>
-                  <p className="text-gray-500">Kalenderansichten werden noch implementiert...</p>
+                  <p className="text-gray-500">Wählen Sie eine Ansicht aus der Toolbar</p>
                 </div>
               </div>
             )}
