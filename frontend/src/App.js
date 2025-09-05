@@ -288,7 +288,220 @@ const Toolbar = ({
   );
 };
 
-// Employee Dialog Component
+// Vacation Entry Dialog
+const VacationDialog = ({ isOpen, onClose, onSave, employees, editingEntry = null }) => {
+  const [formData, setFormData] = useState({
+    employee_id: '',
+    start_date: '',
+    end_date: '',
+    vacation_type: 'URLAUB',
+    notes: ''
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (editingEntry) {
+      setFormData({
+        employee_id: editingEntry.employee_id,
+        start_date: editingEntry.start_date,
+        end_date: editingEntry.end_date,
+        vacation_type: editingEntry.vacation_type,
+        notes: editingEntry.notes || ''
+      });
+    } else {
+      setFormData({
+        employee_id: '',
+        start_date: '',
+        end_date: '',
+        vacation_type: 'URLAUB',
+        notes: ''
+      });
+    }
+    setError('');
+  }, [editingEntry, isOpen]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      // Zusätzliche Validierung
+      if (formData.start_date > formData.end_date) {
+        throw new Error('Startdatum muss vor dem Enddatum liegen');
+      }
+
+      // Finde den Mitarbeiter für employee_name
+      const employee = employees.find(emp => emp.id === formData.employee_id);
+      if (!employee) {
+        throw new Error('Mitarbeiter nicht gefunden');
+      }
+
+      const submitData = {
+        ...formData,
+        employee_name: employee.name
+      };
+
+      if (editingEntry) {
+        await vacationAPI.update(editingEntry.id, submitData);
+      } else {
+        await vacationAPI.create(submitData);
+      }
+      onSave();
+      onClose();
+    } catch (err) {
+      setError(err.response?.data?.error || err.message || 'Ein Fehler ist aufgetreten');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('Urlaubseintrag wirklich löschen?')) {
+      try {
+        await vacationAPI.delete(editingEntry.id);
+        onSave();
+        onClose();
+      } catch (err) {
+        alert('Fehler beim Löschen des Urlaubseintrags');
+      }
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h3 className="text-lg font-semibold">
+            {editingEntry ? 'Urlaub bearbeiten' : 'Neuer Urlaub'}
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded text-sm">
+              {error}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Mitarbeiter *
+            </label>
+            <select
+              value={formData.employee_id}
+              onChange={(e) => setFormData({ ...formData, employee_id: e.target.value })}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="">Mitarbeiter auswählen</option>
+              {employees.map((emp) => (
+                <option key={emp.id} value={emp.id}>
+                  {emp.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Von *
+              </label>
+              <input
+                type="date"
+                value={formData.start_date}
+                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Bis *
+              </label>
+              <input
+                type="date"
+                value={formData.end_date}
+                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Art *
+            </label>
+            <select
+              value={formData.vacation_type}
+              onChange={(e) => setFormData({ ...formData, vacation_type: e.target.value })}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {Object.entries(VACATION_TYPES).map(([key, type]) => (
+                <option key={key} value={key}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Notizen
+            </label>
+            <textarea
+              value={formData.notes}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows="3"
+              placeholder="Optionale Notizen..."
+            />
+          </div>
+
+          <div className="flex justify-between pt-4">
+            {editingEntry && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              >
+                <Trash2 className="w-4 h-4 mr-1 inline" />
+                Löschen
+              </button>
+            )}
+            <div className="flex space-x-2 ml-auto">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+              >
+                Abbrechen
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
+              >
+                {loading ? 'Speichern...' : (editingEntry ? 'Aktualisieren' : 'Erstellen')}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 const EmployeeDialog = ({ isOpen, onClose, onSave, editingEmployee = null }) => {
   const [formData, setFormData] = useState({
     name: '',
