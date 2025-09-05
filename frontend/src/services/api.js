@@ -361,18 +361,21 @@ const processMonthlyVacationAccumulation = () => {
   };
 };
 
-// Manuelle Ausführung der monatlichen Akkumulation (für Tests, ab Oktober)
+// Manuelle Ausführung der monatlichen Akkumulation (für Tests, ab Oktober 2025)
 const forceMonthlyAccumulation = () => {
   const now = new Date();
+  const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1; // 1-12
   
-  if (currentMonth < 10) {
-    console.log('⚠️ Manuelle Akkumulation nicht möglich - startet erst ab Oktober');
+  const isBeforeOctoberTwentyTwentyFive = (currentYear < 2025) || (currentYear === 2025 && currentMonth < 10);
+  
+  if (isBeforeOctoberTwentyTwentyFive) {
+    console.log('⚠️ Manuelle Akkumulation nicht möglich - startet erst ab Oktober 2025');
     return {
       forced: false,
-      reason: 'Akkumulation startet erst ab Oktober',
-      currentMonth: `${now.getFullYear()}-${String(currentMonth).padStart(2, '0')}`,
-      nextStartMonth: `${now.getFullYear()}-10`
+      reason: 'Akkumulation startet erst ab Oktober 2025',
+      currentMonth: `${currentYear}-${String(currentMonth).padStart(2, '0')}`,
+      nextStartMonth: '2025-10'
     };
   }
   
