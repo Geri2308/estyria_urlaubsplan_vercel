@@ -1296,39 +1296,57 @@ function App() {
     max_concurrent_calculated: 1
   });
 
-  // Initialisierung beim App-Start
+  // Initialisierung beim App-Start - Backend-First Approach
   useEffect(() => {
     const initializeApp = async () => {
-      console.log('🚀 App wird initialisiert...');
+      console.log('🚀 App Initialisierung gestartet...');
+      setLoading(true);
       
-      // Prüfe Backend-Verbindung
-      const backendAvailable = await initializeBackend();
-      
-      if (backendAvailable) {
-        console.log('✅ Backend verfügbar - verwende FastAPI');
+      try {
+        // 1. ZUERST: Prüfe Backend-Verfügbarkeit
+        console.log('🔌 Prüfe Backend-Verfügbarkeit...');
+        const backendAvailable = await initializeBackend();
         
-        // Optional: Migration von LocalStorage (einmalig)
-        try {
-          await migrationAPI.migrateFromLocalStorage();
-        } catch (error) {
-          console.log('⚠️ Migration übersprungen oder fehlgeschlagen:', error.message);
-        }
-      } else {
-        console.warn('❌ Backend nicht verfügbar - bitte Backend starten');
-        setError('Backend nicht verfügbar. Bitte Backend starten.');
-      }
-      
-      // Prüfe Authentifizierung
-      if (isAuthenticated()) {
-        const userData = getUserData();
-        setCurrentUser(userData);
-        setAuthenticated(true);
         if (backendAvailable) {
-          loadData();
+          console.log('✅ Backend verfügbar - verwende NUR Backend (KEIN LocalStorage)');
+          setIsBackendMode(true);
+          
+          // Backend-Mode: KEINE LocalStorage-Initialisierung
+          console.log('🌐 Backend-Mode aktiviert - überspringe LocalStorage');
+          
+        } else {
+          console.log('❌ Backend nicht verfügbar - verwende LocalStorage als Fallback');
+          setIsBackendMode(false);
+          
+          // Fallback: LocalStorage-Mode (nur wenn Backend nicht verfügbar)
+          const { initializeData } = await import('./services/api');
+          await initializeData();
+          console.log('💾 LocalStorage-Mode aktiviert');
         }
+        
+        // 2. Prüfe Authentifizierung
+        if (isAuthenticated()) {
+          const userData = getUserData();
+          setCurrentUser(userData);
+          
+          // 3. Lade Daten je nach Modus
+          if (backendAvailable) {
+            console.log('📡 Lade Daten vom Backend...');
+            await loadDataFromBackend();
+          } else {
+            console.log('💾 Lade Daten vom LocalStorage...');
+            await loadDataFromLocalStorage();
+          }
+        }
+        
+      } catch (error) {
+        console.error('❌ Initialisierung fehlgeschlagen:', error);
+        setError('Fehler bei der App-Initialisierung');
+      } finally {
+        setLoading(false);
+        setInitializationComplete(true);
+        console.log('✅ App-Initialisierung abgeschlossen');
       }
-      
-      setLoading(false);
     };
 
     initializeApp();
