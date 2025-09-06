@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 
 import LoginScreen from './components/LoginScreen';
+import UserManagementDialog from './components/UserManagementDialog';
 import { employeeAPI, vacationAPI, settingsAPI } from './services/api';
 import { isAuthenticated, clearAuthData, getUserData } from './utils/auth';
 
