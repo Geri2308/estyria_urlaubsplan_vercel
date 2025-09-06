@@ -909,7 +909,7 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
   );
 };
 
-const VacationDialog = ({ isOpen, onClose, onSave, employees, editingEntry = null }) => {
+const VacationDialog = ({ isOpen, onClose, onSave, employees, editingEntry = null, isBackendMode = false }) => {
   const [formData, setFormData] = useState({
     employee_id: '',
     start_date: '',
