@@ -1836,6 +1836,7 @@ function App() {
             employees={employees}
             selectedEmployee={selectedEmployeeForPersonality}
             onSave={loadData}
+            isBackendMode={isBackendMode}
           />
 
           {/* User Management Dialog */}
