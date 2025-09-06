@@ -781,9 +781,88 @@ const performLogin = ({ username, password }) => {
   });
 };
 
-// Auth API
-const authAPI = {
-  login: performLogin,
+// User Management API (nur für Admins)
+const userAPI = {
+  // Alle Benutzer abrufen
+  getAll: () => {
+    const logins = getValidLogins();
+    const users = Object.keys(logins).map(username => ({
+      username,
+      role: username.toLowerCase() === 'admin' ? 'admin' : 'user',
+      created_date: new Date().toISOString()
+    }));
+    return Promise.resolve({ data: users });
+  },
+
+  // Neuen Benutzer erstellen
+  create: ({ username, password, role = 'user' }) => {
+    const logins = getValidLogins();
+    const usernameKey = username.toLowerCase();
+    
+    if (logins[usernameKey]) {
+      return Promise.reject({ 
+        response: { data: { error: 'Benutzername bereits vorhanden' } } 
+      });
+    }
+
+    logins[usernameKey] = password;
+    saveValidLogins(logins);
+    
+    console.log('✅ Neuer Benutzer erstellt:', username);
+    return Promise.resolve({ 
+      data: { 
+        username: usernameKey, 
+        role,
+        message: 'Benutzer erfolgreich erstellt' 
+      } 
+    });
+  },
+
+  // Benutzer-Passwort ändern
+  updatePassword: ({ username, newPassword }) => {
+    const logins = getValidLogins();
+    const usernameKey = username.toLowerCase();
+    
+    if (!logins[usernameKey]) {
+      return Promise.reject({ 
+        response: { data: { error: 'Benutzer nicht gefunden' } } 
+      });
+    }
+
+    logins[usernameKey] = newPassword;
+    saveValidLogins(logins);
+    
+    console.log('✅ Passwort geändert für:', username);
+    return Promise.resolve({ 
+      data: { message: 'Passwort erfolgreich geändert' } 
+    });
+  },
+
+  // Benutzer löschen
+  delete: (username) => {
+    const logins = getValidLogins();
+    const usernameKey = username.toLowerCase();
+    
+    if (usernameKey === 'admin') {
+      return Promise.reject({ 
+        response: { data: { error: 'Admin-Benutzer kann nicht gelöscht werden' } } 
+      });
+    }
+
+    if (!logins[usernameKey]) {
+      return Promise.reject({ 
+        response: { data: { error: 'Benutzer nicht gefunden' } } 
+      });
+    }
+
+    delete logins[usernameKey];
+    saveValidLogins(logins);
+    
+    console.log('✅ Benutzer gelöscht:', username);
+    return Promise.resolve({ 
+      data: { message: 'Benutzer erfolgreich gelöscht' } 
+    });
+  }
 };
 
 // Employee API (mit automatischem Speichern)
