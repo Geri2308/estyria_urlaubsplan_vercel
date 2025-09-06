@@ -1377,24 +1377,49 @@ function App() {
     setError('');
   };
 
+  // Daten laden - Backend oder LocalStorage je nach Modus
   const loadData = async () => {
+    if (!initializationComplete) {
+      console.log('⏳ Initialisierung noch nicht abgeschlossen - warte...');
+      return;
+    }
+
     try {
-      console.log('🔄 Lade Daten da authentifiziert...');
       setLoading(true);
-      const [employeesRes, vacationRes] = await Promise.all([
-        employeeAPI.getAll(),
-        vacationAPI.getAll()
-      ]);
-
-      console.log('👥 Employees loaded:', employeesRes.data.length);
-      console.log('🗓️ Vacation entries loaded:', vacationRes.data.length);
-      console.log('🗓️ Vacation entries:', vacationRes.data);
-
-      setEmployees(employeesRes.data);
-      setVacationEntries(vacationRes.data);
-      setError('');
-    } catch (err) {
-      console.error('❌ Loading error:', err);
+      
+      if (isBackendMode) {
+        console.log('📡 Lade Daten vom Backend...');
+        
+        // Backend-Mode: Verwende FastAPI
+        const [employeesResponse, vacationsResponse] = await Promise.all([
+          employeeAPI.getAll(),
+          vacationAPI.getAll()
+        ]);
+        
+        setEmployees(employeesResponse.data || []);
+        setVacations(vacationsResponse.data || []);
+        
+        console.log(`✅ Backend-Daten geladen: ${employeesResponse.data?.length || 0} Mitarbeiter, ${vacationsResponse.data?.length || 0} Urlaubseinträge`);
+        
+      } else {
+        console.log('💾 Lade Daten vom LocalStorage...');
+        
+        // LocalStorage-Mode: Verwende alte API
+        const { employeeAPI: localEmployeeAPI, vacationAPI: localVacationAPI } = await import('./services/api');
+        
+        const [employeesResponse, vacationsResponse] = await Promise.all([
+          localEmployeeAPI.getAll(),
+          localVacationAPI.getAll()
+        ]);
+        
+        setEmployees(employeesResponse.data || []);
+        setVacations(vacationsResponse.data || []);
+        
+        console.log(`✅ LocalStorage-Daten geladen: ${employeesResponse.data?.length || 0} Mitarbeiter, ${vacationsResponse.data?.length || 0} Urlaubseinträge`);
+      }
+      
+    } catch (error) {
+      console.error('❌ Fehler beim Laden der Daten:', error);
       setError('Fehler beim Laden der Daten');
     } finally {
       setLoading(false);
