@@ -103,16 +103,29 @@ const LoginScreen = ({ onLogin }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 <Lock className="w-5 h-5 inline mr-2 text-blue-600" />
-                Zugangscode
+                Benutzername
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={handleUsernameChange}
+                className="w-full px-6 py-4 border-2 border-gray-200 rounded-xl text-lg focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/90"
+                placeholder="Benutzername eingeben"
+                autoFocus
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                <Lock className="w-5 h-5 inline mr-2 text-blue-600" />
+                Passwort
               </label>
               <input
                 type="password"
-                value={code}
-                onChange={handleCodeChange}
-                className="w-full px-6 py-4 border-2 border-gray-200 rounded-xl text-center text-3xl font-mono tracking-widest focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/90"
-                placeholder="●●●●"
-                maxLength="4"
-                autoFocus
+                value={password}
+                onChange={handlePasswordChange}
+                className="w-full px-6 py-4 border-2 border-gray-200 rounded-xl text-lg focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/90"
+                placeholder="Passwort eingeben"
               />
             </div>
 
@@ -125,7 +138,7 @@ const LoginScreen = ({ onLogin }) => {
 
             <button
               type="submit"
-              disabled={code.length !== 4 || loading}
+              disabled={!username.trim() || !password.trim() || loading}
               className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
             >
               {loading ? (
