@@ -50,7 +50,19 @@ const LoginScreen = ({ onLogin, isBackendMode = false }) => {
       }
     } catch (error) {
       console.error('❌ Login-Fehler:', error);
-      setError('Login-Fehler: ' + error.message);
+      
+      // Robust error message handling
+      let errorMessage = 'Unbekannter Login-Fehler';
+      
+      if (error?.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
