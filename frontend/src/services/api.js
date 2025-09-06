@@ -753,8 +753,9 @@ initializeData();
 const performLogin = ({ username, password }) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      // Einfache Validierung: Username und Password prüfen
-      const validPassword = VALID_LOGINS[username.toLowerCase()];
+      // Aktuelle Login-Daten laden
+      const validLogins = getValidLogins();
+      const validPassword = validLogins[username.toLowerCase()];
       
       if (!validPassword || validPassword !== password) {
         reject({
