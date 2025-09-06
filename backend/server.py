@@ -392,4 +392,4 @@ async def startup_event():
     print("✅ API bereit!")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get('PORT', 8001)))
