@@ -180,11 +180,23 @@ metadata:
   test_sequence: 1
   run_ui: true
 
+  - task: "Backend-First Initialization - KRITISCHES PROBLEM IDENTIFIZIERT"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ BACKEND-FIRST INITIALIZATION FEHLGESCHLAGEN: Umfassende Tests zeigen, dass das Backend-First System NICHT korrekt funktioniert. DIAGNOSE: Die App lädt BEIDE Systeme gleichzeitig - LocalStorage UND Backend, anstatt nur Backend zu verwenden. CONSOLE LOG EVIDENCE: 1) LocalStorage-Initialisierung läuft trotz Backend-Verfügbarkeit ('🔄 Initialisiere Daten-System...', '📝 Erstmalige Einrichtung', '💾 Automatisch gespeichert: urlaubsplaner_employees'), 2) Backend-First Logs erscheinen korrekt ('✅ Backend verfügbar - verwende NUR Backend', '🌐 Backend-Mode aktiviert - überspringe LocalStorage'), 3) Backend lädt 323 Mitarbeiter ('✅ Backend-Daten geladen: 323 Mitarbeiter, 60 Urlaubseinträge'), was auf Duplikate hinweist. KERNPROBLEM: App-Initialisierung erkennt Backend-Verfügbarkeit nicht korrekt beim Start. Das Multi-Device Problem ist NICHT behoben - verschiedene Geräte würden weiterhin unterschiedliche LocalStorage-Daten haben! EMPFEHLUNG: Main Agent muss App.js Initialisierung überarbeiten - Backend-Check muss VOR LocalStorage-Initialisierung erfolgen."
+
 test_plan:
   current_focus:
-    - "Backend-Verbindungs-Problem - KRITISCHES PROBLEM IDENTIFIZIERT"
+    - "Backend-First Initialization - KRITISCHES PROBLEM IDENTIFIZIERT"
   stuck_tasks:
-    - "FastAPI Backend System vollständig getestet und funktionsfähig"
+    - "Backend-First Initialization - KRITISCHES PROBLEM IDENTIFIZIERT"
   test_all: false
   test_priority: "high_first"
 
