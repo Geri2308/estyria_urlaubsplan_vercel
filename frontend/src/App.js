@@ -715,11 +715,19 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
       
       if (displayEmployees) {
         for (const employee of displayEmployees) {
-          // Rufe die Update-Funktion auf, um Krankheitstage neu zu berechnen
-          // Das löst die Neuberechnung in updateEmployeeVacationDays aus
-          await employeeAPI.update(employee.id, { 
-            last_refresh: new Date().toISOString() 
-          });
+          // Dynamische API-Auswahl basierend auf Backend-Mode
+          if (isBackendMode) {
+            // Backend-Mode: Verwende FastAPI
+            await employeeAPI.update(employee.id, { 
+              last_refresh: new Date().toISOString() 
+            });
+          } else {
+            // LocalStorage-Mode: Verwende lokale API
+            const { employeeAPI: localEmployeeAPI } = await import('./services/api');
+            await localEmployeeAPI.update(employee.id, { 
+              last_refresh: new Date().toISOString() 
+            });
+          }
         }
       }
       
