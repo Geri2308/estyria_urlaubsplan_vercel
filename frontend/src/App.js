@@ -1854,6 +1854,7 @@ function App() {
             onSave={handleSaveVacation}
             employees={employees}
             editingEntry={editingVacationEntry}
+            isBackendMode={isBackendMode}
           />
 
           {/* Employee Dialog */}
