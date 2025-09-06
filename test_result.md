@@ -182,11 +182,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Krankheitstage-Aktualisierungs-Problem beheben"
-  stuck_tasks: 
-    - "Krankheitstage-Aktualisierungs-Problem beheben"
+    - "FastAPI Backend System vollständig getestet und funktionsfähig"
+  stuck_tasks: []
   test_all: false
-  test_priority: "stuck_first"
+  test_priority: "high_first"
 
   - task: "Krankheitstage-Aktualisierungs-Problem beheben"
     implemented: true
