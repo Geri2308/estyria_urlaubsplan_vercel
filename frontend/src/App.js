@@ -1328,14 +1328,15 @@ function App() {
         if (isAuthenticated()) {
           const userData = getUserData();
           setCurrentUser(userData);
+          setAuthenticated(true);
           
           // 3. Lade Daten je nach Modus
           if (backendAvailable) {
             console.log('📡 Lade Daten vom Backend...');
-            await loadDataFromBackend();
+            await loadData();
           } else {
             console.log('💾 Lade Daten vom LocalStorage...');
-            await loadDataFromLocalStorage();
+            // LocalStorage data loading would be handled by initializeData above
           }
         }
         
