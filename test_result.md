@@ -326,6 +326,21 @@ test_plan:
         agent: "testing"
         comment: "🎉 MÜLLEIMER-DELETE-PROBLEM VOLLSTÄNDIG BEHOBEN: Umfassende Tests des behobenen Settings-Dropdown und der Delete-Funktionalität bestätigen vollständige Funktionsfähigkeit! SETTINGS-DROPDOWN IMPORT-FIX VALIDIERUNG: ✅ Admin-Login (admin/admin123) funktioniert perfekt, ✅ Console Debug-Logs 'Settings clicked, current showSettings: false/true' erscheinen korrekt, ✅ Settings-Icon (Zahnrad) korrekt dargestellt und klickbar, ✅ Dropdown öffnet sich mit korrektem z-index: 9999, ✅ Dropdown-Inhalt: 'BenutzerverwaltungPersönlichkeitsprofilAbmelden'. BENUTZERVERWALTUNG ZUGRIFF: ✅ 'Benutzerverwaltung' Option mit Users-Icon nur für Admins sichtbar, ✅ UserManagementDialog öffnet sich korrekt mit Titel 'Benutzerverwaltung', ✅ Alle 6 Standard-Benutzer angezeigt: admin (👑 Administrator), logistik, manager, hr, gerhard, express. TESTBENUTZER ERSTELLUNG: ✅ 'Neuen Benutzer erstellen' funktioniert einwandfrei, ✅ deletetest/delete123 erfolgreich erstellt, ✅ Neuer Benutzer erscheint in Liste mit Mülleimer-Icon. MÜLLEIMER-DELETE-TEST MIT DEBUG-LOGGING: ✅ Mülleimer-Icon (Trash2) bei deletetest gefunden und funktional, ✅ Console-Logs vollständig: '🗑️ Lösche Benutzer: deletetest', '🗑️ userAPI.delete aufgerufen mit: deletetest', '✅ Neuer Benutzer erstellt: deletetest', ✅ Confirm-Dialog funktioniert korrekt, ✅ Success Alert 'Benutzer erfolgreich gelöscht!' erscheint, ✅ UI-Update: deletetest verschwindet aus Liste. ADMIN-SCHUTZ VALIDIERUNG: ✅ Admin hat Crown-Symbol (👑) und KEINEN Delete-Button (korrekt geschützt), ✅ Andere Standard-Benutzer haben Key-Icon und Trash-Icon verfügbar. PERSISTIERUNG TEST: ✅ Gelöschte Benutzer können sich nicht mehr einloggen (Login-Validierung funktioniert). Das ursprünglich gemeldete Mülleimer-Delete-Problem ist vollständig behoben - alle Debug-Logs, UI-Updates und Persistierung funktionieren einwandfrei!"
 
+  - task: "Failed to fetch Login-Problem beheben - Container-Netzwerk-Issue"
+    implemented: true
+    working: true
+    file: "/app/frontend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Benutzer berichtet 'Failed to fetch' Fehler auf Login-Screen nach vorheriger HTTP 404 Behebung."
+      - working: true
+        agent: "main"
+        comment: "Container-Netzwerk-Problem behoben durch troubleshoot_agent Diagnose. Root Cause: localhost:8001/api funktioniert für interne Container-Tests, aber nicht für externe Browser-Zugriffe. REACT_APP_BACKEND_URL von 'http://localhost:8001/api' auf 'http://10.219.36.14:8001/api' (Container-IP) geändert. Tests bestätigen: Kein 'Failed to fetch' Fehler mehr, erfolgreiches Login und Weiterleitung zur Hauptanwendung."
+
   - task: "HTTP 404 Login-Problem beheben"
     implemented: true
     working: true
@@ -342,6 +357,8 @@ test_plan:
         comment: "HTTP 404 Problem behoben durch Korrektur der Frontend Backend-URL. REACT_APP_BACKEND_URL von 'https://express-scheduler.preview.emergentagent.com' auf 'http://localhost:8001/api' geändert. Login-Test erfolgreich: admin/admin123 → Hauptanwendung mit Admin-Badge. Das troubleshoot_agent identifizierte das Problem als Konfigurationsfehler - Frontend kontaktierte falsche Backend-URL."
 
 agent_communication:
+  - agent: "main"
+    message: "BEIDE LOGIN-PROBLEME VOLLSTÄNDIG BEHOBEN: 1) HTTP 404 durch falsche Preview-URL → localhost:8001/api korrigiert, 2) 'Failed to fetch' durch Container-Netzwerk-Problem → Container-IP 10.219.36.14:8001/api verwendet. troubleshoot_agent identifizierte beide Root Causes. Login-System funktioniert jetzt einwandfrei mit erfolgreicher Weiterleitung zur Hauptanwendung."
   - agent: "main"
     message: "KRITISCHES LOGIN-PROBLEM BEHOBEN: HTTP 404 Error durch falsche Backend-URL in .env-Datei verursacht. troubleshoot_agent identifizierte Konfigurationsfehler: Frontend verwendete Preview-URL statt localhost:8001/api. Nach Korrektur funktioniert Login (admin/admin123) einwandfrei mit Weiterleitung zur Hauptanwendung."
   - agent: "main"
