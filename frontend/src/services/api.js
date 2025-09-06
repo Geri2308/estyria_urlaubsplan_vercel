@@ -1162,5 +1162,6 @@ export {
   processMonthlyVacationAccumulation,
   forceMonthlyAccumulation,
   getAccumulationStatus,
-  resetAllEmployeesToTwentyFiveDays
+  resetAllEmployeesToTwentyFiveDays,
+  performLogin
 };
