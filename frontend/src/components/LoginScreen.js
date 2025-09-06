@@ -36,14 +36,15 @@ const LoginScreen = ({ onLogin, isBackendMode = false }) => {
         }
       } else {
         // LocalStorage-Mode: Verwende lokale Auth
-        const { authenticateUser } = await import('../services/api');
-        const isValid = authenticateUser(username, password);
+        const { performLogin } = await import('../services/api');
+        const response = await performLogin({ username, password });
         
-        if (isValid) {
-          console.log('✅ LocalStorage-Login erfolgreich');
+        if (response.data.success) {
+          console.log('✅ LocalStorage-Login erfolgreich:', response.data.user.username);
+          setAuthData(response.data.token, response.data.user);
           onLogin();
         } else {
-          console.log('❌ LocalStorage-Login fehlgeschlagen');
+          console.log('❌ LocalStorage-Login fehlgeschlagen:', response.data.message);
           setError('Ungültige Login-Daten');
         }
       }
