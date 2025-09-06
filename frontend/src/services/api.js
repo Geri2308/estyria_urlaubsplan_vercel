@@ -1140,12 +1140,13 @@ const settingsAPI = {
   },
 };
 
-// API-Exporte mit Reset-Funktion
+// API-Exporte mit Reset-Funktion und User-Management
 export { 
   authAPI, 
   employeeAPI, 
   vacationAPI, 
   settingsAPI,
+  userAPI,
   dataManagement,
   initializeData,
   processMonthlyVacationAccumulation,
