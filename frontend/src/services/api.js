@@ -2,14 +2,24 @@
 // Alles wird lokal im Browser gespeichert
 
 // Login-Codes (können Sie später ändern)
-// Einfache Login-Daten (Username/Password)
-const VALID_LOGINS = {
+// Standard Login-Daten (werden bei erster Initialisierung gespeichert)
+const DEFAULT_LOGINS = {
   'admin': 'admin123',
   'logistik': 'logistik123', 
   'manager': 'manager123',
   'hr': 'hr123',
   'gerhard': 'gerhard123',
   'express': 'express123'
+};
+
+// Login-Daten aus localStorage laden oder Standard verwenden
+const getValidLogins = () => {
+  return getFromStorage('urlaubsplaner_logins', DEFAULT_LOGINS);
+};
+
+// Login-Daten speichern
+const saveValidLogins = (logins) => {
+  saveToStorage('urlaubsplaner_logins', logins);
 };
 
 // Ihre echten Mitarbeiter (fest im Code)
