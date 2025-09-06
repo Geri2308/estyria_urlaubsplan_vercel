@@ -36,7 +36,15 @@ const LoginScreen = ({ onLogin, isBackendMode = false }) => {
         }
       } else {
         // LocalStorage-Mode: Verwende lokale Auth
-        const { performLogin } = await import('../services/api');
+        console.log('🔄 LocalStorage-Mode: Initialisiere und teste Login...');
+        
+        // Importiere benötigte Funktionen
+        const { performLogin, initializeData } = await import('../services/api');
+        
+        // Stelle sicher, dass LocalStorage initialisiert ist
+        await initializeData();
+        
+        // Versuche Login
         const response = await performLogin({ username, password });
         
         if (response.data.success) {
