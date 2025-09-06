@@ -682,9 +682,11 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
   const handleSave = async () => {
     setLoading(true);
     try {
+      const { employeeAPI: currentEmployeeAPI } = await getAPI();
+      
       // Aktualisiere jeden Mitarbeiter mit den neuen Traits
       for (const [employeeId, traits] of Object.entries(personalityTraits)) {
-        await employeeAPI.update(employeeId, { personality_traits: traits });
+        await currentEmployeeAPI.update(employeeId, { personality_traits: traits });
       }
       
       console.log('✅ Persönlichkeitsmerkmale aktualisiert:', personalityTraits);
