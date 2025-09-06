@@ -31,6 +31,7 @@ import {
 
 import LoginScreen from './components/LoginScreen';
 import UserManagementDialog from './components/UserManagementDialog';
+import DataSyncDialog from './components/DataSyncDialog';
 import { 
   employeeAPI, 
   vacationAPI, 
