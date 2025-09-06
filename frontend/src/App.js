@@ -26,7 +26,7 @@ import {
   Minus,
   LogOut,
   Settings as SettingsIcon,
-  Users
+  Users as UsersIcon
 } from 'lucide-react';
 
 import LoginScreen from './components/LoginScreen';
