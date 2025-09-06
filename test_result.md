@@ -182,8 +182,9 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Backend-Verbindungs-Problem - KRITISCHES PROBLEM IDENTIFIZIERT"
+  stuck_tasks:
     - "FastAPI Backend System vollständig getestet und funktionsfähig"
-  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
