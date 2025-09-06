@@ -1294,18 +1294,42 @@ function App() {
     max_concurrent_calculated: 1
   });
 
-  // Check authentication on app load
+  // Initialisierung beim App-Start
   useEffect(() => {
-    console.log('🔄 App useEffect - prüfe Auth');
-    if (isAuthenticated()) {
-      console.log('✅ Bereits authentifiziert');
-      const userData = getUserData();
-      setCurrentUser(userData);
-      setAuthenticated(true);
-    } else {
-      console.log('❌ Nicht authentifiziert');
-    }
-    setLoading(false);
+    const initializeApp = async () => {
+      console.log('🚀 App wird initialisiert...');
+      
+      // Prüfe Backend-Verbindung
+      const backendAvailable = await initializeBackend();
+      
+      if (backendAvailable) {
+        console.log('✅ Backend verfügbar - verwende FastAPI');
+        
+        // Optional: Migration von LocalStorage (einmalig)
+        try {
+          await migrationAPI.migrateFromLocalStorage();
+        } catch (error) {
+          console.log('⚠️ Migration übersprungen oder fehlgeschlagen:', error.message);
+        }
+      } else {
+        console.warn('❌ Backend nicht verfügbar - bitte Backend starten');
+        setError('Backend nicht verfügbar. Bitte Backend starten.');
+      }
+      
+      // Prüfe Authentifizierung
+      if (isAuthenticated()) {
+        const userData = getUserData();
+        setCurrentUser(userData);
+        setAuthenticated(true);
+        if (backendAvailable) {
+          loadData();
+        }
+      }
+      
+      setLoading(false);
+    };
+
+    initializeApp();
   }, []);
 
   // Load data when authenticated
