@@ -25,7 +25,7 @@ import {
   Star,
   Minus,
   LogOut,
-  Settings,
+  Settings as SettingsIcon,
   Users
 } from 'lucide-react';
 
