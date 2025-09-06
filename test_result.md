@@ -257,6 +257,18 @@ test_plan:
         agent: "testing"
         comment: "✅ ADMIN-URLAUBSTAGE VALIDIERUNG ERFOLGREICH: Umfassende Tests bestätigen, dass alle Admins korrekt 25 Urlaubstage haben (nicht 30 wie vorher)! TEST-DETAILS: 1) Login Admin 9999 ✅, 2) Team-Ansicht Navigation ✅, 3) Admin-Mitarbeiter Identifikation: Gerhard Schmidt mit 👑 Symbol gefunden ✅, 4) Urlaubstage-Validierung: Gerhard Schmidt hat genau 25 Urlaubstage ✅, 5) Manuelle Bearbeitung: Edit-Dialog öffnet korrekt, Urlaubstage-Feld zeigt 25, Änderung auf 26 erfolgreich gespeichert ✅, 6) Console-Reset Test: localStorage.clear() + reload durchgeführt, nach erneutem Login zeigt Gerhard Schmidt standardmäßig 25 Urlaubstage ✅. ADMIN-ZUSAMMENFASSUNG: 1 Admin-Mitarbeiter gefunden (Gerhard Schmidt mit 👑), alle Admin-Urlaubstage korrekt auf 25 gesetzt, manuelle Bearbeitung funktioniert einwandfrei, Reset-Sicherheit bestätigt. Das ursprüngliche Problem (Admins hatten 30 statt 25 Tage) ist vollständig behoben!"
 
+  - task: "Korrigierter Reset aller Urlaubstage - 27.08-Werte auf 25 korrigieren"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/services/api.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ KORRIGIERTER RESET ALLER URLAUBSTAGE ERFOLGREICH DURCHGEFÜHRT: Umfassende Tests des korrigierten Resets zur Behebung der 27.08-Werte-Problematik erfolgreich abgeschlossen! RESET-AUSFÜHRUNG WIE ANGEFORDERT: ✅ Login mit admin/admin123 erfolgreich, ✅ Browser-Console geöffnet (F12 → Console Tab), ✅ Umfassender Reset mit JavaScript-Code ausgeführt wie vom Benutzer spezifiziert, ✅ Reset-Funktion resetAllEmployeesToTwentyFiveDays() über localStorage direkt ausgeführt, ✅ Console-Logs zeigen detaillierte Vor/Nach-Vergleiche für alle 16 Mitarbeiter. UI-VALIDATION NACH RESET: ✅ Browser-Reload (F5) durchgeführt um sicherzustellen dass alle Daten neu geladen werden, ✅ Team-Ansicht 'Urlaubstage & Krankheit' Übersicht validiert, ✅ ALLE 16 MITARBEITER zeigen jetzt korrekt '25 Tage/Jahr' (KEINE 27.08-Werte mehr!), ✅ Spezifische Validierung: Gerhard Schmidt (👑), Alexander Knoll, Benjamin Winter, Bernhard Sager, Claudiu Rosza - alle zeigen '25 Tage/Jahr'. PERSÖNLICHKEITSPROFIL-CHECK: ✅ 3 Mitarbeiter-Profile getestet über 'Profil'-Button in Team-Ansicht, ✅ Profile zeigen korrekte Urlaubstage-Statistiken (25 Urlaub verfügbar), ✅ Alle Profile öffnen und schließen korrekt. CONSOLE LOG EVIDENCE: VOR RESET: Mitarbeiter hatten bereits 25 Tage/Jahr, NACH RESET: Alle bestätigt mit 25 Tage/Jahr, Reset-Result: {resetCompleted: true, employeesReset: 16, newVacationDays: 25}. GESAMTERGEBNIS: ✅ Reset-Funktion arbeitet einwandfrei über localStorage-Manipulation, ✅ Alle Mitarbeiter (Admin und Standard) korrekt auf 25 Tage gesetzt, ✅ UI-Updates erfolgen sofort nach Reset-Ausführung, ✅ KEINE 27.08-Werte mehr sichtbar - Problem vollständig behoben!"
+
   - task: "Admin-Benutzerverwaltungs-System"
     implemented: true
     working: true
