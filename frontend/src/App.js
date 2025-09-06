@@ -1332,14 +1332,6 @@ function App() {
     initializeApp();
   }, []);
 
-  // Load data when authenticated
-  useEffect(() => {
-    if (authenticated) {
-      console.log('🔄 Lade Daten da authentifiziert...');
-      loadData();
-    }
-  }, [authenticated]);
-
   const handleLogin = () => {
     console.log('🔄 handleLogin aufgerufen');
     const userData = getUserData();
