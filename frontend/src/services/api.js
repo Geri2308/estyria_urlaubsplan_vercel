@@ -714,7 +714,143 @@ const dataManagement = {
     }
   },
   
-  // Daten aus Backup wiederherstellen
+  // Import von Datei
+  importFromFile: (file) => {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        reject(new Error('Keine Datei ausgewählt'));
+        return;
+      }
+      
+      if (!file.name.endsWith('.json')) {
+        reject(new Error('Nur JSON-Dateien sind erlaubt'));
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const importData = JSON.parse(e.target.result);
+          
+          // Validiere Import-Daten
+          if (!importData.version || !importData.timestamp) {
+            throw new Error('Ungültiges Export-Format');
+          }
+          
+          // Zeige Import-Vorschau
+          const preview = {
+            version: importData.version,
+            timestamp: importData.timestamp,
+            employees: importData.employees ? importData.employees.length : 0,
+            vacations: importData.vacations ? importData.vacations.length : 0,
+            logins: importData.logins ? Object.keys(importData.logins).length : 0,
+            device: importData.device || 'Unbekannt'
+          };
+          
+          console.log('📥 Import-Vorschau:', preview);
+          resolve({ data: importData, preview });
+          
+        } catch (error) {
+          reject(new Error('Fehler beim Lesen der Datei: ' + error.message));
+        }
+      };
+      
+      reader.onerror = () => reject(new Error('Fehler beim Lesen der Datei'));
+      reader.readAsText(file);
+    });
+  },
+  
+  // Importierte Daten anwenden
+  applyImport: (importData, options = {}) => {
+    try {
+      const { 
+        mergeMode = 'replace', // 'replace' oder 'merge'
+        includeLogins = true,
+        includeEmployees = true,
+        includeVacations = true 
+      } = options;
+      
+      console.log('🔄 Starte Import mit Modus:', mergeMode);
+      
+      let importStats = {
+        employees: { imported: 0, skipped: 0 },
+        vacations: { imported: 0, skipped: 0 },
+        logins: { imported: 0, skipped: 0 }
+      };
+      
+      // Importiere Mitarbeiter
+      if (includeEmployees && importData.employees) {
+        if (mergeMode === 'replace') {
+          saveToStorage('urlaubsplaner_employees', importData.employees);
+          importStats.employees.imported = importData.employees.length;
+        } else {
+          // Merge-Modus: Kombiniere bestehende und neue Daten
+          const existingEmployees = getFromStorage('urlaubsplaner_employees', []);
+          const mergedEmployees = [...existingEmployees];
+          
+          importData.employees.forEach(newEmp => {
+            const existingIndex = mergedEmployees.findIndex(emp => emp.id === newEmp.id);
+            if (existingIndex >= 0) {
+              mergedEmployees[existingIndex] = { ...mergedEmployees[existingIndex], ...newEmp };
+              importStats.employees.skipped++;
+            } else {
+              mergedEmployees.push(newEmp);
+              importStats.employees.imported++;
+            }
+          });
+          
+          saveToStorage('urlaubsplaner_employees', mergedEmployees);
+        }
+      }
+      
+      // Importiere Urlaubseinträge
+      if (includeVacations && importData.vacations) {
+        if (mergeMode === 'replace') {
+          saveToStorage('urlaubsplaner_vacations', importData.vacations);
+          importStats.vacations.imported = importData.vacations.length;
+        } else {
+          const existingVacations = getFromStorage('urlaubsplaner_vacations', []);
+          const mergedVacations = [...existingVacations];
+          
+          importData.vacations.forEach(newVac => {
+            const existingIndex = mergedVacations.findIndex(vac => vac.id === newVac.id);
+            if (existingIndex >= 0) {
+              mergedVacations[existingIndex] = { ...mergedVacations[existingIndex], ...newVac };
+              importStats.vacations.skipped++;
+            } else {
+              mergedVacations.push(newVac);
+              importStats.vacations.imported++;
+            }
+          });
+          
+          saveToStorage('urlaubsplaner_vacations', mergedVacations);
+        }
+      }
+      
+      // Importiere Login-Daten (nur im Replace-Modus)
+      if (includeLogins && importData.logins && mergeMode === 'replace') {
+        saveToStorage('urlaubsplaner_logins', importData.logins);
+        importStats.logins.imported = Object.keys(importData.logins).length;
+      }
+      
+      // Markiere Import-Zeitpunkt
+      localStorage.setItem('urlaubsplaner_last_import', new Date().toISOString());
+      localStorage.setItem('urlaubsplaner_import_source', JSON.stringify({
+        timestamp: importData.timestamp,
+        version: importData.version,
+        device: importData.device
+      }));
+      
+      console.log('✅ Import abgeschlossen:', importStats);
+      return { success: true, stats: importStats };
+      
+    } catch (error) {
+      console.error('❌ Fehler beim Import:', error);
+      return { success: false, error: error.message };
+    }
+  },
+  
+  // Daten aus Backup wiederherstellen (alte Funktion für Kompatibilität)
   restoreFromBackup: (backupData) => {
     try {
       const parsed = typeof backupData === 'string' ? JSON.parse(backupData) : backupData;
