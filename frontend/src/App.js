@@ -1545,7 +1545,7 @@ function App() {
 
   // Show login screen if not authenticated
   if (!authenticated) {
-    return <LoginScreen onLogin={handleLogin} />;
+    return <LoginScreen onLogin={handleLogin} isBackendMode={isBackendMode} />;
   }
 
   return (
