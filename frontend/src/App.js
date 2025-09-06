@@ -654,7 +654,7 @@ const YearCalendarView = ({ currentDate, vacationEntries, onMonthClick }) => {
 };
 
 // Personality Profile Dialog Component
-const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee = null, onSave }) => {
+const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee = null, onSave, isBackendMode = false }) => {
   const [personalityTraits, setPersonalityTraits] = useState({});
   const [loading, setLoading] = useState(false);
 
