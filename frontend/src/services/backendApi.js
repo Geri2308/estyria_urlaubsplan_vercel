@@ -193,15 +193,39 @@ export const dataManagement = {
   }
 };
 
-// Initialisierung - prüfe Backend-Verbindung
+// Backend verfügbarkeit prüfen
 export const initializeBackend = async () => {
+  console.log('🌐 Backend API URL:', API_BASE_URL);
+  
   try {
-    console.log('🔌 Prüfe Backend-Verbindung...');
-    const health = await healthAPI.check();
-    console.log('✅ Backend ist verfügbar:', health.data);
-    return true;
+    // Timeout für Health-Check (3 Sekunden)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    
+    const response = await fetch(`${API_BASE_URL}/health`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (response.ok) {
+      const health = await response.json();
+      console.log('✅ Backend ist verfügbar:', health);
+      return true;
+    } else {
+      console.log('❌ Backend antwortet nicht korrekt:', response.status);
+      return false;
+    }
   } catch (error) {
-    console.error('❌ Backend nicht verfügbar:', error);
+    console.log('❌ Backend nicht erreichbar:', error.message);
+    // In Vercel/Production ohne Backend ist das normal
+    if (error.name === 'AbortError') {
+      console.log('⏱️ Backend Health-Check Timeout - verwende LocalStorage');
+    } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+      console.log('🔌 Netzwerk-Problem - verwende LocalStorage als Fallback');
+    }
     return false;
   }
 };
