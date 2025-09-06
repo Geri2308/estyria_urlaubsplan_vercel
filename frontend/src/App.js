@@ -1339,6 +1339,8 @@ function App() {
     setCurrentUser(userData);
     setAuthenticated(true);
     console.log('✅ Auth state auf true gesetzt');
+    // Load data after successful login
+    loadData();
   };
 
   const handleLogout = () => {
