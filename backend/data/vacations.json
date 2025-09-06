@@ -592,5 +592,71 @@
     "days_count": 1.0,
     "description": "",
     "created_date": "2025-09-06T09:36:22.596259"
+  },
+  {
+    "id": "3944faba-510e-47a9-97d9-cfbf001770af",
+    "employee_id": "1",
+    "employee_name": "Gerhard Pailer",
+    "vacation_type": "URLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-17",
+    "days_count": 3.0,
+    "description": "",
+    "created_date": "2025-09-06T09:49:43.848810"
+  },
+  {
+    "id": "8fff1f80-82ab-4228-aff4-b50a14eb532d",
+    "employee_id": "1",
+    "employee_name": "Gerhard Pailer",
+    "vacation_type": "URLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-17",
+    "days_count": 3.0,
+    "description": "",
+    "created_date": "2025-09-06T09:49:43.888328"
+  },
+  {
+    "id": "21a8880a-e2e5-4611-80fa-eaf9eec6f250",
+    "employee_id": "2",
+    "employee_name": "Mario Pregartner",
+    "vacation_type": "KRANKHEIT",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-16",
+    "days_count": 2.0,
+    "description": "",
+    "created_date": "2025-09-06T09:49:43.896376"
+  },
+  {
+    "id": "75512449-1014-4ce8-b6c4-95c0cedad7f1",
+    "employee_id": "2",
+    "employee_name": "Mario Pregartner",
+    "vacation_type": "KRANKHEIT",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-16",
+    "days_count": 2.0,
+    "description": "",
+    "created_date": "2025-09-06T09:49:43.904625"
+  },
+  {
+    "id": "5a0c476b-7b07-4611-aa8e-32ef9ac475bb",
+    "employee_id": "7",
+    "employee_name": "Claudiu Rosza",
+    "vacation_type": "SONDERURLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-15",
+    "days_count": 1.0,
+    "description": "",
+    "created_date": "2025-09-06T09:49:43.937957"
+  },
+  {
+    "id": "431255d1-2708-4a47-854d-5ce57c5c4d69",
+    "employee_id": "7",
+    "employee_name": "Claudiu Rosza",
+    "vacation_type": "SONDERURLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-15",
+    "days_count": 1.0,
+    "description": "",
+    "created_date": "2025-09-06T09:49:43.941640"
   }
 ]
