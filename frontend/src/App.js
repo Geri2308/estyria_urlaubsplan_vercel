@@ -1284,6 +1284,8 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showEmployeeDialog, setShowEmployeeDialog] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
+  const [isBackendMode, setIsBackendMode] = useState(false);
+  const [initializationComplete, setInitializationComplete] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
