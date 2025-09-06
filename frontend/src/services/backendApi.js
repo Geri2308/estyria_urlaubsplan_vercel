@@ -193,41 +193,58 @@ export const dataManagement = {
   }
 };
 
-// Backend verfügbarkeit prüfen
+// Backend verfügbarkeit prüfen - versucht mehrere URLs
 export const initializeBackend = async () => {
-  console.log('🌐 Backend API URL:', API_BASE_URL);
+  console.log('🌐 Backend-Erkennung gestartet...');
   
-  try {
-    // Timeout für Health-Check (3 Sekunden)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-    
-    const response = await fetch(`${API_BASE_URL}/health`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-    
-    if (response.ok) {
-      const health = await response.json();
-      console.log('✅ Backend ist verfügbar:', health);
-      return true;
-    } else {
-      console.log('❌ Backend antwortet nicht korrekt:', response.status);
-      return false;
+  // Liste der zu prüfenden Backend-URLs (in Prioritätsreihenfolge)
+  const backendUrls = [
+    process.env.REACT_APP_RAILWAY_BACKEND_URL, // Railway Backend (höchste Priorität)
+    process.env.REACT_APP_BACKEND_URL || '/api', // Lokaler/Proxy Backend
+  ].filter(url => url && url.trim()); // Entferne leere URLs
+  
+  console.log('🔍 Prüfe Backend-URLs:', backendUrls);
+  
+  for (const baseUrl of backendUrls) {
+    try {
+      console.log(`🌐 Versuche Backend: ${baseUrl}`);
+      
+      // Timeout für Health-Check (3 Sekunden pro URL)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      
+      const healthUrl = baseUrl.endsWith('/api') ? `${baseUrl}/health` : `${baseUrl}/api/health`;
+      const response = await fetch(healthUrl, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (response.ok) {
+        const health = await response.json();
+        console.log(`✅ Backend verfügbar auf: ${baseUrl}`, health);
+        
+        // Setze die funktionierende URL als globale API_BASE_URL
+        if (typeof window !== 'undefined') {
+          window.ACTIVE_BACKEND_URL = baseUrl;
+        }
+        
+        return { available: true, url: baseUrl, health };
+      } else {
+        console.log(`❌ Backend auf ${baseUrl} antwortet nicht korrekt:`, response.status);
+      }
+    } catch (error) {
+      console.log(`❌ Backend auf ${baseUrl} nicht erreichbar:`, error.message);
+      if (error.name === 'AbortError') {
+        console.log(`⏱️ Timeout für ${baseUrl}`);
+      }
     }
-  } catch (error) {
-    console.log('❌ Backend nicht erreichbar:', error.message);
-    // In Vercel/Production ohne Backend ist das normal
-    if (error.name === 'AbortError') {
-      console.log('⏱️ Backend Health-Check Timeout - verwende LocalStorage');
-    } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-      console.log('🔌 Netzwerk-Problem - verwende LocalStorage als Fallback');
-    }
-    return false;
   }
+  
+  console.log('❌ Kein Backend verfügbar - verwende LocalStorage als Fallback');
+  return { available: false, url: null };
 };
 
 console.log('📡 Backend API Service geladen - FastAPI ohne MongoDB');
