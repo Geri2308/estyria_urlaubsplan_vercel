@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Calendar, Lock, AlertTriangle } from 'lucide-react';
-import { authAPI } from '../services/backendApi';
 import { setAuthData } from '../utils/auth';
 
-const LoginScreen = ({ onLogin }) => {
+const LoginScreen = ({ onLogin, isBackendMode = false }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
