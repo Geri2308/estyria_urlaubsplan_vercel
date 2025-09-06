@@ -1342,10 +1342,9 @@ function App() {
     try {
       console.log('🔄 Lade Daten da authentifiziert...');
       setLoading(true);
-      const [employeesRes, vacationRes, settingsRes] = await Promise.all([
+      const [employeesRes, vacationRes] = await Promise.all([
         employeeAPI.getAll(),
-        vacationAPI.getAll(),
-        settingsAPI.get()
+        vacationAPI.getAll()
       ]);
 
       console.log('👥 Employees loaded:', employeesRes.data.length);
