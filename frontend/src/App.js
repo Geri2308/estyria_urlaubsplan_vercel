@@ -281,7 +281,7 @@ const Toolbar = ({
               }}
               className="flex items-center px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors relative"
             >
-              <Settings className="w-4 h-4" />
+              <SettingsIcon className="w-4 h-4" />
             </button>
             
             {showSettings && (
