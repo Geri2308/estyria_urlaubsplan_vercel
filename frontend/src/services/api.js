@@ -739,26 +739,24 @@ const dataManagement = {
 // Initialisierung ausführen
 initializeData();
 
-// Login-Funktion
-const performLogin = (code) => {
+// Login-Funktion (Username/Password)
+const performLogin = ({ username, password }) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      // Finde Benutzer basierend auf Code
-      const userEntry = Object.entries(VALID_LOGINS).find(
-        ([, userCode]) => userCode === code
-      );
-
-      if (!userEntry) {
+      // Einfache Validierung: Username und Password prüfen
+      const validPassword = VALID_LOGINS[username.toLowerCase()];
+      
+      if (!validPassword || validPassword !== password) {
         reject({
           response: {
-            data: { error: 'Ungültiger Code' }
+            data: { error: 'Ungültiger Benutzername oder Passwort' }
           }
         });
         return;
       }
 
-      const [username, ] = userEntry;
-      const role = username === 'admin' ? 'admin' : 'user';
+      // Rolle basierend auf Username bestimmen
+      const role = username.toLowerCase() === 'admin' ? 'admin' : 'user';
 
       resolve({
         data: {
