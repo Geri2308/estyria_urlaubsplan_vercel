@@ -207,7 +207,7 @@ export const initializeBackend = async () => {
   
   // Liste der zu prüfenden Backend-URLs (in Prioritätsreihenfolge)
   const backendUrls = [
-    process.env.REACT_APP_RAILWAY_BACKEND_URL, // Railway Backend (höchste Priorität)
+    process.env.REACT_APP_RENDER_BACKEND_URL, // Render Backend (höchste Priorität)
     process.env.REACT_APP_BACKEND_URL || '/api', // Lokaler/Proxy Backend
   ].filter(url => url && url.trim()); // Entferne leere URLs
   
