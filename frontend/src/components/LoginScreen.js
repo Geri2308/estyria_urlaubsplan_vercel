@@ -16,30 +16,40 @@ const LoginScreen = ({ onLogin, isBackendMode = false }) => {
       return;
     }
 
-    console.log('🔄 Login gestartet mit Benutzername:', username);
+    console.log(`🔄 Login gestartet mit Benutzername: ${username} (${isBackendMode ? 'Backend' : 'LocalStorage'} Mode)`);
     setLoading(true);
     setError('');
 
     try {
-      console.log('🔄 Rufe authAPI.login auf...');
-      // Einfache Login-Validierung
-      const response = await authAPI.login({ username: username.trim(), password: password.trim() });
-      console.log('✅ Login Response:', response.data);
-      
-      const { token, user } = response.data;
-      
-      // Speichere Auth-Daten
-      setAuthData(token, user);
-      console.log('✅ Auth-Daten gespeichert');
-      
-      // Rufe onLogin auf
-      onLogin();
-      console.log('✅ onLogin() aufgerufen');
-    } catch (err) {
-      console.error('❌ Login-Fehler:', err);
-      setError(err.response?.data?.error || 'Ungültige Anmeldedaten');
-      setUsername('');
-      setPassword('');
+      if (isBackendMode) {
+        // Backend-Mode: Verwende backendApi
+        const { authAPI } = await import('../services/backendApi');
+        const response = await authAPI.login(username, password);
+        
+        if (response.success) {
+          console.log('✅ Backend-Login erfolgreich:', response.user.username);
+          setAuthData(response.token, response.user);
+          onLogin();
+        } else {
+          console.log('❌ Backend-Login fehlgeschlagen:', response.message);
+          setError(response.message || 'Login fehlgeschlagen');
+        }
+      } else {
+        // LocalStorage-Mode: Verwende lokale Auth
+        const { authenticateUser } = await import('../services/api');
+        const isValid = authenticateUser(username, password);
+        
+        if (isValid) {
+          console.log('✅ LocalStorage-Login erfolgreich');
+          onLogin();
+        } else {
+          console.log('❌ LocalStorage-Login fehlgeschlagen');
+          setError('Ungültige Login-Daten');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Login-Fehler:', error);
+      setError('Login-Fehler: ' + error.message);
     } finally {
       setLoading(false);
     }
