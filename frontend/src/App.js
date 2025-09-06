@@ -1332,6 +1332,7 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showEmployeeDialog, setShowEmployeeDialog] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
+  const [showDataSync, setShowDataSync] = useState(false);
   const [isBackendMode, setIsBackendMode] = useState(false);
   const [initializationComplete, setInitializationComplete] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
