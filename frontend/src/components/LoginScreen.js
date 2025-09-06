@@ -4,19 +4,27 @@ import { authAPI } from '../services/api';
 import { setAuthData } from '../utils/auth';
 
 const LoginScreen = ({ onLogin }) => {
-  const [code, setCode] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('🔄 Login gestartet mit Code:', code);
+    
+    if (!username.trim() || !password.trim()) {
+      setError('Bitte Benutzername und Passwort eingeben');
+      return;
+    }
+
+    console.log('🔄 Login gestartet mit Benutzername:', username);
     setLoading(true);
     setError('');
 
     try {
       console.log('🔄 Rufe authAPI.login auf...');
-      const response = await authAPI.login(code);
+      // Einfache Login-Validierung
+      const response = await authAPI.login({ username: username.trim(), password: password.trim() });
       console.log('✅ Login Response:', response.data);
       
       const { token, user } = response.data;
@@ -30,16 +38,21 @@ const LoginScreen = ({ onLogin }) => {
       console.log('✅ onLogin() aufgerufen');
     } catch (err) {
       console.error('❌ Login-Fehler:', err);
-      setError(err.response?.data?.error || 'Fehler beim Anmelden');
-      setCode('');
+      setError(err.response?.data?.error || 'Ungültige Anmeldedaten');
+      setUsername('');
+      setPassword('');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCodeChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 4);
-    setCode(value);
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+    if (error) setError('');
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
     if (error) setError('');
   };
 
