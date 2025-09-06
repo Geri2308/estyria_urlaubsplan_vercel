@@ -992,7 +992,13 @@ const VacationDialog = ({ isOpen, onClose, onSave, employees, editingEntry = nul
   const handleDelete = async () => {
     if (window.confirm('Urlaubseintrag wirklich löschen?')) {
       try {
-        await vacationAPI.delete(editingEntry.id);
+        // Dynamische API-Auswahl für Delete
+        if (isBackendMode) {
+          await vacationAPI.delete(editingEntry.id);
+        } else {
+          const { vacationAPI: localVacationAPI } = await import('./services/api');
+          await localVacationAPI.delete(editingEntry.id);
+        }
         onSave();
         onClose();
       } catch (err) {
