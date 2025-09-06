@@ -964,9 +964,21 @@ const VacationDialog = ({ isOpen, onClose, onSave, employees, editingEntry = nul
       };
 
       if (editingEntry) {
-        await vacationAPI.update(editingEntry.id, submitData);
+        // Dynamische API-Auswahl für Update
+        if (isBackendMode) {
+          await vacationAPI.update(editingEntry.id, submitData);
+        } else {
+          const { vacationAPI: localVacationAPI } = await import('./services/api');
+          await localVacationAPI.update(editingEntry.id, submitData);
+        }
       } else {
-        await vacationAPI.create(submitData);
+        // Dynamische API-Auswahl für Create
+        if (isBackendMode) {
+          await vacationAPI.create(submitData);
+        } else {
+          const { vacationAPI: localVacationAPI } = await import('./services/api');
+          await localVacationAPI.create(submitData);
+        }
       }
       onSave();
       onClose();
