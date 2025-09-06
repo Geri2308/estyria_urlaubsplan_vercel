@@ -1122,7 +1122,7 @@ const VacationDialog = ({ isOpen, onClose, onSave, employees, editingEntry = nul
     </div>
   );
 };
-const EmployeeDialog = ({ isOpen, onClose, onSave, editingEmployee = null }) => {
+const EmployeeDialog = ({ isOpen, onClose, onSave, editingEmployee = null, isBackendMode = false }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
