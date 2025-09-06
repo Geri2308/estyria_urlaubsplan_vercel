@@ -24,7 +24,9 @@ import {
   Trash2,
   Star,
   Minus,
-  LogOut
+  LogOut,
+  Settings,
+  Users
 } from 'lucide-react';
 
 import LoginScreen from './components/LoginScreen';
