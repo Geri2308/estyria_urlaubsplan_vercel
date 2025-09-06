@@ -1161,9 +1161,21 @@ const EmployeeDialog = ({ isOpen, onClose, onSave, editingEmployee = null, isBac
 
     try {
       if (editingEmployee) {
-        await employeeAPI.update(editingEmployee.id, formData);
+        // Dynamische API-Auswahl basierend auf Backend-Mode
+        if (isBackendMode) {
+          await employeeAPI.update(editingEmployee.id, formData);
+        } else {
+          const { employeeAPI: localEmployeeAPI } = await import('./services/api');
+          await localEmployeeAPI.update(editingEmployee.id, formData);
+        }
       } else {
-        await employeeAPI.create(formData);
+        // Dynamische API-Auswahl für Create
+        if (isBackendMode) {
+          await employeeAPI.create(formData);
+        } else {
+          const { employeeAPI: localEmployeeAPI } = await import('./services/api');
+          await localEmployeeAPI.create(formData);
+        }
       }
       onSave();
       onClose();
