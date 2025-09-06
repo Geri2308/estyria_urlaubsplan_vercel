@@ -865,6 +865,11 @@ const userAPI = {
   }
 };
 
+// Auth API
+const authAPI = {
+  login: performLogin,
+};
+
 // Employee API (mit automatischem Speichern)
 const employeeAPI = {
   getAll: () => {
