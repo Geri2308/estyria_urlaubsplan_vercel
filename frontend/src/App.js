@@ -273,14 +273,17 @@ const Toolbar = ({
           </span>
           <div className="relative">
             <button 
-              onClick={() => setShowSettings(!showSettings)}
-              className="flex items-center px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
+              onClick={() => {
+                console.log('Settings clicked, current showSettings:', showSettings);
+                setShowSettings(!showSettings);
+              }}
+              className="flex items-center px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors relative"
             >
               <Settings className="w-4 h-4" />
             </button>
             
             {showSettings && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-[9999]">
                 <div className="py-1">
                   {/* Benutzerverwaltung - nur für Admins */}
                   {currentUser?.role === 'admin' && (
