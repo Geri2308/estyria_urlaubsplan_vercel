@@ -61,7 +61,7 @@ const DEFAULT_EMPLOYEES = [
     name: 'Gerhard Schmidt',
     email: 'gerhard.schmidt@estyria.at',
     role: 'admin',
-    vacation_days_total: 30,
+    vacation_days_total: 25,
     skills: [],
     created_date: '2024-01-05T10:00:00Z'
   },
