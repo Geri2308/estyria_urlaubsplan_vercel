@@ -1353,7 +1353,6 @@ function App() {
 
       setEmployees(employeesRes.data);
       setVacationEntries(vacationRes.data);
-      setSettings(settingsRes.data);
       setError('');
     } catch (err) {
       console.error('❌ Loading error:', err);
