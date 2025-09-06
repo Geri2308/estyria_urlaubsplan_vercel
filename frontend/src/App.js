@@ -1717,6 +1717,13 @@ function App() {
             selectedEmployee={selectedEmployeeForPersonality}
             onSave={loadData}
           />
+
+          {/* User Management Dialog */}
+          <UserManagementDialog
+            isOpen={showUserManagement}
+            onClose={() => setShowUserManagement(false)}
+            currentUser={currentUser}
+          />
         </div>
       </BrowserRouter>
     </div>
