@@ -1296,62 +1296,82 @@ function App() {
     max_concurrent_calculated: 1
   });
 
-  // Initialisierung beim App-Start - Backend-First Approach
+  // Initialisierung beim App-Start - Backend-First Approach (BLOCKIEREND)
   useEffect(() => {
+    let isMounted = true;
+    
     const initializeApp = async () => {
-      console.log('🚀 App Initialisierung gestartet...');
+      console.log('🚀 App Initialisierung gestartet (blockierend)...');
       setLoading(true);
       
       try {
-        // 1. ZUERST: Prüfe Backend-Verfügbarkeit
-        console.log('🔌 Prüfe Backend-Verfügbarkeit...');
+        // 1. SYNCHRONER Backend-Check (MUSS zuerst abgeschlossen werden)
+        console.log('🔌 Prüfe Backend-Verfügbarkeit (synchron)...');
         const backendAvailable = await initializeBackend();
+        
+        if (!isMounted) return; // Komponente wurde unmounted
         
         if (backendAvailable) {
           console.log('✅ Backend verfügbar - verwende NUR Backend (KEIN LocalStorage)');
           setIsBackendMode(true);
           
           // Backend-Mode: KEINE LocalStorage-Initialisierung
-          console.log('🌐 Backend-Mode aktiviert - überspringe LocalStorage');
+          console.log('🌐 Backend-Mode aktiviert - LocalStorage komplett übersprungen');
           
         } else {
           console.log('❌ Backend nicht verfügbar - verwende LocalStorage als Fallback');
           setIsBackendMode(false);
           
           // Fallback: LocalStorage-Mode (nur wenn Backend nicht verfügbar)
+          console.log('💾 LocalStorage-Mode aktiviert - Backend unerreichbar');
           const { initializeData } = await import('./services/api');
           await initializeData();
-          console.log('💾 LocalStorage-Mode aktiviert');
         }
         
-        // 2. Prüfe Authentifizierung
+        if (!isMounted) return; // Prüfung nach async operation
+        
+        // 2. Setze Initialisierung als abgeschlossen (BLOCKIERT andere useEffects)
+        setInitializationComplete(true);
+        console.log('✅ App-Initialisierung abgeschlossen - andere useEffects können starten');
+        
+        // 3. Prüfe Authentifizierung NUR nach vollständiger Initialisierung
         if (isAuthenticated()) {
           const userData = getUserData();
           setCurrentUser(userData);
           setAuthenticated(true);
           
-          // 3. Lade Daten je nach Modus
-          if (backendAvailable) {
-            console.log('📡 Lade Daten vom Backend...');
-            await loadData();
-          } else {
-            console.log('💾 Lade Daten vom LocalStorage...');
-            // LocalStorage data loading would be handled by initializeData above
-          }
+          // Lade Daten je nach Modus - aber nicht hier, sondern im separaten useEffect
+          console.log('🔐 Authentifizierung erkannt - Daten werden geladen...');
         }
         
       } catch (error) {
-        console.error('❌ Initialisierung fehlgeschlagen:', error);
-        setError('Fehler bei der App-Initialisierung');
+        if (isMounted) {
+          console.error('❌ Initialisierung fehlgeschlagen:', error);
+          setError('Fehler bei der App-Initialisierung: ' + error.message);
+          setInitializationComplete(true); // Auch bei Fehlern freigeben
+        }
       } finally {
-        setLoading(false);
-        setInitializationComplete(true);
-        console.log('✅ App-Initialisierung abgeschlossen');
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     initializeApp();
-  }, []);
+    
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Läuft nur einmal beim Mount
+
+  // Separater useEffect für Daten-Loading (NUR nach Initialisierung)
+  useEffect(() => {
+    if (initializationComplete && currentUser) {
+      console.log('📊 Starte Daten-Loading nach vollständiger Initialisierung...');
+      loadData();
+    }
+  }, [initializationComplete, currentUser]); // Abhängig von Initialisierung und User
 
   const handleLogin = () => {
     console.log('🔄 handleLogin aufgerufen');
