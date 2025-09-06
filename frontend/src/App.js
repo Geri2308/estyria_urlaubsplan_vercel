@@ -1354,12 +1354,13 @@ function App() {
       try {
         // 1. SYNCHRONER Backend-Check (MUSS zuerst abgeschlossen werden)
         console.log('🔌 Prüfe Backend-Verfügbarkeit (synchron)...');
-        const backendAvailable = await initializeBackend();
+        const backendResult = await initializeBackend();
         
         if (!isMounted) return; // Komponente wurde unmounted
         
-        if (backendAvailable) {
+        if (backendResult.available) {
           console.log('✅ Backend verfügbar - verwende NUR Backend (KEIN LocalStorage)');
+          console.log('🌐 Aktive Backend-URL:', backendResult.url);
           setIsBackendMode(true);
           
           // Backend-Mode: KEINE LocalStorage-Initialisierung
