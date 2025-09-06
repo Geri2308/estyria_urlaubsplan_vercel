@@ -217,9 +217,9 @@ export const initializeBackend = async () => {
     try {
       console.log(`🌐 Versuche Backend: ${baseUrl}`);
       
-      // Timeout für Health-Check (10 Sekunden für Render Wake-up)
+      // Längerer Timeout für Render Wake-up (15 Sekunden)
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
       
       const healthUrl = baseUrl.endsWith('/api') ? `${baseUrl}/health` : `${baseUrl}/api/health`;
       console.log(`🔍 Health-Check URL: ${healthUrl}`);
@@ -239,6 +239,7 @@ export const initializeBackend = async () => {
         // Setze die funktionierende URL als globale API_BASE_URL
         if (typeof window !== 'undefined') {
           window.ACTIVE_BACKEND_URL = baseUrl;
+          console.log(`🔥 BACKEND-MODE AKTIVIERT: ${baseUrl}`);
         }
         
         return { available: true, url: baseUrl, health };
@@ -248,12 +249,13 @@ export const initializeBackend = async () => {
     } catch (error) {
       console.log(`❌ Backend auf ${baseUrl} nicht erreichbar:`, error.message);
       if (error.name === 'AbortError') {
-        console.log(`⏱️ Timeout für ${baseUrl}`);
+        console.log(`⏱️ Timeout für ${baseUrl} - versuche nächste URL...`);
       }
     }
   }
   
   console.log('❌ Kein Backend verfügbar - verwende LocalStorage als Fallback');
+  console.log('🔥 LOCALSTORAGE-MODE AKTIVIERT');
   return { available: false, url: null };
 };
 
