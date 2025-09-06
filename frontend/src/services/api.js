@@ -2,11 +2,14 @@
 // Alles wird lokal im Browser gespeichert
 
 // Login-Codes (können Sie später ändern)
+// Einfache Login-Daten (Username/Password)
 const VALID_LOGINS = {
-  'admin': '9999',
-  'logistik': '1234', 
-  'manager': '5678',
-  'hr': '4321'
+  'admin': 'admin123',
+  'logistik': 'logistik123', 
+  'manager': 'manager123',
+  'hr': 'hr123',
+  'gerhard': 'gerhard123',
+  'express': 'express123'
 };
 
 // Ihre echten Mitarbeiter (fest im Code)
