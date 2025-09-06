@@ -130,5 +130,137 @@
     "days_count": 1.0,
     "description": "",
     "created_date": "2025-09-06T09:27:52.484478"
+  },
+  {
+    "id": "172104fd-057a-42f2-8dfd-1ab1d0642087",
+    "employee_id": "1",
+    "employee_name": "Gerhard Pailer",
+    "vacation_type": "URLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-17",
+    "days_count": 3.0,
+    "description": "",
+    "created_date": "2025-09-06T09:29:59.443752"
+  },
+  {
+    "id": "d5f91608-fa76-49fd-96bc-68a737ba092b",
+    "employee_id": "1",
+    "employee_name": "Gerhard Pailer",
+    "vacation_type": "URLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-17",
+    "days_count": 3.0,
+    "description": "",
+    "created_date": "2025-09-06T09:29:59.447131"
+  },
+  {
+    "id": "b7a77e91-119b-479e-93e0-404be11ac6b5",
+    "employee_id": "2",
+    "employee_name": "Mario Pregartner",
+    "vacation_type": "KRANKHEIT",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-16",
+    "days_count": 2.0,
+    "description": "",
+    "created_date": "2025-09-06T09:29:59.450379"
+  },
+  {
+    "id": "4d4f342b-12af-408b-80df-250a4d574af8",
+    "employee_id": "2",
+    "employee_name": "Mario Pregartner",
+    "vacation_type": "KRANKHEIT",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-16",
+    "days_count": 2.0,
+    "description": "",
+    "created_date": "2025-09-06T09:29:59.453634"
+  },
+  {
+    "id": "59c96891-8c9a-4b99-b4f1-a6d49e4ca0fe",
+    "employee_id": "7",
+    "employee_name": "Claudiu Rosza",
+    "vacation_type": "SONDERURLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-15",
+    "days_count": 1.0,
+    "description": "",
+    "created_date": "2025-09-06T09:29:59.487451"
+  },
+  {
+    "id": "0681efef-45df-470c-abbc-f6c4309f6b82",
+    "employee_id": "7",
+    "employee_name": "Claudiu Rosza",
+    "vacation_type": "SONDERURLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-15",
+    "days_count": 1.0,
+    "description": "",
+    "created_date": "2025-09-06T09:29:59.489146"
+  },
+  {
+    "id": "023b473d-8669-450f-8844-ef1175bff141",
+    "employee_id": "1",
+    "employee_name": "Gerhard Pailer",
+    "vacation_type": "URLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-17",
+    "days_count": 3.0,
+    "description": "",
+    "created_date": "2025-09-06T09:30:13.541111"
+  },
+  {
+    "id": "52fa510d-23e8-4430-a3ee-0853b90471e5",
+    "employee_id": "1",
+    "employee_name": "Gerhard Pailer",
+    "vacation_type": "URLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-17",
+    "days_count": 3.0,
+    "description": "",
+    "created_date": "2025-09-06T09:30:13.544944"
+  },
+  {
+    "id": "fcaa0c01-8a04-4f68-ba03-0335b71fb5b5",
+    "employee_id": "2",
+    "employee_name": "Mario Pregartner",
+    "vacation_type": "KRANKHEIT",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-16",
+    "days_count": 2.0,
+    "description": "",
+    "created_date": "2025-09-06T09:30:13.548677"
+  },
+  {
+    "id": "41bc812c-155d-4df9-9c8b-8382964e9efb",
+    "employee_id": "2",
+    "employee_name": "Mario Pregartner",
+    "vacation_type": "KRANKHEIT",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-16",
+    "days_count": 2.0,
+    "description": "",
+    "created_date": "2025-09-06T09:30:13.586098"
+  },
+  {
+    "id": "7d2f1981-5388-40b9-9f0a-ac57d26f1148",
+    "employee_id": "7",
+    "employee_name": "Claudiu Rosza",
+    "vacation_type": "SONDERURLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-15",
+    "days_count": 1.0,
+    "description": "",
+    "created_date": "2025-09-06T09:30:13.590082"
+  },
+  {
+    "id": "61d8d2d2-afc8-4d41-a6a4-0a338f89b403",
+    "employee_id": "7",
+    "employee_name": "Claudiu Rosza",
+    "vacation_type": "SONDERURLAUB",
+    "start_date": "2025-09-15",
+    "end_date": "2025-09-15",
+    "days_count": 1.0,
+    "description": "",
+    "created_date": "2025-09-06T09:30:13.593375"
   }
 ]
