@@ -1446,6 +1446,24 @@ function App() {
     }
   };
 
+  // Dynamic API selection helper
+  const getAPI = async () => {
+    if (isBackendMode) {
+      return {
+        employeeAPI,
+        vacationAPI,
+        userAPI
+      };
+    } else {
+      const localAPI = await import('./services/api');
+      return {
+        employeeAPI: localAPI.employeeAPI,
+        vacationAPI: localAPI.vacationAPI,
+        userAPI: localAPI.userAPI
+      };
+    }
+  };
+
   // Dialog handlers
   const handleNewVacation = () => {
     setEditingVacationEntry(null);
