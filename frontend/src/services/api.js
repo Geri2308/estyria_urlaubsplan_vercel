@@ -840,25 +840,35 @@ const userAPI = {
 
   // Benutzer löschen
   delete: (username) => {
+    console.log('🗑️ userAPI.delete aufgerufen mit:', username);
+    
     const logins = getValidLogins();
+    console.log('📋 Aktuelle Login-Daten:', Object.keys(logins));
+    
     const usernameKey = username.toLowerCase();
+    console.log('🔑 Username-Key (lowercase):', usernameKey);
     
     if (usernameKey === 'admin') {
+      console.log('❌ Admin-Schutz: Admin kann nicht gelöscht werden');
       return Promise.reject({ 
         response: { data: { error: 'Admin-Benutzer kann nicht gelöscht werden' } } 
       });
     }
 
     if (!logins[usernameKey]) {
+      console.log('❌ Benutzer nicht gefunden in:', Object.keys(logins));
       return Promise.reject({ 
         response: { data: { error: 'Benutzer nicht gefunden' } } 
       });
     }
 
+    console.log('🔄 Lösche Benutzer aus Login-Daten...');
     delete logins[usernameKey];
     saveValidLogins(logins);
     
     console.log('✅ Benutzer gelöscht:', username);
+    console.log('📋 Neue Login-Daten:', Object.keys(logins));
+    
     return Promise.resolve({ 
       data: { message: 'Benutzer erfolgreich gelöscht' } 
     });
