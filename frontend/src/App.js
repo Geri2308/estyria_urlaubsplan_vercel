@@ -1397,7 +1397,7 @@ function App() {
         ]);
         
         setEmployees(employeesResponse.data || []);
-        setVacations(vacationsResponse.data || []);
+        setVacationEntries(vacationsResponse.data || []);
         
         console.log(`✅ Backend-Daten geladen: ${employeesResponse.data?.length || 0} Mitarbeiter, ${vacationsResponse.data?.length || 0} Urlaubseinträge`);
         
@@ -1413,7 +1413,7 @@ function App() {
         ]);
         
         setEmployees(employeesResponse.data || []);
-        setVacations(vacationsResponse.data || []);
+        setVacationEntries(vacationsResponse.data || []);
         
         console.log(`✅ LocalStorage-Daten geladen: ${employeesResponse.data?.length || 0} Mitarbeiter, ${vacationsResponse.data?.length || 0} Urlaubseinträge`);
       }
