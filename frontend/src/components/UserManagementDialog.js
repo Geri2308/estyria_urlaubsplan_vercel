@@ -86,16 +86,25 @@ const UserManagementDialog = ({ isOpen, onClose, currentUser }) => {
 
   // Benutzer löschen
   const handleDeleteUser = async (username) => {
+    console.log('🗑️ Lösche Benutzer:', username);
+    
     if (!window.confirm(`Benutzer "${username}" wirklich löschen?`)) {
+      console.log('❌ Löschung abgebrochen durch Benutzer');
       return;
     }
 
     setLoading(true);
     try {
-      await userAPI.delete(username);
+      console.log('🔄 Rufe userAPI.delete auf...');
+      const result = await userAPI.delete(username);
+      console.log('✅ API-Response:', result);
+      
       await loadUsers();
+      console.log('✅ Benutzerliste neu geladen');
+      
       alert('Benutzer erfolgreich gelöscht!');
     } catch (error) {
+      console.error('❌ Fehler beim Löschen:', error);
       alert(error.response?.data?.error || 'Fehler beim Löschen des Benutzers');
     } finally {
       setLoading(false);
