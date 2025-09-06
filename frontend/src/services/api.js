@@ -658,23 +658,60 @@ const initializeData = () => {
   });
 };
 
-// Backup- und Recovery-Funktionen + Monatliche Akkumulation
+// Backup- und Recovery-Funktionen + Export/Import für Multi-Device-Sync
 const dataManagement = {
-  // Vollständiges Backup erstellen
+  // Vollständiges Backup/Export erstellen
   createBackup: () => {
     const backup = {
       employees: getFromStorage('urlaubsplaner_employees', []),
       vacations: getFromStorage('urlaubsplaner_vacations', []),
+      logins: getFromStorage('urlaubsplaner_logins', {}), // Login-Daten hinzufügen
       accumulationStatus: getAccumulationStatus(),
       timestamp: new Date().toISOString(),
-      version: '1.2'
+      version: '1.3', // Version erhöht für neue Struktur
+      device: {
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString(),
+        exportedBy: 'Urlaubsplaner Multi-Device Sync'
+      }
     };
     
     // Als JSON-String für Download bereitstellen
     const backupString = JSON.stringify(backup, null, 2);
-    console.log('💾 Backup erstellt:', backup);
+    console.log('📤 Export erstellt:', {
+      employees: backup.employees.length,
+      vacations: backup.vacations.length,
+      logins: Object.keys(backup.logins).length,
+      timestamp: backup.timestamp
+    });
     
     return backupString;
+  },
+  
+  // Export als Datei-Download
+  downloadBackup: () => {
+    try {
+      const backupData = dataManagement.createBackup();
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
+      const filename = `urlaubsplaner-export-${timestamp}.json`;
+      
+      // Erstelle Download-Link
+      const blob = new Blob([backupData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      console.log('✅ Export-Datei heruntergeladen:', filename);
+      return { success: true, filename };
+    } catch (error) {
+      console.error('❌ Fehler beim Export:', error);
+      return { success: false, error: error.message };
+    }
   },
   
   // Daten aus Backup wiederherstellen
