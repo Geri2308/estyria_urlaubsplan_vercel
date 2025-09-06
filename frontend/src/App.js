@@ -166,7 +166,8 @@ const Toolbar = ({
   showSettings,
   setShowSettings,
   setShowPersonalityDialog,
-  setSelectedEmployeeForPersonality
+  setSelectedEmployeeForPersonality,
+  setShowUserManagement
 }) => {
   return (
     <div className="bg-white border-b border-gray-200 p-3">
