@@ -94,7 +94,7 @@ const LoginScreen = ({ onLogin }) => {
             <Calendar className="h-12 w-12 text-blue-600" />
           </div>
           <h1 className="text-4xl font-bold text-white mb-3 drop-shadow-lg">Urlaubsplaner</h1>
-          <p className="text-blue-100 text-lg drop-shadow">Bitte geben Sie Ihren 4-stelligen Code ein</p>
+          <p className="text-blue-100 text-lg drop-shadow">Bitte geben Sie Ihre Anmeldedaten ein</p>
         </div>
 
         {/* Login Form */}
