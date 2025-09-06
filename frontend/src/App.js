@@ -1844,6 +1844,7 @@ function App() {
             onClose={() => setShowEmployeeDialog(false)}
             onSave={handleSaveEmployee}
             editingEmployee={editingEmployee}
+            isBackendMode={isBackendMode}
           />
 
           {/* Personality Profile Dialog */}
