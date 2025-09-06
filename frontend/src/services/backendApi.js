@@ -217,11 +217,13 @@ export const initializeBackend = async () => {
     try {
       console.log(`🌐 Versuche Backend: ${baseUrl}`);
       
-      // Timeout für Health-Check (3 Sekunden pro URL)
+      // Timeout für Health-Check (10 Sekunden für Render Wake-up)
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
       
       const healthUrl = baseUrl.endsWith('/api') ? `${baseUrl}/health` : `${baseUrl}/api/health`;
+      console.log(`🔍 Health-Check URL: ${healthUrl}`);
+      
       const response = await fetch(healthUrl, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
