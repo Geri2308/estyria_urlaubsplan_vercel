@@ -1,11 +1,19 @@
 // Backend API Service - FastAPI ohne MongoDB (JSON-Dateien)
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001/api';
-
-console.log('🌐 Backend API URL:', API_BASE_URL);
+const getActiveBackendUrl = () => {
+  // Prüfe ob eine aktive Backend-URL gesetzt wurde
+  if (typeof window !== 'undefined' && window.ACTIVE_BACKEND_URL) {
+    return window.ACTIVE_BACKEND_URL;
+  }
+  // Fallback zur Umgebungsvariable
+  return process.env.REACT_APP_BACKEND_URL || '/api';
+};
 
 // HTTP Request Helper
 const apiRequest = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const baseUrl = getActiveBackendUrl();
+  const apiUrl = baseUrl.endsWith('/api') ? baseUrl : `${baseUrl}/api`;
+  const url = `${apiUrl}${endpoint}`;
+  
   const config = {
     headers: {
       'Content-Type': 'application/json',
