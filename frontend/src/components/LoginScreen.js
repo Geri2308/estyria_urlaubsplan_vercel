@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Lock, AlertTriangle } from 'lucide-react';
-import { authAPI } from '../services/api';
+import { authAPI } from '../services/backendApi';
 import { setAuthData } from '../utils/auth';
 
 const LoginScreen = ({ onLogin }) => {
