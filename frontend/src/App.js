@@ -682,11 +682,18 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
   const handleSave = async () => {
     setLoading(true);
     try {
-      const { employeeAPI: currentEmployeeAPI } = await getAPI();
-      
-      // Aktualisiere jeden Mitarbeiter mit den neuen Traits
-      for (const [employeeId, traits] of Object.entries(personalityTraits)) {
-        await currentEmployeeAPI.update(employeeId, { personality_traits: traits });
+      // Dynamische API-Auswahl basierend auf Backend-Mode  
+      if (isBackendMode) {
+        // Backend-Mode: Verwende FastAPI
+        for (const [employeeId, traits] of Object.entries(personalityTraits)) {
+          await employeeAPI.update(employeeId, { personality_traits: traits });
+        }
+      } else {
+        // LocalStorage-Mode: Verwende lokale API
+        const { employeeAPI: localEmployeeAPI } = await import('./services/api');
+        for (const [employeeId, traits] of Object.entries(personalityTraits)) {
+          await localEmployeeAPI.update(employeeId, { personality_traits: traits });
+        }
       }
       
       console.log('✅ Persönlichkeitsmerkmale aktualisiert:', personalityTraits);
