@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: urlaubsplaner-backend
+    runtime: python3
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "cd backend && python server.py"
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 8001
+      - key: PYTHONPATH
+        value: /app/backend
