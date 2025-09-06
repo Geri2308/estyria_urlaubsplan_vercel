@@ -20,8 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Daten-Verzeichnis
-DATA_DIR = "/app/backend/data"
+# Daten-Verzeichnis (relativ zum aktuellen Verzeichnis)
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 EMPLOYEES_FILE = os.path.join(DATA_DIR, "employees.json")
 VACATIONS_FILE = os.path.join(DATA_DIR, "vacations.json")
 LOGINS_FILE = os.path.join(DATA_DIR, "logins.json")
