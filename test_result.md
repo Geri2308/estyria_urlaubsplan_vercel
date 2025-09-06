@@ -256,9 +256,9 @@ test_plan:
 
   - task: "Admin-Benutzerverwaltungs-System"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/components/UserManagementDialog.js"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
@@ -268,6 +268,9 @@ test_plan:
       - working: true
         agent: "testing"
         comment: "✅ SETTINGS-DROPDOWN UND ADMIN-BENUTZERVERWALTUNG VOLLSTÄNDIG FUNKTIONSFÄHIG: Umfassende Tests bestätigen, dass alle behobenen Features einwandfrei funktionieren! SETTINGS-DROPDOWN FIX: ✅ Settings-Button (Zahnrad-Icon) gefunden und funktional, ✅ Console Debug-Logs 'Settings clicked, current showSettings: false' erscheinen korrekt, ✅ Dropdown öffnet sich mit korrektem z-index: 9999 (über alle anderen Elemente), ✅ Dropdown ist sichtbar und zugänglich. ADMIN-BENUTZERVERWALTUNG: ✅ 'Benutzerverwaltung' Option mit Users-Icon nur für Admins sichtbar, ✅ UserManagementDialog öffnet sich korrekt mit Titel 'Benutzerverwaltung', ✅ Alle 6 Standard-Benutzer angezeigt: admin (👑 Administrator), logistik, manager, hr, gerhard, express, ✅ Admin hat Crown-Symbol und KEINEN Delete-Button (korrekt), ✅ Andere Benutzer haben Key-Icon (6 gefunden) und Trash-Icon (5 gefunden), ✅ 'Neuen Benutzer erstellen' funktioniert: testuser/test123 erfolgreich erstellt, ✅ Neuer Benutzer erscheint in Liste. NON-ADMIN TEST: ✅ testuser Login erfolgreich ohne Admin-Rechte (keine Krone), ✅ Settings-Dropdown für Non-Admin zeigt KEINE 'Benutzerverwaltung' Option. CONSOLE-MONITORING: Alle Debug-Logs funktionieren korrekt, keine JavaScript-Fehler, z-index Fix arbeitet perfekt. Das ursprünglich gemeldete Problem mit dem nicht zugänglichen Settings-Dropdown ist vollständig behoben!"
+      - working: false
+        agent: "testing"
+        comment: "❌ MÜLLEIMER-DELETE-PROBLEM: SETTINGS-DROPDOWN REGRESSION IDENTIFIZIERT: Umfassende Tests der Delete-Funktionalität in der Benutzerverwaltung zeigen eine Regression beim Zugriff auf das Settings-Dropdown. TEST-ERGEBNISSE: ✅ Admin-Login (admin/admin123) funktioniert perfekt, ✅ Console-Logging arbeitet korrekt (umfangreiche Debug-Logs sichtbar), ✅ UserManagementDialog-Code ist vollständig implementiert mit korrekten Debug-Logs für Delete-Funktionalität (🗑️ Lösche Benutzer, 🗑️ userAPI.delete aufgerufen, etc.), ✅ Admin-Schutz implementiert (admin kann nicht gelöscht werden), ❌ KRITISCHES PROBLEM: Settings-Button/Dropdown nicht zugänglich - verhindert Zugriff auf Benutzerverwaltung. DIAGNOSE: Obwohl die Delete-Funktionalität im Code korrekt implementiert ist (UserManagementDialog.js Zeilen 88-112 mit vollständigen Debug-Logs), kann die Benutzerverwaltung nicht über die UI erreicht werden. Dies ist eine Regression vom vorherigen funktionsfähigen Zustand. EMPFEHLUNG: Main Agent muss Settings-Button-Selektor und Dropdown-Funktionalität in App.js überprüfen - möglicherweise CSS-Klassen oder Event-Handler-Problem. Die Delete-Funktionalität selbst ist korrekt implementiert und sollte funktionieren, sobald UI-Zugriff wiederhergestellt ist."
 
 agent_communication:
   - agent: "main"
