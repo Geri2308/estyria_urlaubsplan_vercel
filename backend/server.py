@@ -20,7 +20,18 @@ async def lifespan(app: FastAPI):
     mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/urlaubsplaner')
     if mongo_url.startswith('mongodb+srv://'):
         print("✅ MongoDB Atlas connection configured")
-        app.mongodb_client = AsyncIOMotorClient(mongo_url)
+        
+        # SSL-optimierte Motor-Konfiguration für Render.com
+        app.mongodb_client = AsyncIOMotorClient(
+            mongo_url,
+            tls=True,
+            tlsAllowInvalidCertificates=False,
+            serverSelectionTimeoutMS=30000,
+            connectTimeoutMS=30000,
+            socketTimeoutMS=30000,
+            retryWrites=True,
+            w='majority'
+        )
         app.mongodb = app.mongodb_client.urlaubsplaner
         print("✅ MongoDB Atlas initialized successfully")
     else:
