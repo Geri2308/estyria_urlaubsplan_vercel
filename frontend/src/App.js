@@ -1378,6 +1378,21 @@ function App() {
     max_concurrent_calculated: 1
   });
 
+  // Dark Mode Effect
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  // Toggle Dark Mode Function
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   // Initialisierung beim App-Start - Backend-First Approach (BLOCKIEREND)
   useEffect(() => {
     let isMounted = true;
