@@ -59,17 +59,28 @@ const LoginScreen = ({ onLogin, isBackendMode = false }) => {
     } catch (error) {
       console.error('❌ Login-Fehler:', error);
       
-      // Robust error message handling
+      // Robust error message handling  
       let errorMessage = 'Unbekannter Login-Fehler';
       
-      if (error?.response?.data?.error) {
+      // Prüfe verschiedene Error-Formate
+      if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error?.response?.data?.error) {
         errorMessage = error.response.data.error;
+      } else if (error?.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
       } else if (error?.message) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
-        errorMessage = error;
+      } else if (error?.data?.error) {
+        errorMessage = error.data.error;
+      } else if (Array.isArray(error)) {
+        errorMessage = error.map(e => e.message || e.toString()).join(', ');
+      } else {
+        // Fallback für Object-Arrays
+        errorMessage = `Login-Fehler: ${JSON.stringify(error).substring(0, 100)}`;
       }
       
+      console.log('🔍 Verarbeitete Error-Message:', errorMessage);
       setError(errorMessage);
     } finally {
       setLoading(false);
