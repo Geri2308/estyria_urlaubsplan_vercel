@@ -183,7 +183,7 @@ const Toolbar = ({
   onToggleDarkMode
 }) => {
   return (
-    <div className="bg-white border-b border-gray-200 p-3">
+    <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-3 transition-colors duration-200">
       {/* Main Toolbar */}
       <div className="flex items-center space-x-1 mb-2">
         {/* File Group */}
