@@ -1459,6 +1459,8 @@ function App() {
       
       if (isBackendMode) {
         console.log('📡 Lade Daten vom Backend...');
+        console.log('🔍 Backend-URL Check:', process.env.REACT_APP_BACKEND_URL);
+        console.log('🔍 Window Backend-URL:', typeof window !== 'undefined' ? window.ACTIVE_BACKEND_URL : 'undefined');
         
         // Backend-Mode: Verwende FastAPI
         const [employeesResponse, vacationsResponse] = await Promise.all([
@@ -1490,7 +1492,15 @@ function App() {
       
     } catch (error) {
       console.error('❌ Fehler beim Laden der Daten:', error);
-      setError('Fehler beim Laden der Daten');
+      console.error('❌ Detaillierter Fehler:', error.response?.data || error.message);
+      
+      // Bei Backend-Fehler: Nicht zu LocalStorage fallback - zeige Fehler
+      if (isBackendMode) {
+        console.log('❌ Backend-Daten-Loading fehlgeschlagen - zeige Fehlermeldung statt LocalStorage-Fallback');
+        setError(`Backend-Verbindungsfehler: ${error.message}`);
+      } else {
+        setError('Fehler beim Laden der Daten');
+      }
     } finally {
       setLoading(false);
     }
