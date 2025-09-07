@@ -336,7 +336,11 @@ async def create_user(user_data: UserCreate):
     if username_key in logins:
         raise HTTPException(status_code=400, detail="Benutzername bereits vorhanden")
     
-    logins[username_key] = user_data.password
+    # Speichere im neuen Format mit Passwort und Rolle
+    logins[username_key] = {
+        "password": user_data.password,
+        "role": user_data.role
+    }
     save_json_file(LOGINS_FILE, logins)
     
     return {
