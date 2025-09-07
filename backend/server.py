@@ -10,16 +10,28 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from contextlib import asynccontextmanager
 import uvicorn
 
-# Lifespan event handler for application initialization
+# Lifespan event handler for MongoDB initialization
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    print("🚀 Starting up Urlaubsplaner API with JSON storage...")
-    initialize_data()
-    print("✅ JSON storage initialized successfully")
+    print("🚀 Starting up Urlaubsplaner API with MongoDB Atlas...")
+    
+    # MongoDB connection test
+    mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/urlaubsplaner')
+    if mongo_url.startswith('mongodb+srv://'):
+        print("✅ MongoDB Atlas connection configured")
+        app.mongodb_client = AsyncIOMotorClient(mongo_url)
+        app.mongodb = app.mongodb_client.urlaubsplaner
+        print("✅ MongoDB Atlas initialized successfully")
+    else:
+        print("⚠️ Using fallback to JSON storage (MongoDB URL not configured)")
+        initialize_data()
+    
     yield
     # Shutdown
     print("🛑 Shutting down Urlaubsplaner API...")
+    if hasattr(app, 'mongodb_client'):
+        app.mongodb_client.close()
 
 app = FastAPI(
     title="Urlaubsplaner API", 
