@@ -235,9 +235,21 @@ metadata:
         agent: "testing"
         comment: "🎯 COMPREHENSIVE LOGIN SYSTEM DIAGNOSIS NACH BACKEND-RESET ERFOLGREICH ABGESCHLOSSEN: Vollständige Diagnose des Login-Systems nach Backend-Reset durchgeführt wie angefordert. ALLE KRITISCHEN DIAGNOSEPUNKTE ERFÜLLT: ✅ **Frontend lädt korrekt** (http://localhost:3000), ✅ **Login-Screen wird angezeigt** (2 Eingabefelder: Benutzername + Passwort mit korrekten Placeholders), ✅ **EXPRESS-LOGISTIK Branding** im Hintergrund gefunden, ✅ **Backend-Verbindung beim Start** (alle erwarteten Console-Logs: '🚀 App Initialisierung gestartet', '🔌 Prüfe Backend-Verfügbarkeit', '🌐 Backend API URL: http://localhost:8001/api', '✅ Backend ist verfügbar', '✅ Backend verfügbar - verwende NUR Backend', '🌐 Backend-Mode aktiviert - LocalStorage komplett übersprungen'), ✅ **Login-API-Call erfolgreich** (admin/admin123 → POST /api/auth/login → {success: true, token: token-admin-1757154433.690912, message: Erfolgreich als Administrator angemeldet}), ✅ **Keine CORS/Network Errors**, ✅ **Weiterleitung zur Hauptanwendung** (Kalender-Ansicht sichtbar mit 👑 admin Symbol). BACKEND-RESET VALIDATION: Backend-Daten sind sauber (3 Mitarbeiter, 0 Urlaubseinträge statt vorherige 323 Duplikate). LOGIN-SYSTEM VOLLSTÄNDIG FUNKTIONSFÄHIG nach Backend-Reset - alle Diagnosepunkte bestanden!"
 
+  - task: "KRITISCHE REGRESSION-TESTS nach Authentication-Fix - Alle drei Probleme behoben"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 ALLE DREI KRITISCHEN REGRESSION-PROBLEME VOLLSTÄNDIG BEHOBEN! Umfassende Tests der drei gemeldeten kritischen Probleme erfolgreich durchgeführt mit 11/11 Tests bestanden. **PROBLEM 1 - MULTI-USER LOGIN**: ✅ BEHOBEN - Alle 6 Benutzer können erfolgreich einloggen: admin/admin123 (role: admin), logistik/logistik123 (role: user), manager/manager123 (role: user), hr/hr123 (role: user), gerhard/gerhard123 (role: user), express/express123 (role: user). Alle Login-Requests erfolgreich mit korrekten Rollen. **PROBLEM 2 - VACATION CREATION**: ✅ BEHOBEN - Urlaubsantrag-Erstellung funktioniert einwandfrei ohne 'failed to fetch' Fehler. POST /api/vacations erfolgreich mit HTTP 200, UUID-basierte ID zurückgegeben (4b178ccd-d171-4c6a-a117-cdd5aa5379a4), GET /api/vacations zeigt neuen Eintrag korrekt an. **PROBLEM 3 - EMPLOYEE DATA PERSISTENCE**: ✅ BEHOBEN - Mitarbeiter-Daten bleiben persistent, keine Löschung auf 3 Mitarbeiter. Initial: 3 Mitarbeiter, nach Erstellung: 4 Mitarbeiter (korrekte Erhöhung), Count fällt NICHT auf 3 zurück. **ROOT CAUSE FIX VALIDIERT**: logins.json Datenformat-Standardisierung auf konsistentes Object-Format mit korrekten Rollen erfolgreich implementiert. Backend Authentication-Logic funktioniert korrekt für alle Benutzer. **BACKEND-VERFÜGBARKEIT**: Health-Check erfolgreich, alle Data Files verfügbar (employees: true, vacations: true, logins: true). **CLEANUP**: Test-Daten erfolgreich bereinigt. Authentication-Fix vollständig erfolgreich - alle ursprünglich gemeldeten Probleme sind behoben!"
+
 test_plan:
   current_focus:
-    - "All critical login issues resolved"
+    - "All critical regression issues resolved after authentication fix"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
