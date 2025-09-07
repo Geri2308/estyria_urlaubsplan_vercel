@@ -1882,12 +1882,14 @@ function App() {
             isBackendMode={isBackendMode}
           />
 
-          {/* User Management Dialog */}
-          <UserManagementDialog
-            isOpen={showUserManagement}
-            onClose={() => setShowUserManagement(false)}
-            currentUser={currentUser}
-          />
+          {/* User Management Dialog - Nur für Admins */}
+          {currentUser?.role === 'admin' && (
+            <UserManagementDialog
+              isOpen={showUserManagement}
+              onClose={() => setShowUserManagement(false)}
+              currentUser={currentUser}
+            />
+          )}
         </div>
       </BrowserRouter>
     </div>
