@@ -1,12 +1,19 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 import json
 import os
 import uuid
-from datetime import datetime, date
+from datetime import datetime
+from database import (
+    create_tables, get_session, initialize_default_data,
+    Employee, Vacation, Login
+)
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, update, delete
+import asyncio
+from contextlib import asynccontextmanager
 import uvicorn
 
 app = FastAPI(title="Urlaubsplaner API", version="1.0.0")
