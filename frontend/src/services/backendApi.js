@@ -1,11 +1,19 @@
 // Backend API Service - FastAPI ohne MongoDB (JSON-Dateien)
+// Backend API URL Konfiguration - Deployment-optimiert
 const getActiveBackendUrl = () => {
-  // Prüfe ob eine aktive Backend-URL gesetzt wurde
+  // 1. Prüfe, ob eine explizite Backend-URL gesetzt ist (für Emergent Deployment)
   if (typeof window !== 'undefined' && window.ACTIVE_BACKEND_URL) {
     return window.ACTIVE_BACKEND_URL;
   }
-  // Fallback zur Umgebungsvariable
-  return process.env.REACT_APP_BACKEND_URL || '/api';
+  
+  // 2. Verwende Umgebungsvariablen (Deployment-Priorität)
+  const envBackendUrl = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_RENDER_BACKEND_URL;
+  if (envBackendUrl) {
+    return envBackendUrl;
+  }
+  
+  // 3. Fallback für lokale Entwicklung
+  return '/api';
 };
 
 // HTTP Request Helper
