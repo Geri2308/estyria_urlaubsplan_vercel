@@ -369,7 +369,7 @@ test_plan:
         comment: "Benutzer berichtet 'Login funktioniert immer noch nicht' mit HTTP 404 Fehler auf Login-Screen trotz vorheriger Behebungsversuche."
       - working: true
         agent: "main"
-        comment: "HTTP 404 Problem behoben durch Korrektur der Frontend Backend-URL. REACT_APP_BACKEND_URL von 'https://express-scheduler.preview.emergentagent.com' auf 'http://localhost:8001/api' geändert. Login-Test erfolgreich: admin/admin123 → Hauptanwendung mit Admin-Badge. Das troubleshoot_agent identifizierte das Problem als Konfigurationsfehler - Frontend kontaktierte falsche Backend-URL."
+        comment: "HTTP 404 Problem behoben durch Korrektur der Frontend Backend-URL. REACT_APP_BACKEND_URL von 'https://teamvacation.preview.emergentagent.com' auf 'http://localhost:8001/api' geändert. Login-Test erfolgreich: admin/admin123 → Hauptanwendung mit Admin-Badge. Das troubleshoot_agent identifizierte das Problem als Konfigurationsfehler - Frontend kontaktierte falsche Backend-URL."
 
 agent_communication:
   - agent: "main"
