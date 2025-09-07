@@ -140,12 +140,23 @@ async def login(credentials: LoginCredentials):
     logins = load_json_file(LOGINS_FILE, DEFAULT_LOGINS)
     
     username_key = credentials.username.lower()
-    valid_password = logins.get(username_key)
+    user_data = logins.get(username_key)
+    
+    if not user_data:
+        raise HTTPException(status_code=401, detail="Ungültiger Benutzername oder Passwort")
+    
+    # Unterstütze beide Formate: altes (nur String) und neues (mit role)
+    if isinstance(user_data, str):
+        # Altes Format: nur Passwort als String
+        valid_password = user_data
+        role = "admin" if username_key == "admin" else "user"
+    else:
+        # Neues Format: Objekt mit password und role
+        valid_password = user_data.get("password")
+        role = user_data.get("role", "user")
     
     if not valid_password or valid_password != credentials.password:
         raise HTTPException(status_code=401, detail="Ungültiger Benutzername oder Passwort")
-    
-    role = "admin" if username_key == "admin" else "user"
     
     return {
         "success": True,
