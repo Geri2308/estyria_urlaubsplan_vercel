@@ -1691,7 +1691,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className={`min-h-screen transition-colors duration-200 ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
       <BrowserRouter>
         <div className="flex flex-col h-screen">
           {/* Toolbar */}
