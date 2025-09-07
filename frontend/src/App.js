@@ -1365,6 +1365,11 @@ function App() {
   const [initializationComplete, setInitializationComplete] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    // Check localStorage for saved dark mode preference
+    const saved = localStorage.getItem('darkMode');
+    return saved !== null ? JSON.parse(saved) : false;
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [settings, setSettings] = useState({
