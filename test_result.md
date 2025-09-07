@@ -237,9 +237,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Kritisches Login-Problem behoben - Backend-URL konsistent"
-  stuck_tasks:
-    - "Kritisches Login-Problem behoben - Backend-URL konsistent"
+    - "All critical login issues resolved"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
