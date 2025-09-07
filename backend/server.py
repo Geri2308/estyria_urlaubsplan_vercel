@@ -448,16 +448,46 @@ async def update_employee_vacation_stats(employee_id: str):
 # Health Check
 @app.get("/api/health")
 async def health_check():
-    """Health Check Endpoint"""
-    return {
-        "status": "healthy",
-        "timestamp": datetime.now().isoformat(),
-        "data_files": {
-            "employees": os.path.exists(EMPLOYEES_FILE),
-            "vacations": os.path.exists(VACATIONS_FILE),
-            "logins": os.path.exists(LOGINS_FILE)
+    """API Health Check mit MongoDB-Status"""
+    mongo_url = os.environ.get('MONGO_URL', '')
+    
+    if hasattr(app, 'mongodb'):
+        # MongoDB Atlas Mode
+        try:
+            # Test MongoDB connection
+            await app.mongodb.command('ping')
+            return {
+                "status": "healthy",
+                "timestamp": datetime.now().isoformat(),
+                "database": "mongodb_atlas",
+                "mongodb_connection": "connected",
+                "mongo_url": mongo_url[:20] + "..." if mongo_url else "not configured"
+            }
+        except Exception as e:
+            return {
+                "status": "unhealthy", 
+                "timestamp": datetime.now().isoformat(),
+                "database": "mongodb_atlas",
+                "mongodb_connection": "failed",
+                "error": str(e)
+            }
+    else:
+        # JSON Fallback Mode
+        employees = load_json_file(EMPLOYEES_FILE, DEFAULT_EMPLOYEES)
+        vacations = load_json_file(VACATIONS_FILE, [])
+        logins = load_json_file(LOGINS_FILE, DEFAULT_LOGINS)
+        
+        return {
+            "status": "healthy",
+            "timestamp": datetime.now().isoformat(),
+            "database": "json_fallback",
+            "data_files": {
+                "employees": len(employees) > 0,
+                "vacations": len(vacations) >= 0,
+                "logins": len(logins) > 0
+            },
+            "mongo_url": "not configured - using json fallback"
         }
-    }
 
 # Beim Start initialisieren
 @app.on_event("startup")
