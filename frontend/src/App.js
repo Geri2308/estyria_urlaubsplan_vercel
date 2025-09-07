@@ -960,11 +960,27 @@ const VacationDialog = ({ isOpen, onClose, onSave, employees, editingEntry = nul
         throw new Error('Mitarbeiter nicht gefunden');
       }
 
-      // Berechne die Anzahl der Tage
+      // Berechne die Anzahl der Werktage (exklusive Samstag und Sonntag)
       const startDate = new Date(formData.start_date);
       const endDate = new Date(formData.end_date);
-      const timeDiff = endDate.getTime() - startDate.getTime();
-      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 um beide Tage einzuschließen
+      
+      // Funktion zum Berechnen der Werktage
+      const calculateWorkdays = (start, end) => {
+        let workdays = 0;
+        const currentDate = new Date(start);
+        
+        while (currentDate <= end) {
+          const dayOfWeek = currentDate.getDay(); // 0 = Sonntag, 6 = Samstag
+          if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Nicht Sonntag (0) oder Samstag (6)
+            workdays++;
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+        
+        return workdays;
+      };
+      
+      const daysDiff = calculateWorkdays(startDate, endDate);
 
       const submitData = {
         ...formData,
