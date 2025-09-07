@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { userAPI } from '../services/api';
+import { userAPI } from '../services/backendApi';
 import { X, Plus, Edit2, Trash2, User, Shield, Key } from 'lucide-react';
 
 const UserManagementDialog = ({ isOpen, onClose, currentUser }) => {
