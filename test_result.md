@@ -174,6 +174,21 @@ frontend:
         agent: "testing"
         comment: "✅ TESTED SUCCESSFULLY: Neuer grüner 'Aktualisieren'-Button im Persönlichkeitsprofil-Dialog funktioniert einwandfrei! Button ist korrekt positioniert (links in der Button-Leiste), hat grüne Farbe (bg-green-600), Refresh-Icon vorhanden, korrekten Tooltip 'Krankheitstage und Urlaubstage aktualisieren'. Button-Layout: Position 0: Aktualisieren (grün), Position 1: Abbrechen (grau), Position 2: Merkmale speichern (blau). Funktionalität getestet - Button-Click funktioniert, Responsive Design auf Mobile funktioniert, alle anderen Buttons arbeiten korrekt. Dialog öffnet/schließt ordnungsgemäß. Getestet für Mitarbeiter 'Gerhard Schmidt' mit Admin-Login 9999."
 
+  - task: "Kritisches Login-Problem behoben - Backend-URL konsistent"
+    implemented: true
+    working: true
+    file: "/app/frontend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "KRITISCHES LOGIN-PROBLEM BEHOBEN: REACT_APP_BACKEND_URL von 'https://teamvacation.preview.emergentagent.com' auf 'https://estyria-urlaubsplan-vercel-2.onrender.com' korrigiert. Problem war Inkonsistenz: Benutzererstellung verwendete korrekte Render-URL über backendApi.js initializeBackend(), aber Login verwendete falsche Preview-URL aus .env. Jetzt verwenden BEIDE Operationen dieselbe korrekte Backend-URL. Backend-Health-Check bestätigt: Render-Backend erreichbar und funktional."
+      - working: true
+        agent: "testing"
+        comment: "✅ BACKEND-TESTS VOLLSTÄNDIG ERFOLGREICH: Alle 8/8 kritischen Login-Tests bestanden! Backend Health-Check erfolgreich (Render-Backend erreichbar), Admin-Login (admin/admin123) erfolgreich, Neuer Benutzer-Erstellung erfolgreich, Login mit neuem Benutzer sofort erfolgreich, Fehlerfall-Tests (falsches Passwort/nicht-existierender User) erfolgreich. Backend API lädt 22 Mitarbeiter korrekt. Das kritische Login-Problem ist vollständig behoben - Backend-URL-Konsistenz wiederhergestellt."
+
 backend:
   - task: "Kritisches Login-System nach Backend-URL-Korrektur"
     implemented: true
