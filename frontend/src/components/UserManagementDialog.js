@@ -123,28 +123,6 @@ const UserManagementDialog = ({ isOpen, onClose, currentUser }) => {
     return null;
   }
 
-  // Überprüfe Admin-Berechtigung
-  if (currentUser?.role !== 'admin') {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg max-w-md w-full p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-gray-900">Zugriff verweigert</h3>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-          <p className="text-gray-600">Nur Administratoren können Benutzer verwalten.</p>
-          <button
-            onClick={onClose}
-            className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-          >
-            OK
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
