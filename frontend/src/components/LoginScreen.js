@@ -24,7 +24,7 @@ const LoginScreen = ({ onLogin, isBackendMode = false }) => {
       if (isBackendMode) {
         // Backend-Mode: Verwende backendApi
         const { authAPI } = await import('../services/backendApi');
-        const response = await authAPI.login(username, password);
+        const response = await authAPI.login({ username, password });
         
         if (response.success) {
           console.log('✅ Backend-Login erfolgreich:', response.user.username);
