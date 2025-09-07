@@ -277,6 +277,20 @@ const Toolbar = ({
             <Filter className="w-4 h-4 mr-1" />
             Filter
           </button>
+          
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={onToggleDarkMode}
+            className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
+            title={darkMode ? 'Light Mode aktivieren' : 'Dark Mode aktivieren'}
+          >
+            {darkMode ? (
+              <Sun className="w-4 h-4 mr-1" />
+            ) : (
+              <Moon className="w-4 h-4 mr-1" />
+            )}
+            {darkMode ? 'Light' : 'Dark'}
+          </button>
         </div>
 
         {/* User Info & Settings Dropdown */}
