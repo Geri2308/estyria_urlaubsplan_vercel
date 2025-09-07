@@ -270,40 +270,88 @@ class UrlaubsplanerAPITester:
             print(f"   ⚠️ Cleanup error: {str(e)}")
             return False
 
-    def test_create_employee(self):
-        """Test creating a new employee"""
-        if not self.token:
-            self.log_test("Create Employee", False, "No token available")
-            return False
-            
-        try:
-            headers = {"Authorization": f"Bearer {self.token}"}
-            payload = {
-                "name": "Test Mitarbeiter",
-                "email": "test@example.com",
-                "role": "employee",
-                "vacation_days_total": 25,
-                "skills": [
-                    {"name": "JavaScript", "rating": 4},
-                    {"name": "Python", "rating": 5}
-                ]
-            }
-            
-            response = requests.post(f"{self.api_url}/employees", json=payload, headers=headers, timeout=10)
-            
-            success = response.status_code == 201
-            if success:
-                data = response.json()
-                self.created_employee_id = data.get('id')
-                details = f"Created employee with ID: {self.created_employee_id}"
-            else:
-                details = f"Status Code: {response.status_code}, Response: {response.text}"
-                
-            self.log_test("Create Employee", success, details)
-            return success
-        except Exception as e:
-            self.log_test("Create Employee", False, f"Error: {str(e)}")
-            return False
+    def run_all_tests(self):
+        """Run all critical login system tests"""
+        print("🚀 KRITISCHER LOGIN-SYSTEM TEST nach Backend-URL-Korrektur")
+        print("=" * 70)
+        print(f"🎯 Backend URL: {self.base_url}")
+        print(f"🔗 API Endpoint: {self.api_url}")
+        print("=" * 70)
+        
+        # 1. BACKEND-VERBINDUNG TEST
+        print("\n📡 PHASE 1: BACKEND-VERBINDUNG")
+        health_ok = self.test_health_check()
+        
+        # 2. ADMIN-LOGIN TEST  
+        print("\n🔐 PHASE 2: ADMIN-LOGIN TEST")
+        admin_login_ok = self.test_admin_login()
+        
+        # 3. NEUER BENUTZER TEST
+        print("\n👤 PHASE 3: NEUER BENUTZER TEST")
+        create_user_ok = self.test_create_new_user()
+        new_user_login_ok = self.test_new_user_login()
+        
+        # 4. FEHLERFALL TESTS
+        print("\n❌ PHASE 4: FEHLERFALL TESTS")
+        wrong_password_ok = self.test_login_wrong_password()
+        nonexistent_user_ok = self.test_login_nonexistent_user()
+        
+        # 5. BACKEND API VALIDATION
+        print("\n📊 PHASE 5: BACKEND API VALIDATION")
+        employees_ok = self.test_get_employees_authorized()
+        vacations_ok = self.test_get_vacations()
+        
+        # 6. CLEANUP
+        print("\n🧹 PHASE 6: CLEANUP")
+        self.cleanup_created_user()
+        
+        # Print summary
+        print("\n" + "=" * 70)
+        print(f"📊 KRITISCHE TEST ERGEBNISSE: {self.tests_passed}/{self.tests_run} tests passed")
+        print("=" * 70)
+        
+        # Detailed results
+        critical_tests = {
+            "Backend Health Check": health_ok,
+            "Admin Login": admin_login_ok, 
+            "New User Creation": create_user_ok,
+            "New User Login": new_user_login_ok,
+            "Wrong Password Error": wrong_password_ok,
+            "Nonexistent User Error": nonexistent_user_ok,
+            "Backend API Access": employees_ok and vacations_ok
+        }
+        
+        print("\n🎯 KRITISCHE ERFOLGSKRITERIEN:")
+        all_critical_passed = True
+        for test_name, passed in critical_tests.items():
+            status = "✅ PASSED" if passed else "❌ FAILED"
+            print(f"   {status} {test_name}")
+            if not passed:
+                all_critical_passed = False
+        
+        print("\n" + "=" * 70)
+        if all_critical_passed:
+            print("🎉 ALLE KRITISCHEN TESTS BESTANDEN!")
+            print("✅ LOGIN-SYSTEM VOLLSTÄNDIG FUNKTIONSFÄHIG nach Backend-URL-Korrektur")
+            print("✅ Benutzererstellung und Login verwenden dieselbe Backend-URL")
+            print("✅ Fehlerbehandlung funktioniert korrekt")
+            return 0
+        else:
+            print("⚠️ KRITISCHE TESTS FEHLGESCHLAGEN!")
+            print("❌ LOGIN-SYSTEM hat noch Probleme - weitere Behebung erforderlich")
+            return 1
+
+def main():
+    """Main test runner"""
+    print("🎯 KRITISCHER LOGIN-SYSTEM TEST - Backend-URL-Korrektur Validation")
+    print("📋 Testing nach REACT_APP_BACKEND_URL Fix von Preview-URL zu Render-URL")
+    print("🔗 Render Backend: https://estyria-urlaubsplan-vercel-2.onrender.com")
+    
+    tester = UrlaubsplanerAPITester()
+    return tester.run_all_tests()
+
+if __name__ == "__main__":
+    sys.exit(main())
 
     def test_get_employee_by_id(self):
         """Test getting employee by ID"""
