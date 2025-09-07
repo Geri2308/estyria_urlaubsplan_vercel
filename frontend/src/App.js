@@ -674,6 +674,7 @@ const PersonalityProfileDialog = ({ isOpen, onClose, employees, selectedEmployee
   }, [isOpen, displayEmployees]);
 
   const handleTraitsChange = (employeeId, traits) => {
+    console.log('🔄 Changing traits for employee:', employeeId, 'to:', traits);
     setPersonalityTraits(prev => ({
       ...prev,
       [employeeId]: traits
