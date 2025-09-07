@@ -118,12 +118,12 @@ DEFAULT_EMPLOYEES = [
 ]
 
 DEFAULT_LOGINS = {
-    "admin": "admin123",
-    "logistik": "logistik123", 
-    "manager": "manager123",
-    "hr": "hr123",
-    "gerhard": "gerhard123",
-    "express": "express123"
+    "admin": {"password": "admin123", "role": "admin"},
+    "logistik": {"password": "logistik123", "role": "user"}, 
+    "manager": {"password": "manager123", "role": "user"},
+    "hr": {"password": "hr123", "role": "user"},
+    "gerhard": {"password": "gerhard123", "role": "user"},
+    "express": {"password": "express123", "role": "user"}
 }
 
 # Initialisierung beim Start
