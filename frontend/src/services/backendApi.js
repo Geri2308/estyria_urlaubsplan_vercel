@@ -27,12 +27,17 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 
   console.log(`📡 API Request: ${config.method || 'GET'} ${url}`);
+  console.log(`📦 Request Body:`, config.body);
+  console.log(`📋 Request Headers:`, config.headers);
 
   try {
     const response = await fetch(url, config);
     
+    console.log(`📡 Response Status: ${response.status} ${response.statusText}`);
+    
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.log(`❌ Response Error Data:`, errorData);
       throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
     }
 
