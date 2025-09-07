@@ -16,14 +16,13 @@ import asyncio
 from contextlib import asynccontextmanager
 import uvicorn
 
-# Lifespan event handler for database initialization
+# Lifespan event handler for application initialization
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    print("🚀 Starting up Urlaubsplaner API with PostgreSQL...")
-    await create_tables()
-    await initialize_default_data()
-    print("✅ Database initialized successfully")
+    print("🚀 Starting up Urlaubsplaner API with JSON storage...")
+    initialize_data()
+    print("✅ JSON storage initialized successfully")
     yield
     # Shutdown
     print("🛑 Shutting down Urlaubsplaner API...")
