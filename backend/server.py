@@ -16,7 +16,23 @@ import asyncio
 from contextlib import asynccontextmanager
 import uvicorn
 
-app = FastAPI(title="Urlaubsplaner API", version="1.0.0")
+# Lifespan event handler for database initialization
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    print("🚀 Starting up Urlaubsplaner API with PostgreSQL...")
+    await create_tables()
+    await initialize_default_data()
+    print("✅ Database initialized successfully")
+    yield
+    # Shutdown
+    print("🛑 Shutting down Urlaubsplaner API...")
+
+app = FastAPI(
+    title="Urlaubsplaner API", 
+    version="1.0.0",
+    lifespan=lifespan
+)
 
 # CORS für Frontend-Zugriff
 app.add_middleware(
