@@ -349,6 +349,33 @@ async def create_user(user_data: UserCreate):
         "message": "Benutzer erfolgreich erstellt"
     }
 
+@app.put("/api/users/{username}")
+async def update_user_password(username: str, user_data: dict):
+    """Benutzer-Passwort aktualisieren"""
+    logins = load_json_file(LOGINS_FILE, DEFAULT_LOGINS)
+    
+    username_key = username.lower()
+    if username_key not in logins:
+        raise HTTPException(status_code=404, detail="Benutzer nicht gefunden")
+    
+    new_password = user_data.get("password")
+    if not new_password or len(new_password.strip()) < 3:
+        raise HTTPException(status_code=400, detail="Passwort muss mindestens 3 Zeichen lang sein")
+    
+    # Aktualisiere das Passwort im neuen Format
+    if isinstance(logins[username_key], dict):
+        logins[username_key]["password"] = new_password.strip()
+    else:
+        # Für den Fall, dass noch alte String-Einträge existieren
+        logins[username_key] = {
+            "password": new_password.strip(),
+            "role": "user"
+        }
+    
+    save_json_file(LOGINS_FILE, logins)
+    
+    return {"username": username, "message": "Passwort erfolgreich aktualisiert"}
+
 @app.delete("/api/users/{username}")
 async def delete_user(username: str):
     """Benutzer löschen"""
