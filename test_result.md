@@ -201,13 +201,17 @@ metadata:
         agent: "testing"
         comment: "🎯 COMPREHENSIVE LOGIN SYSTEM DIAGNOSIS NACH BACKEND-RESET ERFOLGREICH ABGESCHLOSSEN: Vollständige Diagnose des Login-Systems nach Backend-Reset durchgeführt wie angefordert. ALLE KRITISCHEN DIAGNOSEPUNKTE ERFÜLLT: ✅ **Frontend lädt korrekt** (http://localhost:3000), ✅ **Login-Screen wird angezeigt** (2 Eingabefelder: Benutzername + Passwort mit korrekten Placeholders), ✅ **EXPRESS-LOGISTIK Branding** im Hintergrund gefunden, ✅ **Backend-Verbindung beim Start** (alle erwarteten Console-Logs: '🚀 App Initialisierung gestartet', '🔌 Prüfe Backend-Verfügbarkeit', '🌐 Backend API URL: http://localhost:8001/api', '✅ Backend ist verfügbar', '✅ Backend verfügbar - verwende NUR Backend', '🌐 Backend-Mode aktiviert - LocalStorage komplett übersprungen'), ✅ **Login-API-Call erfolgreich** (admin/admin123 → POST /api/auth/login → {success: true, token: token-admin-1757154433.690912, message: Erfolgreich als Administrator angemeldet}), ✅ **Keine CORS/Network Errors**, ✅ **Weiterleitung zur Hauptanwendung** (Kalender-Ansicht sichtbar mit 👑 admin Symbol). BACKEND-RESET VALIDATION: Backend-Daten sind sauber (3 Mitarbeiter, 0 Urlaubseinträge statt vorherige 323 Duplikate). LOGIN-SYSTEM VOLLSTÄNDIG FUNKTIONSFÄHIG nach Backend-Reset - alle Diagnosepunkte bestanden!"
 
-test_plan:
-  current_focus:
-    - "Backend-First Initialization - KRITISCHES PROBLEM IDENTIFIZIERT"
-  stuck_tasks:
-    - "Backend-First Initialization - KRITISCHES PROBLEM IDENTIFIZIERT"
-  test_all: false
-  test_priority: "high_first"
+  - task: "Kritisches Login-Problem behoben - Backend-URL konsistent"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "KRITISCHES LOGIN-PROBLEM BEHOBEN: REACT_APP_BACKEND_URL von 'https://teamvacation.preview.emergentagent.com' auf 'https://estyria-urlaubsplan-vercel-2.onrender.com' korrigiert. Problem war Inkonsistenz: Benutzererstellung verwendete korrekte Render-URL über backendApi.js initializeBackend(), aber Login verwendete falsche Preview-URL aus .env. Jetzt verwenden BEIDE Operationen dieselbe korrekte Backend-URL. Backend-Health-Check bestätigt: Render-Backend erreichbar und funktional."
 
   - task: "Krankheitstage-Aktualisierungs-Problem beheben"
     implemented: true
