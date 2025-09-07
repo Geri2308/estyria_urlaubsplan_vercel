@@ -312,10 +312,16 @@ async def get_users():
     logins = load_json_file(LOGINS_FILE, DEFAULT_LOGINS)
     
     users = []
-    for username in logins.keys():
+    for username, user_data in logins.items():
+        # Unterstütze beide Formate: altes (nur String) und neues (mit role)
+        if isinstance(user_data, str):
+            role = "admin" if username == "admin" else "user"
+        else:
+            role = user_data.get("role", "user")
+            
         users.append({
             "username": username,
-            "role": "admin" if username == "admin" else "user",
+            "role": role,
             "created_date": datetime.now().isoformat()
         })
     
