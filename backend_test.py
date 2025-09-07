@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
 """
 Backend API Test Suite for Urlaubsplaner (Vacation Planner)
-Tests all API endpoints including authentication, employee management, and settings.
+KRITISCHER LOGIN-SYSTEM TEST nach Backend-URL-Korrektur
+Tests the login system after fixing REACT_APP_BACKEND_URL from Preview-URL to Render-Backend-URL
 """
 
 import requests
 import sys
 import json
 from datetime import datetime
+import uuid
 
 class UrlaubsplanerAPITester:
-    def __init__(self, base_url="http://localhost:3001"):
+    def __init__(self, base_url="https://estyria-urlaubsplan-vercel-2.onrender.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
         self.tests_run = 0
         self.tests_passed = 0
         self.created_employee_id = None
+        self.created_user_username = None
 
     def log_test(self, name, success, details=""):
         """Log test results"""
