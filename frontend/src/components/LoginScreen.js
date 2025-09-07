@@ -26,13 +26,13 @@ const LoginScreen = ({ onLogin, isBackendMode = false }) => {
         const { authAPI } = await import('../services/backendApi');
         const response = await authAPI.login({ username, password });
         
-        if (response.success) {
-          console.log('✅ Backend-Login erfolgreich:', response.user.username);
-          setAuthData(response.token, response.user);
+        if (response.data.success) {
+          console.log('✅ Backend-Login erfolgreich:', response.data.user.username);
+          setAuthData(response.data.token, response.data.user);
           onLogin();
         } else {
-          console.log('❌ Backend-Login fehlgeschlagen:', response.message);
-          setError(response.message || 'Login fehlgeschlagen');
+          console.log('❌ Backend-Login fehlgeschlagen:', response.data.message);
+          setError(response.data.message || 'Login fehlgeschlagen');
         }
       } else {
         // LocalStorage-Mode: Verwende lokale Auth
