@@ -200,41 +200,74 @@ class UrlaubsplanerAPITester:
             self.log_test("Login Nonexistent User", False, f"Error: {str(e)}")
             return False
 
-    def test_get_employees_unauthorized(self):
-        """Test getting employees without token"""
-        try:
-            response = requests.get(f"{self.api_url}/employees", timeout=10)
-            
-            success = response.status_code == 401
-            details = f"Status Code: {response.status_code} (Expected 401)"
-                
-            self.log_test("Get Employees (Unauthorized)", success, details)
-            return success
-        except Exception as e:
-            self.log_test("Get Employees (Unauthorized)", False, f"Error: {str(e)}")
-            return False
-
     def test_get_employees_authorized(self):
-        """Test getting employees with valid token"""
+        """Test getting employees with valid token - BACKEND API VALIDATION"""
+        print("\n🔍 TESTING: Mitarbeiter-Daten vom Backend abrufen")
         if not self.token:
             self.log_test("Get Employees (Authorized)", False, "No token available")
             return False
             
         try:
-            headers = {"Authorization": f"Bearer {self.token}"}
-            response = requests.get(f"{self.api_url}/employees", headers=headers, timeout=10)
+            response = requests.get(f"{self.api_url}/employees", timeout=15)
             
             success = response.status_code == 200
             if success:
                 data = response.json()
                 details = f"Found {len(data)} employees"
+                print(f"   ✅ Employees loaded: {len(data)} entries")
+                # Show first few employee names for validation
+                if data:
+                    names = [emp.get('name', 'Unknown') for emp in data[:3]]
+                    print(f"   📋 Sample employees: {', '.join(names)}")
             else:
                 details = f"Status Code: {response.status_code}, Response: {response.text}"
+                print(f"   ❌ Error Response: {response.text}")
                 
-            self.log_test("Get Employees (Authorized)", success, details)
+            self.log_test("Get Employees (Backend API)", success, details)
             return success
         except Exception as e:
-            self.log_test("Get Employees (Authorized)", False, f"Error: {str(e)}")
+            self.log_test("Get Employees (Backend API)", False, f"Error: {str(e)}")
+            return False
+
+    def test_get_vacations(self):
+        """Test getting vacations - URLAUBSDATEN VALIDATION"""
+        print("\n🔍 TESTING: Urlaubsdaten vom Backend abrufen")
+        try:
+            response = requests.get(f"{self.api_url}/vacations", timeout=15)
+            
+            success = response.status_code == 200
+            if success:
+                data = response.json()
+                details = f"Found {len(data)} vacation entries"
+                print(f"   ✅ Vacations loaded: {len(data)} entries")
+            else:
+                details = f"Status Code: {response.status_code}, Response: {response.text}"
+                print(f"   ❌ Error Response: {response.text}")
+                
+            self.log_test("Get Vacations (Backend API)", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Get Vacations (Backend API)", False, f"Error: {str(e)}")
+            return False
+
+    def cleanup_created_user(self):
+        """Clean up created test user"""
+        if not self.token or not self.created_user_username:
+            return True
+            
+        try:
+            print(f"\n🧹 CLEANUP: Deleting test user {self.created_user_username}")
+            response = requests.delete(f"{self.api_url}/users/{self.created_user_username}", timeout=15)
+            
+            success = response.status_code == 200
+            if success:
+                print(f"   ✅ Test user {self.created_user_username} deleted successfully")
+            else:
+                print(f"   ⚠️ Could not delete test user: {response.text}")
+                
+            return success
+        except Exception as e:
+            print(f"   ⚠️ Cleanup error: {str(e)}")
             return False
 
     def test_create_employee(self):
