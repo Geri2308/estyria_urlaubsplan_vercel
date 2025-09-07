@@ -1844,6 +1844,15 @@ function App() {
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                           {employees
+                            .filter((employee) => {
+                              // Skills filter
+                              if (skillFilter.trim()) {
+                                return employee.skills?.some(skill =>
+                                  skill.name.toLowerCase().includes(skillFilter.toLowerCase())
+                                );
+                              }
+                              return true;
+                            })
                             .sort((a, b) => {
                               // Admins first
                               if (a.role === 'admin' && b.role !== 'admin') return -1;
