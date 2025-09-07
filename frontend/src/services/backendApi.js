@@ -108,9 +108,13 @@ export const userAPI = {
   }),
   
   updatePassword: ({ username, newPassword }) => {
-    // FastAPI unterstützt noch kein Passwort-Update - könnte erweitert werden
-    console.warn('⚠️ Password update not implemented in FastAPI yet');
-    return Promise.reject({ response: { data: { error: 'Passwort-Änderung noch nicht implementiert' } } });
+    return apiRequest(`/users/${username}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ password: newPassword })
+    });
   },
   
   delete: (username) => apiRequest(`/users/${username}`, {
