@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Mitarbeiter-Bearbeitungs-Problem: Benutzer kann Mitarbeiter nicht aktualisieren, wenn das Feld 'Urlaubstage pro Jahr' Dezimalwerte wie '27,08' enthält"
+user_problem_statement: "KRITISCHES LOGIN-PROBLEM: Neu erstellte Benutzer können sich nicht anmelden. Root Cause: Frontend .env-Datei verwendete falsche Backend-URL (Preview-URL statt Render-URL). BEHOBEN: REACT_APP_BACKEND_URL auf https://estyria-urlaubsplan-vercel-2.onrender.com korrigiert."
 
 frontend:
   - task: "Team View Scrollsystem reparieren"
