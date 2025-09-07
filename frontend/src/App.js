@@ -959,10 +959,19 @@ const VacationDialog = ({ isOpen, onClose, onSave, employees, editingEntry = nul
         throw new Error('Mitarbeiter nicht gefunden');
       }
 
+      // Berechne die Anzahl der Tage
+      const startDate = new Date(formData.start_date);
+      const endDate = new Date(formData.end_date);
+      const timeDiff = endDate.getTime() - startDate.getTime();
+      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 um beide Tage einzuschließen
+
       const submitData = {
         ...formData,
-        employee_name: employee.name
+        employee_name: employee.name,
+        days_count: daysDiff // Backend erwartet days_count, nicht days
       };
+
+      console.log('🔄 Submitting vacation data:', submitData);
 
       if (editingEntry) {
         // Dynamische API-Auswahl für Update
