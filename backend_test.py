@@ -26,15 +26,26 @@ import json
 from datetime import datetime, date
 import uuid
 
-class UrlaubsplanerAPITester:
+class UrlaubsplanerRegressionTester:
     def __init__(self, base_url="https://estyria-urlaubsplan-vercel-2.onrender.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
         self.tests_run = 0
         self.tests_passed = 0
+        self.created_vacation_id = None
         self.created_employee_id = None
-        self.created_user_username = None
+        self.initial_employee_count = 0
+        
+        # Test users from the review request
+        self.test_users = [
+            {"username": "admin", "password": "admin123", "expected_role": "admin"},
+            {"username": "logistik", "password": "logistik123", "expected_role": "user"},
+            {"username": "manager", "password": "manager123", "expected_role": "user"},
+            {"username": "hr", "password": "hr123", "expected_role": "user"},
+            {"username": "gerhard", "password": "gerhard123", "expected_role": "user"},
+            {"username": "express", "password": "express123", "expected_role": "user"}
+        ]
 
     def log_test(self, name, success, details=""):
         """Log test results"""
@@ -46,8 +57,8 @@ class UrlaubsplanerAPITester:
             print(f"❌ {name} - FAILED {details}")
 
     def test_health_check(self):
-        """Test health endpoint - KRITISCHER BACKEND-VERBINDUNGSTEST"""
-        print("\n🔍 TESTING: Backend-Verbindung Health-Check")
+        """Test health endpoint - BACKEND VERFÜGBARKEIT"""
+        print("\n🔍 TESTING: Backend Health Check")
         try:
             response = requests.get(f"{self.api_url}/health", timeout=15)
             success = response.status_code == 200
@@ -60,310 +71,416 @@ class UrlaubsplanerAPITester:
             else:
                 details = f"Status Code: {response.status_code}, Response: {response.text}"
                 
-            self.log_test("Health Check (Render Backend)", success, details)
+            self.log_test("Backend Health Check", success, details)
             return success
         except Exception as e:
-            self.log_test("Health Check (Render Backend)", False, f"Error: {str(e)}")
+            self.log_test("Backend Health Check", False, f"Error: {str(e)}")
             return False
 
-    def test_admin_login(self):
-        """Test admin login - KRITISCHER ADMIN-LOGIN TEST"""
-        print("\n🔍 TESTING: Admin-Login mit username/password")
-        try:
-            payload = {"username": "admin", "password": "admin123"}
-            print(f"   📡 POST {self.api_url}/auth/login")
-            print(f"   📝 Payload: {json.dumps(payload)}")
+    def test_multi_user_login(self):
+        """Test all 6 users can login - PROBLEM 1: Login für andere Benutzer"""
+        print("\n🔍 TESTING: Multi-User Login (Problem 1)")
+        all_passed = True
+        login_results = {}
+        
+        for user in self.test_users:
+            username = user["username"]
+            password = user["password"]
+            expected_role = user["expected_role"]
             
-            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=15)
-            
-            success = response.status_code == 200
-            if success:
-                data = response.json()
-                self.token = data.get('token')
-                user = data.get('user', {})
-                details = f"Success: {data.get('success')}, Role: {user.get('role')}, Token: {self.token[:20]}..."
-                print(f"   ✅ Response: {json.dumps(data, indent=2)}")
-            else:
-                details = f"Status Code: {response.status_code}, Response: {response.text}"
-                print(f"   ❌ Error Response: {response.text}")
+            print(f"\n   Testing login: {username}/{password}")
+            try:
+                payload = {"username": username, "password": password}
+                response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=15)
                 
-            self.log_test("Admin Login (admin/admin123)", success, details)
-            return success
-        except Exception as e:
-            self.log_test("Admin Login (admin/admin123)", False, f"Error: {str(e)}")
-            return False
-
-    def test_create_new_user(self):
-        """Test creating new user - NEUER BENUTZER TEST"""
-        print("\n🔍 TESTING: Neuen Testbenutzer erstellen")
-        if not self.token:
-            self.log_test("Create New User", False, "No admin token available")
-            return False
-            
-        try:
-            # Generate unique username
-            timestamp = str(int(datetime.now().timestamp()))
-            self.created_user_username = f"logintest{timestamp}"
-            
-            payload = {
-                "username": self.created_user_username,
-                "password": "test123",
-                "role": "user"
-            }
-            
-            print(f"   📡 POST {self.api_url}/users")
-            print(f"   📝 Payload: {json.dumps(payload)}")
-            
-            response = requests.post(f"{self.api_url}/users", json=payload, timeout=15)
-            
-            success = response.status_code == 200
-            if success:
-                data = response.json()
-                details = f"Username: {data.get('username')}, Role: {data.get('role')}"
-                print(f"   ✅ Response: {json.dumps(data, indent=2)}")
-            else:
-                details = f"Status Code: {response.status_code}, Response: {response.text}"
-                print(f"   ❌ Error Response: {response.text}")
+                success = response.status_code == 200
+                if success:
+                    data = response.json()
+                    actual_role = data.get('user', {}).get('role', 'unknown')
+                    role_correct = actual_role == expected_role
+                    
+                    if role_correct:
+                        details = f"✅ Success: {data.get('success')}, Role: {actual_role}"
+                        print(f"      ✅ {username} login successful, role: {actual_role}")
+                        login_results[username] = True
+                        
+                        # Store admin token for later tests
+                        if username == "admin":
+                            self.token = data.get('token')
+                    else:
+                        details = f"❌ Role mismatch - Expected: {expected_role}, Got: {actual_role}"
+                        print(f"      ❌ {username} role mismatch: expected {expected_role}, got {actual_role}")
+                        login_results[username] = False
+                        all_passed = False
+                else:
+                    details = f"Status Code: {response.status_code}, Response: {response.text}"
+                    print(f"      ❌ {username} login failed: {response.status_code}")
+                    login_results[username] = False
+                    all_passed = False
+                    
+                self.log_test(f"Login {username}", success and role_correct, details)
                 
-            self.log_test("Create New User", success, details)
-            return success
-        except Exception as e:
-            self.log_test("Create New User", False, f"Error: {str(e)}")
-            return False
+            except Exception as e:
+                print(f"      ❌ {username} login error: {str(e)}")
+                login_results[username] = False
+                all_passed = False
+                self.log_test(f"Login {username}", False, f"Error: {str(e)}")
+        
+        # Summary
+        passed_count = sum(1 for result in login_results.values() if result)
+        total_count = len(self.test_users)
+        
+        print(f"\n   📊 Multi-User Login Summary: {passed_count}/{total_count} users can login")
+        for username, passed in login_results.items():
+            status = "✅" if passed else "❌"
+            print(f"      {status} {username}")
+        
+        return all_passed
 
-    def test_new_user_login(self):
-        """Test login with newly created user - SOFORTIGER LOGIN TEST"""
-        print("\n🔍 TESTING: Login mit neu erstelltem Benutzer")
-        if not self.created_user_username:
-            self.log_test("New User Login", False, "No created user available")
-            return False
-            
-        try:
-            payload = {"username": self.created_user_username, "password": "test123"}
-            print(f"   📡 POST {self.api_url}/auth/login")
-            print(f"   📝 Payload: {json.dumps(payload)}")
-            
-            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=15)
-            
-            success = response.status_code == 200
-            if success:
-                data = response.json()
-                user = data.get('user', {})
-                details = f"Success: {data.get('success')}, Role: {user.get('role')}, Username: {user.get('username')}"
-                print(f"   ✅ Response: {json.dumps(data, indent=2)}")
-            else:
-                details = f"Status Code: {response.status_code}, Response: {response.text}"
-                print(f"   ❌ Error Response: {response.text}")
-                
-            self.log_test("New User Login", success, details)
-            return success
-        except Exception as e:
-            self.log_test("New User Login", False, f"Error: {str(e)}")
-            return False
-
-    def test_login_wrong_password(self):
-        """Test login with wrong password - FEHLERFALL TEST"""
-        print("\n🔍 TESTING: Login mit falschem Passwort")
-        try:
-            payload = {"username": "admin", "password": "wrongpassword"}
-            print(f"   📡 POST {self.api_url}/auth/login")
-            print(f"   📝 Payload: {json.dumps(payload)}")
-            
-            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=15)
-            
-            success = response.status_code == 401
-            details = f"Status Code: {response.status_code} (Expected 401)"
-            if response.status_code == 401:
-                try:
-                    error_data = response.json()
-                    print(f"   ✅ Correct Error Response: {json.dumps(error_data, indent=2)}")
-                except:
-                    print(f"   ✅ Correct Error Response: {response.text}")
-            else:
-                print(f"   ❌ Unexpected Response: {response.text}")
-                
-            self.log_test("Login Wrong Password", success, details)
-            return success
-        except Exception as e:
-            self.log_test("Login Wrong Password", False, f"Error: {str(e)}")
-            return False
-
-    def test_login_nonexistent_user(self):
-        """Test login with non-existent user - FEHLERFALL TEST"""
-        print("\n🔍 TESTING: Login mit nicht-existierendem Benutzer")
-        try:
-            payload = {"username": "nonexistentuser999", "password": "anypassword"}
-            print(f"   📡 POST {self.api_url}/auth/login")
-            print(f"   📝 Payload: {json.dumps(payload)}")
-            
-            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=15)
-            
-            success = response.status_code == 401
-            details = f"Status Code: {response.status_code} (Expected 401)"
-            if response.status_code == 401:
-                try:
-                    error_data = response.json()
-                    print(f"   ✅ Correct Error Response: {json.dumps(error_data, indent=2)}")
-                except:
-                    print(f"   ✅ Correct Error Response: {response.text}")
-            else:
-                print(f"   ❌ Unexpected Response: {response.text}")
-                
-            self.log_test("Login Nonexistent User", success, details)
-            return success
-        except Exception as e:
-            self.log_test("Login Nonexistent User", False, f"Error: {str(e)}")
-            return False
-
-    def test_get_employees_authorized(self):
-        """Test getting employees with valid token - BACKEND API VALIDATION"""
-        print("\n🔍 TESTING: Mitarbeiter-Daten vom Backend abrufen")
-        if not self.token:
-            self.log_test("Get Employees (Authorized)", False, "No token available")
-            return False
-            
+    def get_initial_employee_count(self):
+        """Get initial employee count for persistence test"""
+        print("\n🔍 TESTING: Getting initial employee count")
         try:
             response = requests.get(f"{self.api_url}/employees", timeout=15)
             
-            success = response.status_code == 200
-            if success:
+            if response.status_code == 200:
                 data = response.json()
-                details = f"Found {len(data)} employees"
-                print(f"   ✅ Employees loaded: {len(data)} entries")
-                # Show first few employee names for validation
+                self.initial_employee_count = len(data)
+                print(f"   📊 Initial employee count: {self.initial_employee_count}")
+                
+                # Show sample employees
                 if data:
                     names = [emp.get('name', 'Unknown') for emp in data[:3]]
                     print(f"   📋 Sample employees: {', '.join(names)}")
-            else:
-                details = f"Status Code: {response.status_code}, Response: {response.text}"
-                print(f"   ❌ Error Response: {response.text}")
                 
-            self.log_test("Get Employees (Backend API)", success, details)
-            return success
+                self.log_test("Get Initial Employee Count", True, f"Found {self.initial_employee_count} employees")
+                return True
+            else:
+                self.log_test("Get Initial Employee Count", False, f"Status: {response.status_code}")
+                return False
+                
         except Exception as e:
-            self.log_test("Get Employees (Backend API)", False, f"Error: {str(e)}")
+            self.log_test("Get Initial Employee Count", False, f"Error: {str(e)}")
             return False
 
-    def test_get_vacations(self):
-        """Test getting vacations - URLAUBSDATEN VALIDATION"""
-        print("\n🔍 TESTING: Urlaubsdaten vom Backend abrufen")
+    def test_vacation_creation(self):
+        """Test vacation creation - PROBLEM 2: Kann keinen Urlaub beantragen"""
+        print("\n🔍 TESTING: Vacation Creation (Problem 2)")
+        
+        if not self.token:
+            self.log_test("Vacation Creation", False, "No admin token available")
+            return False
+        
+        # First get employees to use a valid employee_id
+        try:
+            response = requests.get(f"{self.api_url}/employees", timeout=15)
+            if response.status_code != 200:
+                self.log_test("Vacation Creation", False, "Could not get employees list")
+                return False
+                
+            employees = response.json()
+            if not employees:
+                self.log_test("Vacation Creation", False, "No employees found")
+                return False
+                
+            # Use first employee for vacation test
+            test_employee = employees[0]
+            employee_id = test_employee["id"]
+            employee_name = test_employee["name"]
+            
+            print(f"   👤 Using employee: {employee_name} (ID: {employee_id})")
+            
+        except Exception as e:
+            self.log_test("Vacation Creation", False, f"Error getting employees: {str(e)}")
+            return False
+        
+        # Create vacation entry
+        try:
+            vacation_data = {
+                "employee_id": employee_id,
+                "employee_name": employee_name,
+                "vacation_type": "URLAUB",
+                "start_date": "2025-12-20",
+                "end_date": "2025-12-22",
+                "days_count": 3,
+                "description": "Regression test vacation"
+            }
+            
+            print(f"   📡 POST {self.api_url}/vacations")
+            print(f"   📝 Payload: {json.dumps(vacation_data, indent=2)}")
+            
+            response = requests.post(f"{self.api_url}/vacations", json=vacation_data, timeout=15)
+            
+            success = response.status_code == 200
+            if success:
+                data = response.json()
+                self.created_vacation_id = data.get('id')
+                
+                # Verify UUID format
+                uuid_valid = self.created_vacation_id and len(self.created_vacation_id) > 20
+                
+                details = f"Created vacation ID: {self.created_vacation_id}, UUID valid: {uuid_valid}"
+                print(f"   ✅ Vacation created successfully")
+                print(f"   🆔 Vacation ID: {self.created_vacation_id}")
+                print(f"   📅 Days: {data.get('days_count')}, Type: {data.get('vacation_type')}")
+                
+                self.log_test("Vacation Creation", success and uuid_valid, details)
+                return success and uuid_valid
+            else:
+                details = f"Status Code: {response.status_code}, Response: {response.text}"
+                print(f"   ❌ Vacation creation failed: {response.status_code}")
+                print(f"   📄 Response: {response.text}")
+                
+                self.log_test("Vacation Creation", False, details)
+                return False
+                
+        except Exception as e:
+            self.log_test("Vacation Creation", False, f"Error: {str(e)}")
+            return False
+
+    def test_vacation_retrieval(self):
+        """Test that created vacation appears in GET /api/vacations"""
+        print("\n🔍 TESTING: Vacation Retrieval Verification")
+        
+        if not self.created_vacation_id:
+            self.log_test("Vacation Retrieval", False, "No vacation was created")
+            return False
+        
         try:
             response = requests.get(f"{self.api_url}/vacations", timeout=15)
             
             success = response.status_code == 200
             if success:
-                data = response.json()
-                details = f"Found {len(data)} vacation entries"
-                print(f"   ✅ Vacations loaded: {len(data)} entries")
+                vacations = response.json()
+                
+                # Find our created vacation
+                found_vacation = None
+                for vacation in vacations:
+                    if vacation.get('id') == self.created_vacation_id:
+                        found_vacation = vacation
+                        break
+                
+                if found_vacation:
+                    details = f"Found vacation in list, Type: {found_vacation.get('vacation_type')}, Days: {found_vacation.get('days_count')}"
+                    print(f"   ✅ Created vacation found in vacation list")
+                    print(f"   📋 Total vacations: {len(vacations)}")
+                    print(f"   🎯 Our vacation: {found_vacation.get('vacation_type')} - {found_vacation.get('days_count')} days")
+                    
+                    self.log_test("Vacation Retrieval", True, details)
+                    return True
+                else:
+                    details = f"Created vacation ID {self.created_vacation_id} not found in {len(vacations)} vacations"
+                    print(f"   ❌ Created vacation not found in vacation list")
+                    print(f"   📋 Total vacations: {len(vacations)}")
+                    
+                    self.log_test("Vacation Retrieval", False, details)
+                    return False
             else:
                 details = f"Status Code: {response.status_code}, Response: {response.text}"
-                print(f"   ❌ Error Response: {response.text}")
+                self.log_test("Vacation Retrieval", False, details)
+                return False
                 
-            self.log_test("Get Vacations (Backend API)", success, details)
-            return success
         except Exception as e:
-            self.log_test("Get Vacations (Backend API)", False, f"Error: {str(e)}")
+            self.log_test("Vacation Retrieval", False, f"Error: {str(e)}")
             return False
 
-    def cleanup_created_user(self):
-        """Clean up created test user"""
-        if not self.token or not self.created_user_username:
-            return True
-            
+    def test_employee_persistence(self):
+        """Test employee data persistence - PROBLEM 3: Bei Updates werden alle Mitarbeiter gelöscht außer 3"""
+        print("\n🔍 TESTING: Employee Data Persistence (Problem 3)")
+        
+        if not self.token:
+            self.log_test("Employee Persistence", False, "No admin token available")
+            return False
+        
+        # Step 1: Create a new employee
         try:
-            print(f"\n🧹 CLEANUP: Deleting test user {self.created_user_username}")
-            response = requests.delete(f"{self.api_url}/users/{self.created_user_username}", timeout=15)
+            new_employee_data = {
+                "name": f"Test Employee {datetime.now().strftime('%H%M%S')}",
+                "email": f"test{datetime.now().strftime('%H%M%S')}@express-logistik.com",
+                "role": "employee",
+                "vacation_days_total": 25.0
+            }
             
-            success = response.status_code == 200
-            if success:
-                print(f"   ✅ Test user {self.created_user_username} deleted successfully")
-            else:
-                print(f"   ⚠️ Could not delete test user: {response.text}")
+            print(f"   📡 POST {self.api_url}/employees")
+            print(f"   📝 Creating employee: {new_employee_data['name']}")
+            
+            response = requests.post(f"{self.api_url}/employees", json=new_employee_data, timeout=15)
+            
+            if response.status_code != 200:
+                self.log_test("Employee Persistence", False, f"Could not create employee: {response.status_code}")
+                return False
                 
-            return success
+            created_employee = response.json()
+            self.created_employee_id = created_employee.get('id')
+            
+            print(f"   ✅ Employee created: {created_employee.get('name')} (ID: {self.created_employee_id})")
+            
         except Exception as e:
-            print(f"   ⚠️ Cleanup error: {str(e)}")
+            self.log_test("Employee Persistence", False, f"Error creating employee: {str(e)}")
+            return False
+        
+        # Step 2: Check current employee count
+        try:
+            response = requests.get(f"{self.api_url}/employees", timeout=15)
+            
+            if response.status_code != 200:
+                self.log_test("Employee Persistence", False, f"Could not get employees: {response.status_code}")
+                return False
+                
+            current_employees = response.json()
+            current_count = len(current_employees)
+            expected_count = self.initial_employee_count + 1
+            
+            print(f"   📊 Employee count check:")
+            print(f"      Initial count: {self.initial_employee_count}")
+            print(f"      Current count: {current_count}")
+            print(f"      Expected count: {expected_count}")
+            
+            # Verify count increased correctly
+            count_correct = current_count == expected_count
+            
+            # Verify count is not fallen back to 3 (the reported problem)
+            not_fallen_to_3 = current_count != 3 or self.initial_employee_count == 2
+            
+            if count_correct and not_fallen_to_3:
+                details = f"Employee count correct: {current_count} (was {self.initial_employee_count}, added 1)"
+                print(f"   ✅ Employee persistence test passed")
+                print(f"   ✅ Count did not fall back to 3")
+                
+                self.log_test("Employee Persistence", True, details)
+                return True
+            else:
+                if not count_correct:
+                    details = f"Count mismatch: Expected {expected_count}, Got {current_count}"
+                    print(f"   ❌ Employee count mismatch")
+                elif not not_fallen_to_3:
+                    details = f"Employee count fell back to 3 (reported bug)"
+                    print(f"   ❌ CRITICAL: Employee count fell back to 3!")
+                
+                self.log_test("Employee Persistence", False, details)
+                return False
+                
+        except Exception as e:
+            self.log_test("Employee Persistence", False, f"Error checking employee count: {str(e)}")
             return False
 
-    def run_all_tests(self):
-        """Run all critical login system tests"""
-        print("🚀 KRITISCHER LOGIN-SYSTEM TEST nach Backend-URL-Korrektur")
-        print("=" * 70)
+    def cleanup_test_data(self):
+        """Clean up created test data"""
+        print("\n🧹 CLEANUP: Removing test data")
+        
+        # Clean up vacation
+        if self.created_vacation_id:
+            try:
+                response = requests.delete(f"{self.api_url}/vacations/{self.created_vacation_id}", timeout=15)
+                if response.status_code == 200:
+                    print(f"   ✅ Deleted test vacation: {self.created_vacation_id}")
+                else:
+                    print(f"   ⚠️ Could not delete vacation: {response.status_code}")
+            except Exception as e:
+                print(f"   ⚠️ Vacation cleanup error: {str(e)}")
+        
+        # Clean up employee
+        if self.created_employee_id:
+            try:
+                response = requests.delete(f"{self.api_url}/employees/{self.created_employee_id}", timeout=15)
+                if response.status_code == 200:
+                    print(f"   ✅ Deleted test employee: {self.created_employee_id}")
+                else:
+                    print(f"   ⚠️ Could not delete employee: {response.status_code}")
+            except Exception as e:
+                print(f"   ⚠️ Employee cleanup error: {str(e)}")
+
+    def run_regression_tests(self):
+        """Run all regression tests for the three reported problems"""
+        print("🚀 KRITISCHE REGRESSION-TESTS nach Authentication-Fix")
+        print("=" * 80)
         print(f"🎯 Backend URL: {self.base_url}")
         print(f"🔗 API Endpoint: {self.api_url}")
-        print("=" * 70)
+        print("\n📋 TESTING THREE CRITICAL PROBLEMS:")
+        print("   1. Login für andere Benutzer funktioniert nicht")
+        print("   2. Kann keinen Urlaub beantragen (failed to fetch)")
+        print("   3. Bei Updates werden alle Mitarbeiter gelöscht außer 3")
+        print("=" * 80)
         
-        # 1. BACKEND-VERBINDUNG TEST
-        print("\n📡 PHASE 1: BACKEND-VERBINDUNG")
+        # Phase 1: Backend Health Check
+        print("\n📡 PHASE 1: BACKEND VERFÜGBARKEIT")
         health_ok = self.test_health_check()
         
-        # 2. ADMIN-LOGIN TEST  
-        print("\n🔐 PHASE 2: ADMIN-LOGIN TEST")
-        admin_login_ok = self.test_admin_login()
+        if not health_ok:
+            print("❌ Backend nicht verfügbar - Tests abgebrochen")
+            return 1
         
-        # 3. NEUER BENUTZER TEST
-        print("\n👤 PHASE 3: NEUER BENUTZER TEST")
-        create_user_ok = self.test_create_new_user()
-        new_user_login_ok = self.test_new_user_login()
+        # Phase 2: Multi-User Login Test (Problem 1)
+        print("\n🔐 PHASE 2: MULTI-USER LOGIN TEST (Problem 1)")
+        multi_login_ok = self.test_multi_user_login()
         
-        # 4. FEHLERFALL TESTS
-        print("\n❌ PHASE 4: FEHLERFALL TESTS")
-        wrong_password_ok = self.test_login_wrong_password()
-        nonexistent_user_ok = self.test_login_nonexistent_user()
+        # Phase 3: Get initial employee count
+        print("\n📊 PHASE 3: INITIAL DATA COLLECTION")
+        initial_count_ok = self.get_initial_employee_count()
         
-        # 5. BACKEND API VALIDATION
-        print("\n📊 PHASE 5: BACKEND API VALIDATION")
-        employees_ok = self.test_get_employees_authorized()
-        vacations_ok = self.test_get_vacations()
+        # Phase 4: Vacation Creation Test (Problem 2)
+        print("\n📅 PHASE 4: VACATION CREATION TEST (Problem 2)")
+        vacation_create_ok = self.test_vacation_creation()
+        vacation_retrieve_ok = self.test_vacation_retrieval()
         
-        # 6. CLEANUP
+        # Phase 5: Employee Persistence Test (Problem 3)
+        print("\n👥 PHASE 5: EMPLOYEE PERSISTENCE TEST (Problem 3)")
+        employee_persistence_ok = self.test_employee_persistence()
+        
+        # Phase 6: Cleanup
         print("\n🧹 PHASE 6: CLEANUP")
-        self.cleanup_created_user()
+        self.cleanup_test_data()
         
-        # Print summary
-        print("\n" + "=" * 70)
-        print(f"📊 KRITISCHE TEST ERGEBNISSE: {self.tests_passed}/{self.tests_run} tests passed")
-        print("=" * 70)
+        # Results Summary
+        print("\n" + "=" * 80)
+        print(f"📊 REGRESSION TEST RESULTS: {self.tests_passed}/{self.tests_run} tests passed")
+        print("=" * 80)
         
-        # Detailed results
-        critical_tests = {
-            "Backend Health Check": health_ok,
-            "Admin Login": admin_login_ok, 
-            "New User Creation": create_user_ok,
-            "New User Login": new_user_login_ok,
-            "Wrong Password Error": wrong_password_ok,
-            "Nonexistent User Error": nonexistent_user_ok,
-            "Backend API Access": employees_ok and vacations_ok
+        # Critical problem results
+        problem_results = {
+            "Problem 1 - Multi-User Login": multi_login_ok,
+            "Problem 2 - Vacation Creation": vacation_create_ok and vacation_retrieve_ok,
+            "Problem 3 - Employee Persistence": employee_persistence_ok
         }
         
-        print("\n🎯 KRITISCHE ERFOLGSKRITERIEN:")
-        all_critical_passed = True
-        for test_name, passed in critical_tests.items():
-            status = "✅ PASSED" if passed else "❌ FAILED"
-            print(f"   {status} {test_name}")
-            if not passed:
-                all_critical_passed = False
+        print("\n🎯 KRITISCHE PROBLEME STATUS:")
+        all_problems_fixed = True
+        for problem, fixed in problem_results.items():
+            status = "✅ BEHOBEN" if fixed else "❌ WEITERHIN PROBLEM"
+            print(f"   {status} {problem}")
+            if not fixed:
+                all_problems_fixed = False
         
-        print("\n" + "=" * 70)
-        if all_critical_passed:
-            print("🎉 ALLE KRITISCHEN TESTS BESTANDEN!")
-            print("✅ LOGIN-SYSTEM VOLLSTÄNDIG FUNKTIONSFÄHIG nach Backend-URL-Korrektur")
-            print("✅ Benutzererstellung und Login verwenden dieselbe Backend-URL")
-            print("✅ Fehlerbehandlung funktioniert korrekt")
+        print("\n" + "=" * 80)
+        if all_problems_fixed:
+            print("🎉 ALLE DREI KRITISCHEN PROBLEME BEHOBEN!")
+            print("✅ Multi-User Login funktioniert für alle 6 Benutzer")
+            print("✅ Vacation Creation funktioniert ohne 'failed to fetch'")
+            print("✅ Employee Data Persistence - keine Löschung auf 3 Mitarbeiter")
+            print("✅ Authentication-Fix erfolgreich implementiert")
             return 0
         else:
-            print("⚠️ KRITISCHE TESTS FEHLGESCHLAGEN!")
-            print("❌ LOGIN-SYSTEM hat noch Probleme - weitere Behebung erforderlich")
+            print("⚠️ KRITISCHE PROBLEME WEITERHIN BESTEHEND!")
+            print("❌ Weitere Behebung erforderlich")
+            
+            # Specific recommendations
+            if not multi_login_ok:
+                print("🔧 EMPFEHLUNG: logins.json Datenformat überprüfen")
+            if not (vacation_create_ok and vacation_retrieve_ok):
+                print("🔧 EMPFEHLUNG: Vacation API und CORS-Konfiguration überprüfen")
+            if not employee_persistence_ok:
+                print("🔧 EMPFEHLUNG: Employee Update-Logic und Datenpersistierung überprüfen")
+            
             return 1
 
 def main():
     """Main test runner"""
-    print("🎯 KRITISCHER LOGIN-SYSTEM TEST - Backend-URL-Korrektur Validation")
-    print("📋 Testing nach REACT_APP_BACKEND_URL Fix von Preview-URL zu Render-URL")
-    print("🔗 Render Backend: https://estyria-urlaubsplan-vercel-2.onrender.com")
+    print("🎯 KRITISCHE REGRESSION-TESTS nach Authentication-Fix")
+    print("📋 Testing der drei gemeldeten kritischen Probleme")
+    print("🔗 Backend: https://estyria-urlaubsplan-vercel-2.onrender.com")
     
-    tester = UrlaubsplanerAPITester()
-    return tester.run_all_tests()
+    tester = UrlaubsplanerRegressionTester()
+    return tester.run_regression_tests()
 
 if __name__ == "__main__":
     sys.exit(main())
