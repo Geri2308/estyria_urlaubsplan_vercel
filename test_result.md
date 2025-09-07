@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "KRITISCHES LOGIN-PROBLEM: Neu erstellte Benutzer können sich nicht anmelden. Root Cause: Frontend .env-Datei verwendete falsche Backend-URL (Preview-URL statt Render-URL). BEHOBEN: REACT_APP_BACKEND_URL auf https://estyria-urlaubsplan-vercel-2.onrender.com korrigiert."
+user_problem_statement: "DREI KRITISCHE BUGS: 1) Login für andere Benutzer funktioniert nicht, 2) Kann keinen neuen Urlaub beantragen (failed to fetch), 3) Bei Updates werden alle Mitarbeiter gelöscht außer 3. ROOT CAUSE: Datenformat-Inkonsistenz in logins.json (String vs Object Format) verursacht Authentifizierungs-Probleme."
 
 frontend:
   - task: "Team View Scrollsystem reparieren"
