@@ -118,7 +118,10 @@ const UserManagementDialog = ({ isOpen, onClose, currentUser }) => {
     setShowCreateForm(false);
   };
 
-  if (!isOpen) return null;
+  // Sicherheitscheck: Nur Admins dürfen diese Komponente verwenden
+  if (!isOpen || currentUser?.role !== 'admin') {
+    return null;
+  }
 
   // Überprüfe Admin-Berechtigung
   if (currentUser?.role !== 'admin') {
