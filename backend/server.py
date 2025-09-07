@@ -6,13 +6,7 @@ import json
 import os
 import uuid
 from datetime import datetime
-from database import (
-    create_tables, get_session, initialize_default_data,
-    Employee, Vacation, Login
-)
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
-import asyncio
+from motor.motor_asyncio import AsyncIOMotorClient
 from contextlib import asynccontextmanager
 import uvicorn
 
