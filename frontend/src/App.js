@@ -1381,6 +1381,7 @@ function App() {
   const [initializationComplete, setInitializationComplete] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [skillFilter, setSkillFilter] = useState('');
   const [darkMode, setDarkMode] = useState(() => {
     // Check localStorage for saved dark mode preference
     const saved = localStorage.getItem('darkMode');
