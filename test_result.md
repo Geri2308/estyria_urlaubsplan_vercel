@@ -174,6 +174,19 @@ frontend:
         agent: "testing"
         comment: "✅ TESTED SUCCESSFULLY: Neuer grüner 'Aktualisieren'-Button im Persönlichkeitsprofil-Dialog funktioniert einwandfrei! Button ist korrekt positioniert (links in der Button-Leiste), hat grüne Farbe (bg-green-600), Refresh-Icon vorhanden, korrekten Tooltip 'Krankheitstage und Urlaubstage aktualisieren'. Button-Layout: Position 0: Aktualisieren (grün), Position 1: Abbrechen (grau), Position 2: Merkmale speichern (blau). Funktionalität getestet - Button-Click funktioniert, Responsive Design auf Mobile funktioniert, alle anderen Buttons arbeiten korrekt. Dialog öffnet/schließt ordnungsgemäß. Getestet für Mitarbeiter 'Gerhard Schmidt' mit Admin-Login 9999."
 
+backend:
+  - task: "Kritisches Login-System nach Backend-URL-Korrektur"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 KRITISCHES LOGIN-SYSTEM VOLLSTÄNDIG FUNKTIONSFÄHIG nach Backend-URL-Korrektur! Umfassende Tests aller kritischen Szenarien erfolgreich durchgeführt: ✅ **BACKEND-VERBINDUNG**: Health-Check https://estyria-urlaubsplan-vercel-2.onrender.com/api/health erfolgreich - Status: healthy, alle Data Files verfügbar (employees: true, vacations: true, logins: true). ✅ **ADMIN-LOGIN**: POST /api/auth/login mit admin/admin123 → Success: true, Role: admin, Token generiert, Message: 'Erfolgreich als Administrator angemeldet'. ✅ **NEUER BENUTZER TEST**: Testbenutzer logintest1757233153/test123 erfolgreich erstellt → Sofortiger Login erfolgreich → Success: true, Role: user, Username korrekt. ✅ **FEHLERFALL TESTS**: Falsches Passwort → 401 'Ungültiger Benutzername oder Passwort', Nicht-existierender Benutzer → 401 korrekte Fehlermeldung. ✅ **BACKEND API VALIDATION**: 22 Mitarbeiter erfolgreich geladen (Alexander Knoll, Benjamin Winter, Gerhard Schmidt), 0 Urlaubseinträge verfügbar. ✅ **CLEANUP**: Testbenutzer erfolgreich gelöscht. ALLE 8/8 KRITISCHEN TESTS BESTANDEN! Das ursprüngliche Problem (Benutzererstellung funktionierte, Login fehlschlug durch verschiedene URLs) ist vollständig behoben - beide Operationen verwenden jetzt dieselbe korrekte Render-Backend-URL. Fehlerbehandlung funktioniert einwandfrei."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
