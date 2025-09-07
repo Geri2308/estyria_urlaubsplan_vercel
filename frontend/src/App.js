@@ -1716,6 +1716,8 @@ function App() {
             setShowPersonalityDialog={setShowPersonalityDialog}
             setSelectedEmployeeForPersonality={setSelectedEmployeeForPersonality}
             setShowUserManagement={setShowUserManagement}
+            darkMode={darkMode}
+            onToggleDarkMode={toggleDarkMode}
           />
 
           {/* Calendar Navigation */}
