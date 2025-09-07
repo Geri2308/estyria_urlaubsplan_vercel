@@ -1779,7 +1779,45 @@ function App() {
                     <p className="text-gray-500 mb-6">Fügen Sie Ihren ersten Mitarbeiter hinzu, um zu beginnen.</p>
                   </div>
                 ) : (
-                  <div className="shadow ring-1 ring-black ring-opacity-5 md:rounded-lg overflow-hidden">
+                  <div>
+                    {/* Skills Filter */}
+                    <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div className="flex items-center space-x-4">
+                        <div className="flex-1">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Nach Skills filtern
+                          </label>
+                          <input
+                            type="text"
+                            value={skillFilter}
+                            onChange={(e) => setSkillFilter(e.target.value)}
+                            placeholder="Skill eingeben (z.B. JavaScript, Marketing, Design...)"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                          />
+                        </div>
+                        {skillFilter && (
+                          <button
+                            onClick={() => setSkillFilter('')}
+                            className="px-3 py-2 text-sm bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                          >
+                            Filter zurücksetzen
+                          </button>
+                        )}
+                      </div>
+                      {skillFilter && (
+                        <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                          Gefiltert nach: "{skillFilter}" • {
+                            employees.filter(emp => 
+                              emp.skills?.some(skill => 
+                                skill.name.toLowerCase().includes(skillFilter.toLowerCase())
+                              )
+                            ).length
+                          } Mitarbeiter gefunden
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="shadow ring-1 ring-black ring-opacity-5 md:rounded-lg overflow-hidden">
                     <div className="team-table-scroll">
                       <table className="min-w-full divide-y divide-gray-300">
                         <thead className="bg-gray-50 sticky top-0 z-10">
