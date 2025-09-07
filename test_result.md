@@ -176,9 +176,9 @@ frontend:
 
   - task: "Kritisches Login-Problem behoben - Backend-URL konsistent"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/.env"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -188,6 +188,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ BACKEND-TESTS VOLLSTÄNDIG ERFOLGREICH: Alle 8/8 kritischen Login-Tests bestanden! Backend Health-Check erfolgreich (Render-Backend erreichbar), Admin-Login (admin/admin123) erfolgreich, Neuer Benutzer-Erstellung erfolgreich, Login mit neuem Benutzer sofort erfolgreich, Fehlerfall-Tests (falsches Passwort/nicht-existierender User) erfolgreich. Backend API lädt 22 Mitarbeiter korrekt. Das kritische Login-Problem ist vollständig behoben - Backend-URL-Konsistenz wiederhergestellt."
+      - working: false
+        agent: "testing"
+        comment: "❌ KRITISCHES FRONTEND-LOGIN-PROBLEM IDENTIFIZIERT: Umfassende Frontend-Tests zeigen, dass das Login-System NICHT vollständig funktionsfähig ist! POSITIVE BEFUNDE: ✅ App-Initialisierung erfolgreich (Login-Screen lädt), ✅ EXPRESS-LOGISTIK Branding vorhanden (3 Elemente), ✅ Backend-Verbindung etabliert (Health-Check erfolgreich), ✅ Admin-Login-Authentifizierung funktioniert (POST /api/auth/login → success: true, token generiert), ✅ Backend-Mode aktiviert, ✅ User-Auth-State korrekt gesetzt. KRITISCHE PROBLEME: ❌ Nach erfolgreichem Login schlägt Daten-Loading fehl, ❌ Multiple 'Failed to fetch' Errors für GET /api/employees und GET /api/vacations, ❌ Admin-Badge (👑) nicht sichtbar in Hauptanwendung, ❌ App fällt zurück zu LocalStorage-Mode nach Login-Daten-Loading-Fehler, ❌ Network-Requests werden abgebrochen (net::ERR_ABORTED). ROOT CAUSE: Login-Authentifizierung funktioniert, aber kritisches Problem beim Daten-Loading nach Login. Backend Health-Check funktioniert, aber nachfolgende API-Calls für employees/vacations schlagen fehl. Mögliche Ursachen: Timeout-Problem mit Render-Backend nach initialem Health-Check, CORS-Problem mit authentifizierten Requests, oder Netzwerk-Konnektivitätsproblem nach Login. EMPFEHLUNG: Main Agent muss Backend-API-Calls nach Login debuggen und Render-Backend-Stabilität überprüfen."
 
 backend:
   - task: "Kritisches Login-System nach Backend-URL-Korrektur"
