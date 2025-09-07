@@ -1,14 +1,29 @@
 #!/usr/bin/env python3
 """
 Backend API Test Suite for Urlaubsplaner (Vacation Planner)
-KRITISCHER LOGIN-SYSTEM TEST nach Backend-URL-Korrektur
-Tests the login system after fixing REACT_APP_BACKEND_URL from Preview-URL to Render-Backend-URL
+KRITISCHE REGRESSION-TESTS nach Authentication-Fix
+
+**HINTERGRUND:**
+User berichtet 3 kritische Probleme:
+1. Login für andere Benutzer funktioniert nicht  
+2. Kann keinen Urlaub beantragen (failed to fetch)
+3. Bei Updates werden alle Mitarbeiter gelöscht außer 3
+
+**ROOT CAUSE IDENTIFIZIERT UND BEHOBEN:**
+- logins.json hatte gemischte Datenformate (String vs Object)
+- Standardisiert auf konsistentes Object-Format mit korrekten Rollen
+- Backend Authentication-Logic korrekt implementiert
+
+**TESTE ALLE DREI PROBLEME:**
+1. MULTI-USER LOGIN TEST: Alle 6 Benutzer testen
+2. VACATION CREATION TEST: Urlaubsantrag erstellen und validieren
+3. EMPLOYEE DATA PERSISTENCE TEST: Mitarbeiter-Anzahl nach Updates prüfen
 """
 
 import requests
 import sys
 import json
-from datetime import datetime
+from datetime import datetime, date
 import uuid
 
 class UrlaubsplanerAPITester:
