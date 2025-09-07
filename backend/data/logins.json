@@ -4,5 +4,9 @@
   "manager": "manager123",
   "hr": "hr123",
   "gerhard": "gerhard123",
-  "express": "express123"
+  "express": "express123",
+  "testuser": {
+    "password": "test123",
+    "role": "user"
+  }
 }
