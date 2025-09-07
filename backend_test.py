@@ -31,77 +31,173 @@ class UrlaubsplanerAPITester:
             print(f"❌ {name} - FAILED {details}")
 
     def test_health_check(self):
-        """Test health endpoint"""
+        """Test health endpoint - KRITISCHER BACKEND-VERBINDUNGSTEST"""
+        print("\n🔍 TESTING: Backend-Verbindung Health-Check")
         try:
-            response = requests.get(f"{self.api_url}/health", timeout=10)
+            response = requests.get(f"{self.api_url}/health", timeout=15)
             success = response.status_code == 200
             
             if success:
                 data = response.json()
-                details = f"Status: {data.get('status', 'unknown')}"
+                details = f"Status: {data.get('status', 'unknown')}, Data Files: {data.get('data_files', {})}"
+                print(f"   📡 Backend URL: {self.api_url}/health")
+                print(f"   ✅ Response: {json.dumps(data, indent=2)}")
             else:
-                details = f"Status Code: {response.status_code}"
+                details = f"Status Code: {response.status_code}, Response: {response.text}"
                 
-            self.log_test("Health Check", success, details)
+            self.log_test("Health Check (Render Backend)", success, details)
             return success
         except Exception as e:
-            self.log_test("Health Check", False, f"Error: {str(e)}")
+            self.log_test("Health Check (Render Backend)", False, f"Error: {str(e)}")
             return False
 
-    def test_login_admin(self):
-        """Test admin login with code 9999"""
+    def test_admin_login(self):
+        """Test admin login - KRITISCHER ADMIN-LOGIN TEST"""
+        print("\n🔍 TESTING: Admin-Login mit username/password")
         try:
-            payload = {"code": "9999"}
-            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=10)
+            payload = {"username": "admin", "password": "admin123"}
+            print(f"   📡 POST {self.api_url}/auth/login")
+            print(f"   📝 Payload: {json.dumps(payload)}")
+            
+            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=15)
             
             success = response.status_code == 200
             if success:
                 data = response.json()
                 self.token = data.get('token')
                 user = data.get('user', {})
-                details = f"Role: {user.get('role')}, Username: {user.get('username')}"
+                details = f"Success: {data.get('success')}, Role: {user.get('role')}, Token: {self.token[:20]}..."
+                print(f"   ✅ Response: {json.dumps(data, indent=2)}")
             else:
                 details = f"Status Code: {response.status_code}, Response: {response.text}"
+                print(f"   ❌ Error Response: {response.text}")
                 
-            self.log_test("Admin Login (9999)", success, details)
+            self.log_test("Admin Login (admin/admin123)", success, details)
             return success
         except Exception as e:
-            self.log_test("Admin Login (9999)", False, f"Error: {str(e)}")
+            self.log_test("Admin Login (admin/admin123)", False, f"Error: {str(e)}")
             return False
 
-    def test_login_user(self):
-        """Test user login with code 1234"""
+    def test_create_new_user(self):
+        """Test creating new user - NEUER BENUTZER TEST"""
+        print("\n🔍 TESTING: Neuen Testbenutzer erstellen")
+        if not self.token:
+            self.log_test("Create New User", False, "No admin token available")
+            return False
+            
         try:
-            payload = {"code": "1234"}
-            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=10)
+            # Generate unique username
+            timestamp = str(int(datetime.now().timestamp()))
+            self.created_user_username = f"logintest{timestamp}"
+            
+            payload = {
+                "username": self.created_user_username,
+                "password": "test123",
+                "role": "user"
+            }
+            
+            print(f"   📡 POST {self.api_url}/users")
+            print(f"   📝 Payload: {json.dumps(payload)}")
+            
+            response = requests.post(f"{self.api_url}/users", json=payload, timeout=15)
+            
+            success = response.status_code == 200
+            if success:
+                data = response.json()
+                details = f"Username: {data.get('username')}, Role: {data.get('role')}"
+                print(f"   ✅ Response: {json.dumps(data, indent=2)}")
+            else:
+                details = f"Status Code: {response.status_code}, Response: {response.text}"
+                print(f"   ❌ Error Response: {response.text}")
+                
+            self.log_test("Create New User", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Create New User", False, f"Error: {str(e)}")
+            return False
+
+    def test_new_user_login(self):
+        """Test login with newly created user - SOFORTIGER LOGIN TEST"""
+        print("\n🔍 TESTING: Login mit neu erstelltem Benutzer")
+        if not self.created_user_username:
+            self.log_test("New User Login", False, "No created user available")
+            return False
+            
+        try:
+            payload = {"username": self.created_user_username, "password": "test123"}
+            print(f"   📡 POST {self.api_url}/auth/login")
+            print(f"   📝 Payload: {json.dumps(payload)}")
+            
+            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=15)
             
             success = response.status_code == 200
             if success:
                 data = response.json()
                 user = data.get('user', {})
-                details = f"Role: {user.get('role')}, Username: {user.get('username')}"
+                details = f"Success: {data.get('success')}, Role: {user.get('role')}, Username: {user.get('username')}"
+                print(f"   ✅ Response: {json.dumps(data, indent=2)}")
             else:
                 details = f"Status Code: {response.status_code}, Response: {response.text}"
+                print(f"   ❌ Error Response: {response.text}")
                 
-            self.log_test("User Login (1234)", success, details)
+            self.log_test("New User Login", success, details)
             return success
         except Exception as e:
-            self.log_test("User Login (1234)", False, f"Error: {str(e)}")
+            self.log_test("New User Login", False, f"Error: {str(e)}")
             return False
 
-    def test_login_invalid(self):
-        """Test login with invalid code"""
+    def test_login_wrong_password(self):
+        """Test login with wrong password - FEHLERFALL TEST"""
+        print("\n🔍 TESTING: Login mit falschem Passwort")
         try:
-            payload = {"code": "0000"}
-            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=10)
+            payload = {"username": "admin", "password": "wrongpassword"}
+            print(f"   📡 POST {self.api_url}/auth/login")
+            print(f"   📝 Payload: {json.dumps(payload)}")
+            
+            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=15)
             
             success = response.status_code == 401
             details = f"Status Code: {response.status_code} (Expected 401)"
+            if response.status_code == 401:
+                try:
+                    error_data = response.json()
+                    print(f"   ✅ Correct Error Response: {json.dumps(error_data, indent=2)}")
+                except:
+                    print(f"   ✅ Correct Error Response: {response.text}")
+            else:
+                print(f"   ❌ Unexpected Response: {response.text}")
                 
-            self.log_test("Invalid Login (0000)", success, details)
+            self.log_test("Login Wrong Password", success, details)
             return success
         except Exception as e:
-            self.log_test("Invalid Login (0000)", False, f"Error: {str(e)}")
+            self.log_test("Login Wrong Password", False, f"Error: {str(e)}")
+            return False
+
+    def test_login_nonexistent_user(self):
+        """Test login with non-existent user - FEHLERFALL TEST"""
+        print("\n🔍 TESTING: Login mit nicht-existierendem Benutzer")
+        try:
+            payload = {"username": "nonexistentuser999", "password": "anypassword"}
+            print(f"   📡 POST {self.api_url}/auth/login")
+            print(f"   📝 Payload: {json.dumps(payload)}")
+            
+            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=15)
+            
+            success = response.status_code == 401
+            details = f"Status Code: {response.status_code} (Expected 401)"
+            if response.status_code == 401:
+                try:
+                    error_data = response.json()
+                    print(f"   ✅ Correct Error Response: {json.dumps(error_data, indent=2)}")
+                except:
+                    print(f"   ✅ Correct Error Response: {response.text}")
+            else:
+                print(f"   ❌ Unexpected Response: {response.text}")
+                
+            self.log_test("Login Nonexistent User", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Login Nonexistent User", False, f"Error: {str(e)}")
             return False
 
     def test_get_employees_unauthorized(self):
